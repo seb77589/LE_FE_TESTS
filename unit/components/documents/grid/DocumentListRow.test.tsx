@@ -28,7 +28,7 @@ jest.mock('next/image', () => {
 });
 
 // Mock DocumentThumbnail component
-jest.mock('../../DocumentThumbnail', () => {
+jest.mock('@/components/documents/DocumentThumbnail', () => {
   return function MockDocumentThumbnail({ document, onClick, size }: any) {
     return (
       <button
@@ -70,7 +70,7 @@ jest.mock('@/components/ui/Button', () => {
 });
 
 // Mock gridUtils
-jest.mock('../gridUtils', () => ({
+jest.mock('@/components/documents/grid/gridUtils', () => ({
   formatFileSize: (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;

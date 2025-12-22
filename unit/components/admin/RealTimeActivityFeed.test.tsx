@@ -187,7 +187,7 @@ jest.mock('@/components/ui/Button', () => ({
 // Mock filter and export utilities - these are defined but used inside jest.mock
 
 // Mock activity components
-jest.mock('../activity', () => {
+jest.mock('@/components/admin/activity', () => {
   const React = require('react');
   return {
     ActivityFilters: ({ filters, onFiltersChange, activityTypes, severityLevels }: any) =>

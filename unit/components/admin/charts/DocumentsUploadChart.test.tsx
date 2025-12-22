@@ -63,7 +63,7 @@ jest.mock('recharts', () => ({
 
 // Mock ChartContainer
 const mockChartContainerRenderKey = 'test-key';
-jest.mock('../ChartContainer', () => ({
+jest.mock('@/components/admin/charts/ChartContainer', () => ({
   ChartContainer: ({ isLoading, loadingMessage, children }: any) =>
     isLoading ? (
       <div data-testid="chart-loading">{loadingMessage || 'Loading...'}</div>

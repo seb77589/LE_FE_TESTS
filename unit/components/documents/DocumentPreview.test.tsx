@@ -69,7 +69,7 @@ jest.mock('@/components/ui/Modal', () => {
 });
 
 // Mock preview components
-jest.mock('../preview/ImagePreview', () => ({
+jest.mock('@/components/documents/preview/ImagePreview', () => ({
   ImagePreview: function MockImagePreview({
     previewData,
     mimeType,
@@ -90,7 +90,7 @@ jest.mock('../preview/ImagePreview', () => ({
   },
 }));
 
-jest.mock('../preview/PDFPreview', () => ({
+jest.mock('@/components/documents/preview/PDFPreview', () => ({
   PDFPreview: function MockPDFPreview({
     previewData,
     imageError,
@@ -109,7 +109,7 @@ jest.mock('../preview/PDFPreview', () => ({
   },
 }));
 
-jest.mock('../preview/InfoPreview', () => ({
+jest.mock('@/components/documents/preview/InfoPreview', () => ({
   InfoPreview: function MockInfoPreview({
     previewData,
     mimeType,
@@ -126,7 +126,7 @@ jest.mock('../preview/InfoPreview', () => ({
   },
 }));
 
-jest.mock('../preview/DocumentInfo', () => ({
+jest.mock('@/components/documents/preview/DocumentInfo', () => ({
   DocumentInfo: function MockDocumentInfo({ document }: any) {
     return (
       <div data-testid="document-info">
@@ -137,7 +137,7 @@ jest.mock('../preview/DocumentInfo', () => ({
   },
 }));
 
-jest.mock('../preview/PreviewActions', () => ({
+jest.mock('@/components/documents/preview/PreviewActions', () => ({
   PreviewActions: function MockPreviewActions({
     onClose,
     onDownload,
@@ -159,13 +159,13 @@ jest.mock('../preview/PreviewActions', () => ({
   },
 }));
 
-jest.mock('../preview/PreviewLoading', () => ({
+jest.mock('@/components/documents/preview/PreviewLoading', () => ({
   PreviewLoading: function MockPreviewLoading() {
     return <div data-testid="preview-loading">Loading...</div>;
   },
 }));
 
-jest.mock('../preview/PreviewError', () => ({
+jest.mock('@/components/documents/preview/PreviewError', () => ({
   PreviewError: function MockPreviewError({
     error,
     onRetry,
@@ -184,7 +184,7 @@ jest.mock('../preview/PreviewError', () => ({
   },
 }));
 
-jest.mock('../preview/PreviewEmpty', () => ({
+jest.mock('@/components/documents/preview/PreviewEmpty', () => ({
   PreviewEmpty: function MockPreviewEmpty({ mimeType }: { mimeType: string }) {
     return (
       <div data-testid="preview-empty">

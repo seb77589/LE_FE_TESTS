@@ -31,12 +31,12 @@ jest.mock('@/lib/logging', () => ({
 }));
 
 // Mock the API fetcher
-jest.mock('../api', () => ({
+jest.mock('@/lib/api', () => ({
   fetcher: jest.fn(),
 }));
 
 // Mock swrErrorConfig
-jest.mock('../errors', () => ({
+jest.mock('@/lib/errors', () => ({
   swrErrorConfig: {
     shouldRetryOnError: true,
     onError: jest.fn(),
@@ -45,7 +45,7 @@ jest.mock('../errors', () => ({
 
 // Mock useAuth hook
 const mockGetValidAccessToken = jest.fn();
-jest.mock('../context/ConsolidatedAuthContext', () => ({
+jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
   useAuth: () => ({
     getValidAccessToken: mockGetValidAccessToken,
   }),

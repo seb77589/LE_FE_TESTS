@@ -111,7 +111,7 @@ jest.mock('@/components/users/UserDetailsDrawer', () => ({
     ) : null,
 }));
 
-jest.mock('../UserAnalytics', () => ({
+jest.mock('@/components/admin/UserAnalytics', () => ({
   UserAnalytics: ({ analytics }: any) => (
     <div data-testid="user-analytics">
       <span data-testid="total-users">{analytics?.total_users}</span>
@@ -119,7 +119,7 @@ jest.mock('../UserAnalytics', () => ({
   ),
 }));
 
-jest.mock('../UserImport', () => ({
+jest.mock('@/components/admin/UserImport', () => ({
   UserImport: ({ importing, importResult, onImport }: any) => (
     <div data-testid="user-import">
       <span data-testid="importing">{importing ? 'true' : 'false'}</span>
@@ -131,7 +131,7 @@ jest.mock('../UserImport', () => ({
   ),
 }));
 
-jest.mock('../UserManagementError', () => ({
+jest.mock('@/components/admin/UserManagementError', () => ({
   UserManagementError: ({ showHeader, showBackLink }: any) => (
     <div data-testid="user-management-error">
       <span data-testid="error-header">{showHeader ? 'true' : 'false'}</span>
@@ -140,7 +140,7 @@ jest.mock('../UserManagementError', () => ({
   ),
 }));
 
-jest.mock('../UserManagementLoading', () => ({
+jest.mock('@/components/admin/UserManagementLoading', () => ({
   UserManagementLoading: ({ showHeader, showBackLink }: any) => (
     <div data-testid="user-management-loading">
       <span data-testid="loading-header">{showHeader ? 'true' : 'false'}</span>

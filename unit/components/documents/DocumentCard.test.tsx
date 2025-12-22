@@ -28,7 +28,7 @@ jest.mock('@/lib/i18n', () => ({
 }));
 
 // Mock DocumentThumbnail component
-jest.mock('../DocumentThumbnail', () => {
+jest.mock('@/components/documents/DocumentThumbnail', () => {
   return function MockDocumentThumbnail({ document, onClick, size, className }: any) {
     return (
       <button
