@@ -1,0 +1,22 @@
+/**
+ * Tests for AccountsLoading component
+ */
+
+import React from 'react';
+import { render } from '@testing-library/react';
+import { AccountsLoading } from '@/components/admin/unlock/AccountsLoading';
+
+describe('AccountsLoading', () => {
+  it('should render loading spinner', () => {
+    const { container } = render(<AccountsLoading />);
+    // Check for spinner element
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it('should have correct container structure', () => {
+    const { container } = render(<AccountsLoading />);
+    const mainDiv = container.firstChild as HTMLElement;
+    expect(mainDiv).toHaveClass('flex', 'justify-center', 'p-6');
+  });
+});
