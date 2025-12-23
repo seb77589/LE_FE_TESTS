@@ -101,19 +101,58 @@ describe('Dashboard Page', () => {
     expect(buttonTexts.filter((text) => text?.includes('Admin Panel'))).toHaveLength(0);
   });
 
-  test('redirects admin users to admin dashboard', () => {
+  test('displays admin users dashboard with admin actions', () => {
     setupAuth('manager');
     render(<DashboardPage />);
 
-    // Admin users see a redirect loading message
-    expect(screen.getByText('Redirecting to Admin Dashboard...')).toBeInTheDocument();
+    // Welcome message should be visible
+    const userEmail = screen.getByTestId('user-email');
+    expect(userEmail).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER.email);
+
+    // Admin-specific quick action should be visible
+    const quickActionsContainer = screen.getByText('Quick Actions').closest('div');
+    expect(quickActionsContainer).toBeInTheDocument();
+    const buttonTexts = quickActionsContainer
+      ? Array.from(quickActionsContainer.querySelectorAll('button')).map(
+          (button) => button.textContent,
+        )
+      : [];
+    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(1);
+
+    // Admin privilege notice should be visible
+    expect(screen.getByText('Administrator Access')).toBeInTheDocument();
+    expect(
+      screen.getByText(/you have administrative privileges/i),
+    ).toBeInTheDocument();
   });
 
-  test('redirects superadmin users to admin dashboard', () => {
+  test('displays superadmin users dashboard with all admin actions', () => {
     setupAuth('superadmin');
     render(<DashboardPage />);
 
-    // SuperAdmin users see a redirect loading message
-    expect(screen.getByText('Redirecting to Admin Dashboard...')).toBeInTheDocument();
+    // Welcome message should be visible
+    const userEmail = screen.getByTestId('user-email');
+    expect(userEmail).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER.email);
+
+    // Admin actions including Admin Panel quick action should be visible
+    const quickActionsContainer = screen.getByText('Quick Actions').closest('div');
+    expect(quickActionsContainer).toBeInTheDocument();
+    const buttonTexts = quickActionsContainer
+      ? Array.from(quickActionsContainer.querySelectorAll('button')).map(
+          (button) => button.textContent,
+        )
+      : [];
+    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(1);
+    expect(buttonTexts.filter((text) => text?.includes('Admin Panel'))).toHaveLength(1);
+
+    // Admin privilege notice section should have "System Admin" button
+    const adminSection = screen.getByText('Administrator Access').closest('div');
+    expect(adminSection).toBeInTheDocument();
+    const adminButtons = adminSection
+      ? Array.from(adminSection.querySelectorAll('button')).map(
+          (button) => button.textContent,
+        )
+      : [];
+    expect(adminButtons.filter((text) => text?.includes('System Admin'))).toHaveLength(1);
   });
 });

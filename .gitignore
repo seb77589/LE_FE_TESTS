@@ -1,0 +1,14 @@
+# Jest token artifacts (generated during test runs)
+setup/.jest-token
+setup/.jest-token-*
+setup/.jest-tokens.json
+
+# Test results
+test-results/
+coverage/
+playwright-report/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
