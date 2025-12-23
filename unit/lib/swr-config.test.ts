@@ -60,7 +60,7 @@ globalThis.fetch = mockFetch;
 // ==============================================================================
 
 // JSON response factory for mock fetch - extracted from inline arrow functions
-const createJsonResponse = <T>(data: T): () => Promise<T> => {
+const createJsonResponse = <T>(data: T): (() => Promise<T>) => {
   return () => Promise.resolve(data);
 };
 
@@ -84,7 +84,7 @@ const createErrorResponse = (status: number, statusText: string) => ({
 
 const createOkResponseWithHeaders = (
   jsonFn: () => Promise<unknown>,
-  contentType: string
+  contentType: string,
 ) => ({
   ok: true,
   headers: new Headers({ 'content-type': contentType }),
@@ -339,7 +339,11 @@ describe('SWR Config Module', () => {
 
       it('should generate adminStats key', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.adminStats()).toEqual(['/api/v1/admin/stats', 'manager', 'stats']);
+        expect(swrKeys.adminStats()).toEqual([
+          '/api/v1/admin/stats',
+          'manager',
+          'stats',
+        ]);
       });
 
       it('should generate systemStatus key', async () => {
@@ -390,7 +394,9 @@ describe('SWR Config Module', () => {
 
       it('should generate activitySummary key with custom hours', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.activitySummary(48)[0]).toBe('/api/v1/admin/activity/summary?hours=48');
+        expect(swrKeys.activitySummary(48)[0]).toBe(
+          '/api/v1/admin/activity/summary?hours=48',
+        );
       });
 
       it('should generate activityTypes key', async () => {
@@ -436,7 +442,9 @@ describe('SWR Config Module', () => {
 
       it('should generate healthHistory key with period', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.healthHistory('24h')[0]).toBe('/api/v1/health-check/history?period=24h');
+        expect(swrKeys.healthHistory('24h')[0]).toBe(
+          '/api/v1/health-check/history?period=24h',
+        );
       });
 
       it('should generate healthTrends key with default days', async () => {
@@ -468,24 +476,40 @@ describe('SWR Config Module', () => {
 
       it('should generate document key with number id', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.document(123)).toEqual(['/api/v1/documents/123', 'document', 123]);
+        expect(swrKeys.document(123)).toEqual([
+          '/api/v1/documents/123',
+          'document',
+          123,
+        ]);
       });
 
       it('should generate document key with string id', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.document('abc-123')).toEqual(['/api/v1/documents/abc-123', 'document', 'abc-123']);
+        expect(swrKeys.document('abc-123')).toEqual([
+          '/api/v1/documents/abc-123',
+          'document',
+          'abc-123',
+        ]);
       });
     });
 
     describe('dashboard and websocket keys', () => {
       it('should generate dashboardStats key', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.dashboardStats()).toEqual(['/api/v1/stats/overview', 'dashboard', 'stats']);
+        expect(swrKeys.dashboardStats()).toEqual([
+          '/api/v1/stats/overview',
+          'dashboard',
+          'stats',
+        ]);
       });
 
       it('should generate wsStatus key', async () => {
         const { swrKeys } = await import('../swr-config');
-        expect(swrKeys.wsStatus()).toEqual(['/api/v1/ws/status', 'websocket', 'status']);
+        expect(swrKeys.wsStatus()).toEqual([
+          '/api/v1/ws/status',
+          'websocket',
+          'status',
+        ]);
       });
 
       it('should generate userAnalytics key', async () => {
@@ -517,7 +541,11 @@ describe('SWR Config Module', () => {
         const result = optimisticUpdates.updateUserInList(users, updatedUser);
 
         expect(result).toHaveLength(3);
-        expect(result[1]).toEqual({ id: 2, name: 'Bob Updated', email: 'bob@example.com' });
+        expect(result[1]).toEqual({
+          id: 2,
+          name: 'Bob Updated',
+          email: 'bob@example.com',
+        });
       });
 
       it('should not modify other users', async () => {
@@ -603,7 +631,11 @@ describe('SWR Config Module', () => {
 
         const result = optimisticUpdates.updateDocumentInList(documents, updatedDoc);
 
-        expect(result[1]).toEqual({ id: 2, title: 'Doc 2 Updated', status: 'processed' });
+        expect(result[1]).toEqual({
+          id: 2,
+          title: 'Doc 2 Updated',
+          status: 'processed',
+        });
       });
     });
 
@@ -643,7 +675,9 @@ describe('SWR Config Module', () => {
       const { useAuthenticatedFetcher } = await import('../swr-config');
       const { result } = renderHook(() => useAuthenticatedFetcher());
 
-      await expect(result.current.fetcher('/api/test')).rejects.toThrow('Authentication required');
+      await expect(result.current.fetcher('/api/test')).rejects.toThrow(
+        'Authentication required',
+      );
     });
 
     it('authenticatedFetcher - should make authenticated GET request with token', async () => {
@@ -671,7 +705,9 @@ describe('SWR Config Module', () => {
       const { useAuthenticatedFetcher } = await import('../swr-config');
       const { result } = renderHook(() => useAuthenticatedFetcher());
 
-      await expect(result.current.fetcher('/api/test')).rejects.toThrow('HTTP 404: Not Found');
+      await expect(result.current.fetcher('/api/test')).rejects.toThrow(
+        'HTTP 404: Not Found',
+      );
     });
 
     it('postFetcher - should make POST request with body', async () => {
@@ -715,7 +751,7 @@ describe('SWR Config Module', () => {
     it('deleteFetcher - should make DELETE request', async () => {
       mockGetValidAccessToken.mockResolvedValue('test-token');
       mockFetch.mockResolvedValue(
-        createOkResponseWithHeaders(jsonResolveDeleted, 'application/json')
+        createOkResponseWithHeaders(jsonResolveDeleted, 'application/json'),
       );
 
       const { useAuthenticatedFetcher } = await import('../swr-config');
@@ -747,7 +783,7 @@ describe('SWR Config Module', () => {
     it('deleteFetcher - should parse JSON response when content-type is JSON', async () => {
       mockGetValidAccessToken.mockResolvedValue('test-token');
       mockFetch.mockResolvedValue(
-        createOkResponseWithHeaders(jsonResolveDeletedWithId, 'application/json')
+        createOkResponseWithHeaders(jsonResolveDeletedWithId, 'application/json'),
       );
 
       const { useAuthenticatedFetcher } = await import('../swr-config');

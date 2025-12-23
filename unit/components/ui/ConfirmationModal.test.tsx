@@ -329,9 +329,7 @@ describe('ConfirmationModal', () => {
   describe('Error Handling', () => {
     it('should handle errors in onConfirm callback', async () => {
       const logger = require('@/lib/logging').default;
-      const errorMock = jest
-        .fn()
-        .mockRejectedValue(new Error('Confirmation failed'));
+      const errorMock = jest.fn().mockRejectedValue(new Error('Confirmation failed'));
 
       render(
         <ConfirmationModal

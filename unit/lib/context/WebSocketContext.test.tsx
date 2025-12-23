@@ -64,7 +64,9 @@ function WebSocketStatusComponent() {
       <span data-testid="status">{ws.status}</span>
       <span data-testid="isConnected">{String(ws.isConnected)}</span>
       <span data-testid="lastError">{ws.lastError || 'null'}</span>
-      <span data-testid="connectionStats">{ws.connectionStats ? 'has-stats' : 'null'}</span>
+      <span data-testid="connectionStats">
+        {ws.connectionStats ? 'has-stats' : 'null'}
+      </span>
     </div>
   );
 }

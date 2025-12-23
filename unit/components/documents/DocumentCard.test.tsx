@@ -63,7 +63,7 @@ jest.mock('@/components/ui/Button', () => {
         className,
         ...props,
       },
-      children
+      children,
     );
   };
 });
@@ -313,11 +313,7 @@ describe('DocumentCard', () => {
       const onSelect = jest.fn();
       const onPreview = jest.fn();
       render(
-        <DocumentCard
-          {...defaultProps}
-          onSelect={onSelect}
-          onPreview={onPreview}
-        />
+        <DocumentCard {...defaultProps} onSelect={onSelect} onPreview={onPreview} />,
       );
 
       const checkbox = screen.getByRole('checkbox');
@@ -355,7 +351,9 @@ describe('DocumentCard', () => {
       const user = userEvent.setup();
       const onSelect = jest.fn();
       const onPreview = jest.fn();
-      render(<DocumentCard {...defaultProps} onSelect={onSelect} onPreview={onPreview} />);
+      render(
+        <DocumentCard {...defaultProps} onSelect={onSelect} onPreview={onPreview} />,
+      );
 
       const card = screen.getByTestId('document-item');
       await user.click(card);
@@ -366,9 +364,7 @@ describe('DocumentCard', () => {
 
     it('does nothing when card is clicked without onSelect or onPreview', async () => {
       const user = userEvent.setup();
-      const { container } = render(
-        <DocumentCard document={mockDocument} />
-      );
+      const { container } = render(<DocumentCard document={mockDocument} />);
 
       const card = screen.getByTestId('document-item');
       await user.click(card);
@@ -383,9 +379,9 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} />);
 
       // The more options button exists but is initially hidden via opacity
-      const moreButton = screen.getByTestId('document-item').querySelector(
-        'x-mock-button[data-variant="ghost"]'
-      );
+      const moreButton = screen
+        .getByTestId('document-item')
+        .querySelector('x-mock-button[data-variant="ghost"]');
       expect(moreButton).toBeInTheDocument();
     });
 
@@ -394,9 +390,9 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} />);
 
       // Find the more options button
-      const moreButton = screen.getByTestId('document-item').querySelector(
-        'x-mock-button[data-variant="ghost"]'
-      ) as HTMLElement;
+      const moreButton = screen
+        .getByTestId('document-item')
+        .querySelector('x-mock-button[data-variant="ghost"]') as HTMLElement;
 
       await user.click(moreButton);
 
@@ -413,9 +409,9 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} />);
 
       // Open menu
-      const moreButton = screen.getByTestId('document-item').querySelector(
-        'x-mock-button[data-variant="ghost"]'
-      ) as HTMLElement;
+      const moreButton = screen
+        .getByTestId('document-item')
+        .querySelector('x-mock-button[data-variant="ghost"]') as HTMLElement;
       await user.click(moreButton);
 
       // Click preview action
@@ -432,9 +428,9 @@ describe('DocumentCard', () => {
       const user = userEvent.setup();
       render(<DocumentCard {...defaultProps} />);
 
-      const moreButton = screen.getByTestId('document-item').querySelector(
-        'x-mock-button[data-variant="ghost"]'
-      ) as HTMLElement;
+      const moreButton = screen
+        .getByTestId('document-item')
+        .querySelector('x-mock-button[data-variant="ghost"]') as HTMLElement;
 
       // Open menu
       await user.click(moreButton);
@@ -451,11 +447,11 @@ describe('DocumentCard', () => {
   describe('Action Handlers', () => {
     const openMenuAndClickAction = async (
       user: ReturnType<typeof userEvent.setup>,
-      actionTestId: string
+      actionTestId: string,
     ) => {
-      const moreButton = screen.getByTestId('document-item').querySelector(
-        'x-mock-button[data-variant="ghost"]'
-      ) as HTMLElement;
+      const moreButton = screen
+        .getByTestId('document-item')
+        .querySelector('x-mock-button[data-variant="ghost"]') as HTMLElement;
       await user.click(moreButton);
       await user.click(screen.getByTestId(actionTestId));
     };
@@ -514,13 +510,13 @@ describe('DocumentCard', () => {
       const user = userEvent.setup();
       render(<DocumentCard document={mockDocument} />);
 
-      const moreButton = screen.getByTestId('document-item').querySelector(
-        'x-mock-button[data-variant="ghost"]'
-      ) as HTMLElement;
+      const moreButton = screen
+        .getByTestId('document-item')
+        .querySelector('x-mock-button[data-variant="ghost"]') as HTMLElement;
       await user.click(moreButton);
 
       const previewBtn = screen.getByTestId('preview-button');
-      
+
       // Should not throw
       expect(async () => {
         await user.click(previewBtn);
@@ -547,7 +543,7 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} />);
 
       const card = screen.getByTestId('document-item');
-      
+
       // Enter hover state
       fireEvent.mouseEnter(card);
       await waitFor(() => {
@@ -556,7 +552,7 @@ describe('DocumentCard', () => {
 
       // Leave hover state
       fireEvent.mouseLeave(card);
-      
+
       // The hover overlay buttons should not be visible (opacity-0 on leave)
       // Component still exists but won't show overlay
     });
@@ -686,7 +682,8 @@ describe('DocumentCard', () => {
     it('handles long filenames with truncation', () => {
       const longNameDoc = {
         ...mockDocument,
-        filename: 'this-is-a-very-long-filename-that-should-be-truncated-in-display.pdf',
+        filename:
+          'this-is-a-very-long-filename-that-should-be-truncated-in-display.pdf',
       };
       render(<DocumentCard {...defaultProps} document={longNameDoc} />);
 

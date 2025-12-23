@@ -139,7 +139,11 @@ describe('errors/types', () => {
 
       it('includes context when provided', () => {
         const context = { component: 'LoginForm', action: 'submit' };
-        const error = ErrorFactory.createAuthenticationError('Failed', undefined, context);
+        const error = ErrorFactory.createAuthenticationError(
+          'Failed',
+          undefined,
+          context,
+        );
 
         expect(error.context).toEqual(context);
       });
@@ -147,7 +151,9 @@ describe('errors/types', () => {
       it('provides helpful suggestions', () => {
         const error = ErrorFactory.createAuthenticationError('Failed');
 
-        expect(error.suggestions).toContain('Verify your email and password are correct');
+        expect(error.suggestions).toContain(
+          'Verify your email and password are correct',
+        );
         expect(error.suggestions?.length).toBeGreaterThan(0);
       });
     });
@@ -168,7 +174,10 @@ describe('errors/types', () => {
         const validationErrors: ValidationErrorData[] = [
           { field: 'email', message: 'Invalid email', code: 'INVALID_EMAIL' },
         ];
-        const error = ErrorFactory.createValidationError('Validation failed', validationErrors);
+        const error = ErrorFactory.createValidationError(
+          'Validation failed',
+          validationErrors,
+        );
 
         expect(error.code).toBe('VALIDATION_FAILED');
         expect(error.category).toBe(ErrorCategory.VALIDATION);
@@ -267,7 +276,7 @@ describe('errors/types', () => {
         const error = ErrorFactory.createServerError('Service unavailable', 503);
 
         expect(error.suggestions).toContainEqual(
-          expect.stringContaining('temporarily unavailable')
+          expect.stringContaining('temporarily unavailable'),
         );
       });
     });
@@ -344,14 +353,24 @@ describe('errors/types', () => {
 
       it('creates rate limit error for 429', () => {
         const responseData = { limit: 100, remaining: 0, retryAfter: 30000 };
-        const error = ErrorFactory.fromHttpError(429, 'Too Many Requests', responseData);
+        const error = ErrorFactory.fromHttpError(
+          429,
+          'Too Many Requests',
+          responseData,
+        );
 
         expect(error.category).toBe(ErrorCategory.RATE_LIMIT);
       });
 
       it('creates validation error for 422', () => {
-        const responseData = { errors: [{ field: 'email', message: 'Invalid', code: 'ERR' }] };
-        const error = ErrorFactory.fromHttpError(422, 'Unprocessable Entity', responseData);
+        const responseData = {
+          errors: [{ field: 'email', message: 'Invalid', code: 'ERR' }],
+        };
+        const error = ErrorFactory.fromHttpError(
+          422,
+          'Unprocessable Entity',
+          responseData,
+        );
 
         expect(error.category).toBe(ErrorCategory.VALIDATION);
         expect(error.validationErrors).toHaveLength(1);
@@ -383,7 +402,11 @@ describe('errors/types', () => {
 
       it('accepts custom category', () => {
         const originalError = new Error('Network issue');
-        const error = ErrorFactory.fromError(originalError, undefined, ErrorCategory.NETWORK);
+        const error = ErrorFactory.fromError(
+          originalError,
+          undefined,
+          ErrorCategory.NETWORK,
+        );
 
         expect(error.category).toBe(ErrorCategory.NETWORK);
       });
@@ -592,7 +615,9 @@ describe('errors/types', () => {
       });
 
       it('includes additional data', () => {
-        const context = ErrorUtils.createErrorContext('Form', 'save', { userId: '123' });
+        const context = ErrorUtils.createErrorContext('Form', 'save', {
+          userId: '123',
+        });
 
         expect(context.userId).toBe('123');
       });
@@ -951,7 +976,7 @@ describe('errors/types', () => {
     describe('getWaitTimeMessage', () => {
       it('returns message for rate_limit', () => {
         expect(getWaitTimeMessage('rate_limit')).toBe(
-          'Please wait 15 minutes before attempting to login again.'
+          'Please wait 15 minutes before attempting to login again.',
         );
       });
 
@@ -964,43 +989,83 @@ describe('errors/types', () => {
     describe('error type checkers', () => {
       it('isEmailVerificationError works correctly', () => {
         expect(
-          isEmailVerificationError({ type: 'validation', message: '', retryable: false, code: AuthErrorCode.EMAIL_NOT_VERIFIED })
+          isEmailVerificationError({
+            type: 'validation',
+            message: '',
+            retryable: false,
+            code: AuthErrorCode.EMAIL_NOT_VERIFIED,
+          }),
         ).toBe(true);
         expect(
-          isEmailVerificationError({ type: 'authentication', message: '', retryable: true, code: AuthErrorCode.INVALID_CREDENTIALS })
+          isEmailVerificationError({
+            type: 'authentication',
+            message: '',
+            retryable: true,
+            code: AuthErrorCode.INVALID_CREDENTIALS,
+          }),
         ).toBe(false);
       });
 
       it('isCredentialError works correctly', () => {
         expect(
-          isCredentialError({ type: 'authentication', message: '', retryable: true, code: AuthErrorCode.INVALID_CREDENTIALS })
+          isCredentialError({
+            type: 'authentication',
+            message: '',
+            retryable: true,
+            code: AuthErrorCode.INVALID_CREDENTIALS,
+          }),
         ).toBe(true);
       });
 
       it('isAccountLockedError works correctly', () => {
         expect(
-          isAccountLockedError({ type: 'authorization', message: '', retryable: false, code: AuthErrorCode.ACCOUNT_LOCKED })
+          isAccountLockedError({
+            type: 'authorization',
+            message: '',
+            retryable: false,
+            code: AuthErrorCode.ACCOUNT_LOCKED,
+          }),
         ).toBe(true);
       });
 
       it('isRateLimitError works correctly', () => {
         expect(
-          isRateLimitError({ type: 'rate_limit', message: '', retryable: true, code: AuthErrorCode.RATE_LIMITED })
+          isRateLimitError({
+            type: 'rate_limit',
+            message: '',
+            retryable: true,
+            code: AuthErrorCode.RATE_LIMITED,
+          }),
         ).toBe(true);
       });
 
       it('isSessionExpiredError works correctly', () => {
         expect(
-          isSessionExpiredError({ type: 'authentication', message: '', retryable: true, code: AuthErrorCode.SESSION_EXPIRED })
+          isSessionExpiredError({
+            type: 'authentication',
+            message: '',
+            retryable: true,
+            code: AuthErrorCode.SESSION_EXPIRED,
+          }),
         ).toBe(true);
       });
 
       it('isAccountDisabledError works correctly', () => {
         expect(
-          isAccountDisabledError({ type: 'authorization', message: '', retryable: false, code: AuthErrorCode.ACCOUNT_DISABLED })
+          isAccountDisabledError({
+            type: 'authorization',
+            message: '',
+            retryable: false,
+            code: AuthErrorCode.ACCOUNT_DISABLED,
+          }),
         ).toBe(true);
         expect(
-          isAccountDisabledError({ type: 'authorization', message: '', retryable: false, code: AuthErrorCode.ACCOUNT_SUSPENDED })
+          isAccountDisabledError({
+            type: 'authorization',
+            message: '',
+            retryable: false,
+            code: AuthErrorCode.ACCOUNT_SUSPENDED,
+          }),
         ).toBe(true);
       });
     });

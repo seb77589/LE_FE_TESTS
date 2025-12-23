@@ -35,10 +35,7 @@ jest.mock('@/lib/features/FeatureFlagConfig', () => ({
     advanced_search: true,
     experimental_features: false,
   })),
-  getFeatureFlag: jest.fn((
-    config: FeatureFlagConfig,
-    flag: string
-  ) => {
+  getFeatureFlag: jest.fn((config: FeatureFlagConfig, flag: string) => {
     const value = config[flag];
     return typeof value === 'boolean' ? value : false;
   }),
@@ -54,7 +51,9 @@ import logger from '@/lib/logging';
 import { getFeatureFlags, getFeatureFlag } from '@/lib/features/FeatureFlagConfig';
 
 // Get references to mocked functions
-const mockGetFeatureFlags = getFeatureFlags as jest.MockedFunction<typeof getFeatureFlags>;
+const mockGetFeatureFlags = getFeatureFlags as jest.MockedFunction<
+  typeof getFeatureFlags
+>;
 const mockGetFeatureFlag = getFeatureFlag as jest.MockedFunction<typeof getFeatureFlag>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
@@ -68,12 +67,10 @@ describe('FeatureFlagProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetFeatureFlags.mockReturnValue(defaultConfig);
-    mockGetFeatureFlag.mockImplementation(
-      (config: FeatureFlagConfig, flag: string) => {
-        const value = config[flag];
-        return typeof value === 'boolean' ? value : false;
-      }
-    );
+    mockGetFeatureFlag.mockImplementation((config: FeatureFlagConfig, flag: string) => {
+      const value = config[flag];
+      return typeof value === 'boolean' ? value : false;
+    });
   });
 
   describe('FeatureFlagProvider component', () => {
@@ -81,7 +78,7 @@ describe('FeatureFlagProvider', () => {
       render(
         <FeatureFlagProvider>
           <div data-testid="child">Child content</div>
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       expect(screen.getByTestId('child')).toBeInTheDocument();
@@ -92,7 +89,7 @@ describe('FeatureFlagProvider', () => {
       render(
         <FeatureFlagProvider>
           <div>Content</div>
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       expect(mockGetFeatureFlags).toHaveBeenCalled();
@@ -106,7 +103,7 @@ describe('FeatureFlagProvider', () => {
       render(
         <FeatureFlagProvider config={customConfig}>
           <TestComponent />
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       // getFeatureFlags should not be called since config was provided
@@ -126,14 +123,14 @@ describe('FeatureFlagProvider', () => {
       render(
         <FeatureFlagProvider config={config} userId="user-123" userRole="admin">
           <TestComponent />
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       expect(mockGetFeatureFlag).toHaveBeenCalledWith(
         config,
         'new_dashboard',
         'user-123',
-        'admin'
+        'admin',
       );
     });
 
@@ -142,7 +139,7 @@ describe('FeatureFlagProvider', () => {
         <FeatureFlagProvider>
           <div data-testid="child1">First</div>
           <div data-testid="child2">Second</div>
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       expect(screen.getByTestId('child1')).toBeInTheDocument();
@@ -192,7 +189,7 @@ describe('FeatureFlagProvider', () => {
       expect(result.current).toBe(false);
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'general',
-        expect.stringContaining("FeatureFlagProvider not found"),
+        expect.stringContaining('FeatureFlagProvider not found'),
       );
     });
 
@@ -252,7 +249,7 @@ describe('FeatureFlagProvider', () => {
 
       expect(result.current).toBeInstanceOf(Error);
       expect((result.current as Error).message).toBe(
-        'useFeatureFlags must be used within FeatureFlagProvider'
+        'useFeatureFlags must be used within FeatureFlagProvider',
       );
     });
 
@@ -261,9 +258,7 @@ describe('FeatureFlagProvider', () => {
         new_dashboard: true,
         experimental_features: false,
       };
-      mockGetFeatureFlag
-        .mockReturnValueOnce(true)
-        .mockReturnValueOnce(false);
+      mockGetFeatureFlag.mockReturnValueOnce(true).mockReturnValueOnce(false);
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
         <FeatureFlagProvider config={config}>{children}</FeatureFlagProvider>
@@ -296,7 +291,7 @@ describe('FeatureFlagProvider', () => {
         config,
         'new_dashboard',
         'user-456',
-        'admin'
+        'admin',
       );
     });
 
@@ -376,7 +371,7 @@ describe('FeatureFlagProvider', () => {
           <FeatureFlagProvider config={innerConfig}>
             <InnerComponent />
           </FeatureFlagProvider>
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       // Inner provider should take precedence
@@ -384,7 +379,7 @@ describe('FeatureFlagProvider', () => {
         innerConfig,
         'new_dashboard',
         undefined,
-        undefined
+        undefined,
       );
     });
 
@@ -402,7 +397,7 @@ describe('FeatureFlagProvider', () => {
       render(
         <FeatureFlagProvider config={config}>
           <MemoizedComponent />
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       expect(screen.getByText('enabled')).toBeInTheDocument();
@@ -426,7 +421,7 @@ describe('FeatureFlagProvider', () => {
       render(
         <FeatureFlagProvider config={config}>
           <ConditionalComponent />
-        </FeatureFlagProvider>
+        </FeatureFlagProvider>,
       );
 
       expect(screen.getByTestId('new')).toBeInTheDocument();

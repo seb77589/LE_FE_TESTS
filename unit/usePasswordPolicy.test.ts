@@ -13,10 +13,11 @@
 
 import { renderHook, waitFor } from '@testing-library/react';
 import { usePasswordPolicy, usePasswordValidation } from '@/hooks/usePasswordPolicy';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 import {
-  clearPasswordPolicyCache,
-} from '@/lib/api/passwordPolicy';
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
+import { clearPasswordPolicyCache } from '@/lib/api/passwordPolicy';
 
 // ==============================================================================
 // Module-level mock factories (extracted to reduce nesting depth - fixes S2004)
@@ -78,7 +79,9 @@ function createNeverResolvingPromise<T>(): Promise<T> {
 }
 
 jest.mock('@/lib/api/passwordPolicy', () => ({
-  fetchPasswordPolicy: jest.fn((...args: any[]) => mockFetchPasswordPolicyImpl(...args)),
+  fetchPasswordPolicy: jest.fn((...args: any[]) =>
+    mockFetchPasswordPolicyImpl(...args),
+  ),
   clearPasswordPolicyCache: jest.fn(() => mockClearPasswordPolicyCacheImpl()),
   getStrengthColor: jest.fn((strength: string) => mockGetStrengthColorImpl(strength)),
 }));

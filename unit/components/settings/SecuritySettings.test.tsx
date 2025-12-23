@@ -107,7 +107,9 @@ describe('SecuritySettings', () => {
       render(<SecuritySettings />);
 
       expect(screen.getByText('Security Settings')).toBeInTheDocument();
-      expect(screen.getByText('Manage your account security preferences')).toBeInTheDocument();
+      expect(
+        screen.getByText('Manage your account security preferences'),
+      ).toBeInTheDocument();
     });
 
     it('should render password change form', () => {
@@ -122,7 +124,9 @@ describe('SecuritySettings', () => {
     it('should render change password button', () => {
       render(<SecuritySettings />);
 
-      expect(screen.getByRole('button', { name: /Update Password/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Update Password/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -131,9 +135,18 @@ describe('SecuritySettings', () => {
       const user = userEvent.setup();
       render(<SecuritySettings />);
 
-      await user.type(screen.getByLabelText('Current Password'), FRONTEND_TEST_DATA.PASSWORD.CURRENT);
-      await user.type(screen.getByLabelText('New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
-      await user.type(screen.getByLabelText('Confirm New Password'), FRONTEND_TEST_DATA.PASSWORD.DIFFERENT);
+      await user.type(
+        screen.getByLabelText('Current Password'),
+        FRONTEND_TEST_DATA.PASSWORD.CURRENT,
+      );
+      await user.type(
+        screen.getByLabelText('New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
+      await user.type(
+        screen.getByLabelText('Confirm New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.DIFFERENT,
+      );
 
       fireEvent.submit(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -146,10 +159,15 @@ describe('SecuritySettings', () => {
       const user = userEvent.setup();
       render(<SecuritySettings />);
 
-      await user.type(screen.getByLabelText('New Password'), FRONTEND_TEST_DATA.PASSWORD.SECURE);
+      await user.type(
+        screen.getByLabelText('New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.SECURE,
+      );
 
       // Should show strength indicator (based on our mock)
-      expect(screen.getByLabelText('New Password')).toHaveValue(FRONTEND_TEST_DATA.PASSWORD.SECURE);
+      expect(screen.getByLabelText('New Password')).toHaveValue(
+        FRONTEND_TEST_DATA.PASSWORD.SECURE,
+      );
     });
   });
 
@@ -160,9 +178,18 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      await user.type(screen.getByLabelText('Current Password'), FRONTEND_TEST_DATA.PASSWORD.CURRENT);
-      await user.type(screen.getByLabelText('New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
-      await user.type(screen.getByLabelText('Confirm New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
+      await user.type(
+        screen.getByLabelText('Current Password'),
+        FRONTEND_TEST_DATA.PASSWORD.CURRENT,
+      );
+      await user.type(
+        screen.getByLabelText('New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
+      await user.type(
+        screen.getByLabelText('Confirm New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
 
       fireEvent.submit(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -176,14 +203,25 @@ describe('SecuritySettings', () => {
 
     it('should show success message on successful password change', async () => {
       const user = userEvent.setup();
-      mockChangePassword.mockResolvedValueOnce({ message: 'Password changed successfully' });
+      mockChangePassword.mockResolvedValueOnce({
+        message: 'Password changed successfully',
+      });
 
       render(<SecuritySettings />);
 
       // Use specific IDs to avoid label conflicts
-      await user.type(screen.getByLabelText('Current Password'), FRONTEND_TEST_DATA.PASSWORD.CURRENT);
-      await user.type(screen.getByLabelText('New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
-      await user.type(screen.getByLabelText('Confirm New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
+      await user.type(
+        screen.getByLabelText('Current Password'),
+        FRONTEND_TEST_DATA.PASSWORD.CURRENT,
+      );
+      await user.type(
+        screen.getByLabelText('New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
+      await user.type(
+        screen.getByLabelText('Confirm New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
 
       fireEvent.submit(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -199,9 +237,18 @@ describe('SecuritySettings', () => {
       render(<SecuritySettings />);
 
       // Use specific IDs to avoid label conflicts
-      await user.type(screen.getByLabelText('Current Password'), FRONTEND_TEST_DATA.PASSWORD.WRONG);
-      await user.type(screen.getByLabelText('New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
-      await user.type(screen.getByLabelText('Confirm New Password'), FRONTEND_TEST_DATA.PASSWORD.NEW);
+      await user.type(
+        screen.getByLabelText('Current Password'),
+        FRONTEND_TEST_DATA.PASSWORD.WRONG,
+      );
+      await user.type(
+        screen.getByLabelText('New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
+      await user.type(
+        screen.getByLabelText('Confirm New Password'),
+        FRONTEND_TEST_DATA.PASSWORD.NEW,
+      );
 
       fireEvent.submit(screen.getByRole('button', { name: /Update Password/i }));
 

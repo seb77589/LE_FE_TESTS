@@ -278,7 +278,10 @@ describe('useSessionTimeout', () => {
     renderHook(() => useSessionTimeout());
 
     expect(activityTracker.addActivityListener).toHaveBeenCalled();
-    expect(globalThis.window.addEventListener).toHaveBeenCalledWith('focus', expect.any(Function));
+    expect(globalThis.window.addEventListener).toHaveBeenCalledWith(
+      'focus',
+      expect.any(Function),
+    );
   });
 
   it('should cleanup on unmount', () => {

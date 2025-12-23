@@ -107,14 +107,14 @@ let mockCanvas: ReturnType<typeof createMockCanvas>;
 
 beforeEach(() => {
   mockCanvas = createMockCanvas();
-  
+
   // Mock Image class
   (globalThis as any).Image = MockImage;
-  
+
   // Mock URL methods
   URL.createObjectURL = jest.fn().mockReturnValue('blob:test-url');
   URL.revokeObjectURL = jest.fn();
-  
+
   // Mock createElement for canvas
   jest.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
     if (tagName === 'canvas') {
@@ -122,7 +122,7 @@ beforeEach(() => {
     }
     return originalCreateElement(tagName);
   });
-  
+
   jest.clearAllMocks();
 });
 
@@ -200,26 +200,46 @@ describe('imageOptimization', () => {
 
     describe('file size validation', () => {
       it('should accept files under 5MB', () => {
-        const file = createMockFile('image data', 'test.jpg', 'image/jpeg', 1024 * 1024);
+        const file = createMockFile(
+          'image data',
+          'test.jpg',
+          'image/jpeg',
+          1024 * 1024,
+        );
         const result = validateImageFile(file);
         expect(result.valid).toBe(true);
       });
 
       it('should accept files exactly at 5MB', () => {
-        const file = createMockFile('image data', 'test.jpg', 'image/jpeg', 5 * 1024 * 1024);
+        const file = createMockFile(
+          'image data',
+          'test.jpg',
+          'image/jpeg',
+          5 * 1024 * 1024,
+        );
         const result = validateImageFile(file);
         expect(result.valid).toBe(true);
       });
 
       it('should reject files over 5MB', () => {
-        const file = createMockFile('image data', 'test.jpg', 'image/jpeg', 5 * 1024 * 1024 + 1);
+        const file = createMockFile(
+          'image data',
+          'test.jpg',
+          'image/jpeg',
+          5 * 1024 * 1024 + 1,
+        );
         const result = validateImageFile(file);
         expect(result.valid).toBe(false);
         expect(result.error).toBe('File size must be less than 5MB');
       });
 
       it('should reject large files (10MB)', () => {
-        const file = createMockFile('image data', 'test.jpg', 'image/jpeg', 10 * 1024 * 1024);
+        const file = createMockFile(
+          'image data',
+          'test.jpg',
+          'image/jpeg',
+          10 * 1024 * 1024,
+        );
         const result = validateImageFile(file);
         expect(result.valid).toBe(false);
       });
@@ -233,7 +253,12 @@ describe('imageOptimization', () => {
 
     describe('combined validation', () => {
       it('should reject large files even with valid type', () => {
-        const file = createMockFile('image data', 'test.jpg', 'image/jpeg', 10 * 1024 * 1024);
+        const file = createMockFile(
+          'image data',
+          'test.jpg',
+          'image/jpeg',
+          10 * 1024 * 1024,
+        );
         const result = validateImageFile(file);
         expect(result.valid).toBe(false);
       });
@@ -368,7 +393,9 @@ describe('imageOptimization', () => {
       setupFailingImageMock();
 
       const file = createMockFile('image data', 'test.jpg', 'image/jpeg');
-      await expect(optimizeProfilePicture(file)).rejects.toThrow('Failed to load image');
+      await expect(optimizeProfilePicture(file)).rejects.toThrow(
+        'Failed to load image',
+      );
     });
   });
 
@@ -402,7 +429,9 @@ describe('imageOptimization', () => {
       mockCanvas.getContext = jest.fn().mockReturnValue(null);
 
       const file = createMockFile('image data', 'test.jpg', 'image/jpeg');
-      await expect(generateThumbnail(file)).rejects.toThrow('Failed to get canvas context');
+      await expect(generateThumbnail(file)).rejects.toThrow(
+        'Failed to get canvas context',
+      );
     });
 
     it('should handle image load failure', async () => {
@@ -480,11 +509,13 @@ describe('imageOptimization', () => {
 
     it('should use custom quality', async () => {
       let capturedQuality: number | undefined;
-      mockCanvas.toBlob = jest.fn((callback: BlobCallback, type?: string, quality?: number) => {
-        capturedQuality = quality;
-        const blob = new Blob(['test'], { type: 'image/webp' });
-        callback(blob);
-      });
+      mockCanvas.toBlob = jest.fn(
+        (callback: BlobCallback, type?: string, quality?: number) => {
+          capturedQuality = quality;
+          const blob = new Blob(['test'], { type: 'image/webp' });
+          callback(blob);
+        },
+      );
 
       const file = createMockFile('image data', 'test.jpg', 'image/jpeg', 1024);
       await convertToWebP(file, 0.6);
@@ -493,7 +524,12 @@ describe('imageOptimization', () => {
     });
 
     it('should handle files with complex extensions', async () => {
-      const file = createMockFile('image data', 'my.photo.backup.jpg', 'image/jpeg', 1024);
+      const file = createMockFile(
+        'image data',
+        'my.photo.backup.jpg',
+        'image/jpeg',
+        1024,
+      );
       const result = await convertToWebP(file);
 
       expect(result.name).toBe('my.photo.backup.webp');

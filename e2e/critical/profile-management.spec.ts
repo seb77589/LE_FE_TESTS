@@ -1,8 +1,5 @@
 import { test, expect, Page, TestType } from '@playwright/test';
-import {
-  TEST_DATA,
-  PROFILE_TEST_CREDENTIALS,
-} from '../../test-credentials';
+import { TEST_DATA, PROFILE_TEST_CREDENTIALS } from '../../test-credentials';
 import { TestHelpers } from '../../utils/test-helpers';
 
 // Explicit credential mapping - each worker gets unique user to prevent concurrent session invalidation
@@ -361,7 +358,7 @@ test.describe('Profile Management System', () => {
     // Needs dedicated test user or proper password cleanup before re-enabling.
     // Ref: _FE_REFURB_003.md - Batch 2 credential pollution fix
     const credentials = TEST_USER_MAP[testInfo.parallelIndex % TEST_USER_MAP.length];
-    
+
     await page.goto('/profile');
     await page.waitForLoadState('networkidle');
 

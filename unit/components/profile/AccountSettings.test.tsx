@@ -218,7 +218,9 @@ describe('AccountSettings', () => {
 
       // Third party checkbox should be unchecked based on settings value (false)
       const thirdPartyLabel = screen.getByText(/third-party data sharing/i);
-      const thirdPartyCheckbox = thirdPartyLabel.closest('label')?.querySelector('input');
+      const thirdPartyCheckbox = thirdPartyLabel
+        .closest('label')
+        ?.querySelector('input');
       expect(thirdPartyCheckbox).not.toBeChecked();
     });
 
@@ -621,7 +623,7 @@ describe('AccountSettings', () => {
         expect(defaultMockReturn.handleNestedChange).toHaveBeenCalledWith(
           'data_sharing',
           'analytics',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });
@@ -644,7 +646,7 @@ describe('AccountSettings', () => {
 
       expect(defaultMockReturn.handleChange).toHaveBeenCalledWith(
         'profile_visibility',
-        'private'
+        'private',
       );
     });
 
@@ -768,7 +770,9 @@ describe('AccountSettings', () => {
           isLoading={false}
         />,
       );
-      expect(screen.getByText(/manage how you receive notifications/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/manage how you receive notifications/i),
+      ).toBeInTheDocument();
     });
 
     it('should render privacy settings header', () => {
@@ -779,7 +783,9 @@ describe('AccountSettings', () => {
           isLoading={false}
         />,
       );
-      expect(screen.getByText(/control your privacy and visibility/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/control your privacy and visibility/i),
+      ).toBeInTheDocument();
     });
 
     it('should render security settings header', () => {
@@ -801,7 +807,9 @@ describe('AccountSettings', () => {
           isLoading={false}
         />,
       );
-      expect(screen.getByText(/irreversible and destructive actions/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/irreversible and destructive actions/i),
+      ).toBeInTheDocument();
     });
 
     it('should render danger zone warning text', () => {
@@ -950,7 +958,7 @@ describe('AccountSettings', () => {
         expect(defaultMockReturn.handleNestedChange).toHaveBeenCalledWith(
           'data_sharing',
           'marketing',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });
@@ -969,13 +977,15 @@ describe('AccountSettings', () => {
       );
 
       const thirdPartyLabel = screen.getByText(/third-party data sharing/i);
-      const thirdPartyCheckbox = thirdPartyLabel.closest('label')?.querySelector('input');
+      const thirdPartyCheckbox = thirdPartyLabel
+        .closest('label')
+        ?.querySelector('input');
       if (thirdPartyCheckbox) {
         fireEvent.click(thirdPartyCheckbox);
         expect(defaultMockReturn.handleNestedChange).toHaveBeenCalledWith(
           'data_sharing',
           'third_party',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });
@@ -996,12 +1006,14 @@ describe('AccountSettings', () => {
       );
 
       const onlineStatusLabel = screen.getByText(/show online status/i);
-      const onlineStatusCheckbox = onlineStatusLabel.closest('label')?.querySelector('input');
+      const onlineStatusCheckbox = onlineStatusLabel
+        .closest('label')
+        ?.querySelector('input');
       if (onlineStatusCheckbox) {
         fireEvent.click(onlineStatusCheckbox);
         expect(defaultMockReturn.handleChange).toHaveBeenCalledWith(
           'show_online_status',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });
@@ -1025,7 +1037,7 @@ describe('AccountSettings', () => {
         fireEvent.click(dmCheckbox);
         expect(defaultMockReturn.handleChange).toHaveBeenCalledWith(
           'allow_direct_messages',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });
@@ -1049,7 +1061,7 @@ describe('AccountSettings', () => {
         fireEvent.click(pushCheckbox);
         expect(defaultMockReturn.handleChange).toHaveBeenCalledWith(
           'push_notifications',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });
@@ -1073,7 +1085,7 @@ describe('AccountSettings', () => {
         fireEvent.click(smsCheckbox);
         expect(defaultMockReturn.handleChange).toHaveBeenCalledWith(
           'sms_notifications',
-          expect.any(Boolean)
+          expect.any(Boolean),
         );
       }
     });

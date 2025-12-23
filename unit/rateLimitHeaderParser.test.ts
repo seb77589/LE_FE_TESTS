@@ -19,7 +19,9 @@ jest.mock('@/lib/logging', () => ({
 
 describe('rateLimitHeaderParser', () => {
   // Helper to create mock headers
-  const createHeaders = (overrides: Record<string, string> = {}): Record<string, string> => ({
+  const createHeaders = (
+    overrides: Record<string, string> = {},
+  ): Record<string, string> => ({
     'X-RateLimit-Limit': '100',
     'X-RateLimit-Remaining': '50',
     'X-RateLimit-Reset': '1609459200', // Unix timestamp
@@ -129,7 +131,7 @@ describe('rateLimitHeaderParser', () => {
         expect.objectContaining({
           limit: 'invalid',
           remaining: '50',
-        })
+        }),
       );
     });
 
@@ -146,7 +148,7 @@ describe('rateLimitHeaderParser', () => {
         expect.objectContaining({
           limit: '100',
           remaining: 'invalid',
-        })
+        }),
       );
     });
 
@@ -256,7 +258,7 @@ describe('rateLimitHeaderParser', () => {
           endpoint: '/api/v1/login',
           remaining: 50,
           limit: 100,
-        })
+        }),
       );
     });
 
@@ -284,7 +286,7 @@ describe('rateLimitHeaderParser', () => {
         expect.objectContaining({
           error: expect.any(Object),
           rateLimitInfo,
-        })
+        }),
       );
 
       setItemSpy.mockRestore();
@@ -347,7 +349,7 @@ describe('rateLimitHeaderParser', () => {
         expect.objectContaining({
           error: expect.any(Object),
           endpoint: '/api/v1/login',
-        })
+        }),
       );
     });
 
@@ -368,7 +370,7 @@ describe('rateLimitHeaderParser', () => {
     });
 
     it('should not return expired data even if within one hour', () => {
-      const fiftyNineMinutesAgo = Date.now() - (59 * 60 * 1000);
+      const fiftyNineMinutesAgo = Date.now() - 59 * 60 * 1000;
       const data = {
         limit: 100,
         remaining: 50,

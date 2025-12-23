@@ -28,7 +28,9 @@ jest.mock('@/lib/errors', () => ({
 import logger from '@/lib/logging';
 import { extractErrorMessage } from '@/lib/errors';
 
-const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<typeof extractErrorMessage>;
+const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
+  typeof extractErrorMessage
+>;
 
 describe('useAccountSettings', () => {
   const mockSettings = {

@@ -222,7 +222,11 @@ describe('AdminPageWrapper', () => {
 
 describe('useAdminAccess', () => {
   // Test component to use the hook
-  function TestComponent({ requireSuperAdmin = false }: { readonly requireSuperAdmin?: boolean }) {
+  function TestComponent({
+    requireSuperAdmin = false,
+  }: {
+    readonly requireSuperAdmin?: boolean;
+  }) {
     const access = useAdminAccess({ requireSuperAdmin });
     return (
       <div>

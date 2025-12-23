@@ -169,7 +169,10 @@ test.describe('Mobile Responsive - Navigation', () => {
 });
 
 test.describe('Mobile Responsive - Forms', () => {
-  test('should be usable on mobile - Login form', async ({ page, workerCredentials }) => {
+  test('should be usable on mobile - Login form', async ({
+    page,
+    workerCredentials,
+  }) => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     await page.goto('/auth/login');
@@ -196,10 +199,7 @@ test.describe('Mobile Responsive - Forms', () => {
     }
 
     // Test form submission on mobile
-    await page.fill(
-      'input[name="email"], input[id="email"]',
-      workerCredentials.email,
-    );
+    await page.fill('input[name="email"], input[id="email"]', workerCredentials.email);
     await page.fill(
       'input[name="password"], input[id="password"]',
       workerCredentials.password,
@@ -268,7 +268,10 @@ test.describe('Mobile Responsive - Forms', () => {
 });
 
 test.describe('Mobile Responsive - Content Layout', () => {
-  test('should stack content vertically on mobile', async ({ page, workerCredentials }) => {
+  test('should stack content vertically on mobile', async ({
+    page,
+    workerCredentials,
+  }) => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     await TestHelpers.loginAndWaitForRedirect(

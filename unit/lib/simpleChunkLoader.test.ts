@@ -52,7 +52,8 @@ describe('simpleChunkLoader', () => {
 
     it('retries on failure and succeeds', async () => {
       const mockModule = { default: () => 'component' };
-      const loadFn = jest.fn()
+      const loadFn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Network error'))
         .mockResolvedValueOnce(mockModule);
 
@@ -63,7 +64,7 @@ describe('simpleChunkLoader', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'general',
         expect.stringContaining('failed, retrying'),
-        expect.any(Object)
+        expect.any(Object),
       );
     }, 15000);
 
@@ -72,18 +73,21 @@ describe('simpleChunkLoader', () => {
       const loadFn = jest.fn().mockRejectedValue(error);
 
       // With retries=1, it tries once initially, then retries once = 2 calls total
-      await expect(loadChunkWithRetry('test-chunk', loadFn, 1)).rejects.toThrow('Persistent error');
+      await expect(loadChunkWithRetry('test-chunk', loadFn, 1)).rejects.toThrow(
+        'Persistent error',
+      );
       expect(loadFn).toHaveBeenCalledTimes(2);
       expect(mockLogger.error).toHaveBeenCalledWith(
         'general',
         expect.stringContaining('failed after all retries'),
-        expect.any(Object)
+        expect.any(Object),
       );
     }, 5000);
 
     it('logs warning on each retry attempt', async () => {
       const mockModule = { default: () => 'component' };
-      const loadFn = jest.fn()
+      const loadFn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Error 1'))
         .mockRejectedValueOnce(new Error('Error 2'))
         .mockResolvedValueOnce(mockModule);
@@ -94,7 +98,7 @@ describe('simpleChunkLoader', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'general',
         expect.stringContaining('test-chunk'),
-        expect.objectContaining({ retriesLeft: 2 })
+        expect.objectContaining({ retriesLeft: 2 }),
       );
     }, 15000);
 
@@ -112,7 +116,8 @@ describe('simpleChunkLoader', () => {
     it('handles errors without response property', async () => {
       const mockModule = { default: () => 'component' };
       const networkError = new Error('Network offline');
-      const loadFn = jest.fn()
+      const loadFn = jest
+        .fn()
         .mockRejectedValueOnce(networkError)
         .mockResolvedValueOnce(mockModule);
 
@@ -146,7 +151,9 @@ describe('simpleChunkLoader', () => {
       // Get the error handler
       const calls = addEventListenerSpy.mock.calls;
       const errorCall = calls.find((call: [string, unknown]) => call[0] === 'error');
-      const errorHandler = errorCall?.[1] as ((event: { message?: string }) => void) | undefined;
+      const errorHandler = errorCall?.[1] as
+        | ((event: { message?: string }) => void)
+        | undefined;
 
       // Mock confirm to return false (don't reload)
       const confirmSpy = jest.spyOn(globalThis, 'confirm').mockReturnValue(false);
@@ -160,7 +167,7 @@ describe('simpleChunkLoader', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'general',
         'Chunk loading error detected',
-        expect.objectContaining({ message: 'Loading chunk 123 failed' })
+        expect.objectContaining({ message: 'Loading chunk 123 failed' }),
       );
 
       confirmSpy.mockRestore();
@@ -171,7 +178,9 @@ describe('simpleChunkLoader', () => {
 
       const calls = addEventListenerSpy.mock.calls;
       const errorCall = calls.find((call: [string, unknown]) => call[0] === 'error');
-      const errorHandler = errorCall?.[1] as ((event: { message?: string }) => void) | undefined;
+      const errorHandler = errorCall?.[1] as
+        | ((event: { message?: string }) => void)
+        | undefined;
 
       const confirmSpy = jest.spyOn(globalThis, 'confirm').mockReturnValue(false);
 
@@ -179,7 +188,7 @@ describe('simpleChunkLoader', () => {
       errorHandler?.(errorEvent);
 
       expect(confirmSpy).toHaveBeenCalledWith(
-        'Failed to load application resources. Reload page?'
+        'Failed to load application resources. Reload page?',
       );
 
       confirmSpy.mockRestore();
@@ -190,7 +199,9 @@ describe('simpleChunkLoader', () => {
 
       const calls = addEventListenerSpy.mock.calls;
       const errorCall = calls.find((call: [string, unknown]) => call[0] === 'error');
-      const errorHandler = errorCall?.[1] as ((event: { message?: string }) => void) | undefined;
+      const errorHandler = errorCall?.[1] as
+        | ((event: { message?: string }) => void)
+        | undefined;
 
       const confirmSpy = jest.spyOn(globalThis, 'confirm');
 
@@ -208,7 +219,9 @@ describe('simpleChunkLoader', () => {
 
       const calls = addEventListenerSpy.mock.calls;
       const errorCall = calls.find((call: [string, unknown]) => call[0] === 'error');
-      const errorHandler = errorCall?.[1] as ((event: { message?: string }) => void) | undefined;
+      const errorHandler = errorCall?.[1] as
+        | ((event: { message?: string }) => void)
+        | undefined;
 
       const confirmSpy = jest.spyOn(globalThis, 'confirm');
 
@@ -227,7 +240,7 @@ describe('simpleChunkLoader', () => {
 
       expect(mockLogger.debug).toHaveBeenCalledWith(
         'general',
-        expect.stringContaining('Critical chunks preload called')
+        expect.stringContaining('Critical chunks preload called'),
       );
     });
 

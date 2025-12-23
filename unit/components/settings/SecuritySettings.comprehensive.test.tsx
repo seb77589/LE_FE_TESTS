@@ -1,6 +1,6 @@
 /**
  * Comprehensive Tests for SecuritySettings component
- * 
+ *
  * @description Tests covering all code paths including:
  * - Rendering and form display
  * - Password change flow (success and error paths)
@@ -79,20 +79,20 @@ jest.mock('@/hooks/usePasswordPolicy', () => ({
     const hasLower = /[a-z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*]/.test(password);
-    
+
     const errors: string[] = [];
     const suggestions: string[] = [];
-    
+
     if (!hasMinLength) errors.push('Password must be at least 8 characters');
     if (!hasUpper) errors.push('Password must contain uppercase');
     if (!hasLower) errors.push('Password must contain lowercase');
     if (!hasNumber) errors.push('Password must contain a number');
     if (!hasSpecial) suggestions.push('Add special characters for stronger password');
-    
+
     const isValid = hasMinLength && hasUpper && hasLower && hasNumber;
     let strength = 'weak';
     let strengthScore = 20;
-    
+
     if (isValid && hasSpecial) {
       strength = 'strong';
       strengthScore = 100;
@@ -103,7 +103,7 @@ jest.mock('@/hooks/usePasswordPolicy', () => ({
       strength = 'fair';
       strengthScore = 40;
     }
-    
+
     return {
       isValid,
       strength,
@@ -133,7 +133,7 @@ describe('SecuritySettings', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Default SWR mock - no sessions
     mockUseSWR.mockReturnValue({
       data: {
@@ -151,7 +151,9 @@ describe('SecuritySettings', () => {
     it('renders security settings heading', () => {
       render(<SecuritySettings />);
       expect(screen.getByText('Security Settings')).toBeInTheDocument();
-      expect(screen.getByText('Manage your account security preferences')).toBeInTheDocument();
+      expect(
+        screen.getByText('Manage your account security preferences'),
+      ).toBeInTheDocument();
     });
 
     it('renders password change form with all fields', () => {
@@ -164,13 +166,17 @@ describe('SecuritySettings', () => {
 
     it('renders update password button', () => {
       render(<SecuritySettings />);
-      expect(screen.getByRole('button', { name: /Update Password/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Update Password/i }),
+      ).toBeInTheDocument();
     });
 
     it('renders active sessions section', () => {
       render(<SecuritySettings />);
       expect(screen.getByText('Active Sessions')).toBeInTheDocument();
-      expect(screen.getByText('Manage your active sessions across different devices.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Manage your active sessions across different devices.'),
+      ).toBeInTheDocument();
     });
 
     it('renders current session when no sessions from API', () => {
@@ -185,9 +191,15 @@ describe('SecuritySettings', () => {
     it('shows error when passwords do not match', async () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.DIFFERENT } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.DIFFERENT },
+      });
 
       fireEvent.submit(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -199,16 +211,22 @@ describe('SecuritySettings', () => {
     it('shows validation errors for weak password', () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'weak' } });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'weak' },
+      });
 
-      expect(screen.getByText(/Password must be at least 8 characters/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Password must be at least 8 characters/),
+      ).toBeInTheDocument();
     });
 
     it('shows password strength indicator', () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'StrongPass1!' } });
-      
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'StrongPass1!' },
+      });
+
       expect(screen.getByText('strong')).toBeInTheDocument();
     });
 
@@ -216,7 +234,9 @@ describe('SecuritySettings', () => {
       render(<SecuritySettings />);
 
       // Password without special character
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'Password1' } });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'Password1' },
+      });
 
       expect(screen.getByText('Suggestions:')).toBeInTheDocument();
       expect(screen.getByText(/Add special characters/)).toBeInTheDocument();
@@ -225,9 +245,15 @@ describe('SecuritySettings', () => {
     it('disables button when password is invalid', () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'current' } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'weak' } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: 'weak' } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: 'current' },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'weak' },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: 'weak' },
+      });
 
       const button = screen.getByRole('button', { name: /Update Password/i });
       expect(button).toBeDisabled();
@@ -236,9 +262,15 @@ describe('SecuritySettings', () => {
     it('enables button when password is valid and matches', () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'currentpass' } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'ValidPass1!' } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: 'ValidPass1!' } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: 'currentpass' },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'ValidPass1!' },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: 'ValidPass1!' },
+      });
 
       const button = screen.getByRole('button', { name: /Update Password/i });
       expect(button).not.toBeDisabled();
@@ -248,9 +280,15 @@ describe('SecuritySettings', () => {
       render(<SecuritySettings />);
 
       // Type invalid password but matching
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'current' } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'Password1' } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: 'Password1' } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: 'current' },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'Password1' },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: 'Password1' },
+      });
 
       // Manually trigger submit since button should be enabled
       const form = screen.getByRole('button', { name: /Update Password/i });
@@ -266,12 +304,18 @@ describe('SecuritySettings', () => {
   describe('Password Change Flow', () => {
     it('calls changePassword API with correct payload', async () => {
       mockChangePassword.mockResolvedValueOnce({ message: 'Password changed' });
-      
+
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -288,9 +332,15 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -304,9 +354,15 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -324,9 +380,15 @@ describe('SecuritySettings', () => {
       const newInput = screen.getByLabelText('New Password');
       const confirmInput = screen.getByLabelText('Confirm New Password');
 
-      fireEvent.change(currentInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(newInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(confirmInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(currentInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(newInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(confirmInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -340,17 +402,23 @@ describe('SecuritySettings', () => {
     it('triggers redirect after successful password change', async () => {
       jest.useFakeTimers();
       mockChangePassword.mockResolvedValueOnce({ message: 'Done' });
-      
+
       // Note: jsdom doesn't support window.location navigation, so we just verify
       // the success message appears and the timer is set. The actual navigation
       // would work in a real browser.
-      
+
       try {
         render(<SecuritySettings />);
 
-        fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-        fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-        fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+        fireEvent.change(screen.getByLabelText('Current Password'), {
+          target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+        });
+        fireEvent.change(screen.getByLabelText('New Password'), {
+          target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+        });
+        fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+          target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+        });
 
         fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -380,9 +448,15 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.WRONG } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.WRONG },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -397,9 +471,15 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -413,9 +493,15 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -429,9 +515,15 @@ describe('SecuritySettings', () => {
 
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE } });
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SECURE },
+      });
 
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
@@ -635,8 +727,20 @@ describe('SecuritySettings', () => {
       mockUseSWR.mockReturnValue({
         data: {
           active_sessions: [
-            { id: 's1', device: 'Chrome', location: 'NY', last_active: '2024', is_current: true },
-            { id: 's2', device: 'Firefox', location: 'LA', last_active: '2024', is_current: false },
+            {
+              id: 's1',
+              device: 'Chrome',
+              location: 'NY',
+              last_active: '2024',
+              is_current: true,
+            },
+            {
+              id: 's2',
+              device: 'Firefox',
+              location: 'LA',
+              last_active: '2024',
+              is_current: false,
+            },
           ],
           session_count: 2,
           max_concurrent_sessions: 5,
@@ -649,113 +753,118 @@ describe('SecuritySettings', () => {
 
     it('shows confirmation dialog before revoking', async () => {
       const confirmSpy = jest.spyOn(globalThis, 'confirm').mockReturnValue(false);
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       expect(confirmSpy).toHaveBeenCalledWith(
         'Are you sure you want to sign out of all other sessions? You will remain logged in on this device.',
       );
-      
+
       confirmSpy.mockRestore();
     });
 
     it('does not call API when user cancels confirmation', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(false);
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       expect(mockApiDelete).not.toHaveBeenCalled();
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('calls API when user confirms', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockResolvedValueOnce({});
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       await waitFor(() => {
         expect(mockApiDelete).toHaveBeenCalledWith('/api/v1/auth/sessions');
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('shows success message after revoking sessions', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockResolvedValueOnce({});
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       await waitFor(() => {
-        expect(screen.getByText(/All other sessions have been signed out successfully/)).toBeInTheDocument();
+        expect(
+          screen.getByText(/All other sessions have been signed out successfully/),
+        ).toBeInTheDocument();
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('refreshes sessions list after successful revoke', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockResolvedValueOnce({});
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalled();
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('shows error message when revoke fails', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockRejectedValueOnce({ message: 'Network error' });
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       await waitFor(() => {
         expect(screen.getByText(/Network error/)).toBeInTheDocument();
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('logs revoking sessions', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockResolvedValueOnce({});
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       await waitFor(() => {
-        expect(mockLogger.info).toHaveBeenCalledWith('ui', 'Revoking all other sessions');
+        expect(mockLogger.info).toHaveBeenCalledWith(
+          'ui',
+          'Revoking all other sessions',
+        );
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('logs error when revoke fails', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockRejectedValueOnce({ message: 'Server error' });
-      
+
       render(<SecuritySettings />);
-      
+
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-      
+
       await waitFor(() => {
         expect(mockLogger.error).toHaveBeenCalledWith(
           'ui',
@@ -763,7 +872,7 @@ describe('SecuritySettings', () => {
           expect.any(Object),
         );
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
   });
@@ -771,14 +880,20 @@ describe('SecuritySettings', () => {
   describe('Alert Dismissal', () => {
     it('clears password error when close is clicked', async () => {
       mockChangePassword.mockRejectedValueOnce({ message: 'Error!' });
-      
+
       render(<SecuritySettings />);
 
       // Use fireEvent.change for faster execution
-      fireEvent.change(screen.getByLabelText('Current Password'), { target: { value: 'old' } });
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'NewPassword1!' } });
-      fireEvent.change(screen.getByLabelText('Confirm New Password'), { target: { value: 'NewPassword1!' } });
-      
+      fireEvent.change(screen.getByLabelText('Current Password'), {
+        target: { value: 'old' },
+      });
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'NewPassword1!' },
+      });
+      fireEvent.change(screen.getByLabelText('Confirm New Password'), {
+        target: { value: 'NewPassword1!' },
+      });
+
       fireEvent.click(screen.getByRole('button', { name: /Update Password/i }));
 
       await waitFor(() => {
@@ -800,12 +915,24 @@ describe('SecuritySettings', () => {
     it('clears session error when close is clicked', async () => {
       jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
       mockApiDelete.mockRejectedValueOnce({ message: 'Session error!' });
-      
+
       mockUseSWR.mockReturnValue({
         data: {
           active_sessions: [
-            { id: 's1', device: 'C', location: 'NY', last_active: '2024', is_current: true },
-            { id: 's2', device: 'F', location: 'LA', last_active: '2024', is_current: false },
+            {
+              id: 's1',
+              device: 'C',
+              location: 'NY',
+              last_active: '2024',
+              is_current: true,
+            },
+            {
+              id: 's2',
+              device: 'F',
+              location: 'LA',
+              last_active: '2024',
+              is_current: false,
+            },
           ],
           session_count: 2,
           max_concurrent_sessions: 5,
@@ -814,7 +941,7 @@ describe('SecuritySettings', () => {
         isLoading: false,
         mutate: mockMutate,
       } as any);
-      
+
       render(<SecuritySettings />);
 
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
@@ -822,7 +949,7 @@ describe('SecuritySettings', () => {
       await waitFor(() => {
         expect(screen.getByText(/Session error!/)).toBeInTheDocument();
       });
-      
+
       jest.spyOn(globalThis, 'confirm').mockRestore();
     });
   });
@@ -832,8 +959,10 @@ describe('SecuritySettings', () => {
       render(<SecuritySettings />);
 
       // Use fireEvent.change for faster execution
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'StrongPass1!' } });
-      
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'StrongPass1!' },
+      });
+
       // The strength indicator should show
       const strengthText = screen.getByText('strong');
       expect(strengthText).toBeInTheDocument();
@@ -842,8 +971,10 @@ describe('SecuritySettings', () => {
     it('applies correct color for medium password', () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'Password1' } });
-      
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'Password1' },
+      });
+
       // Medium strength (no special char)
       expect(screen.getByText('medium')).toBeInTheDocument();
     });
@@ -851,8 +982,10 @@ describe('SecuritySettings', () => {
     it('applies correct color for weak password', () => {
       render(<SecuritySettings />);
 
-      fireEvent.change(screen.getByLabelText('New Password'), { target: { value: 'weak' } });
-      
+      fireEvent.change(screen.getByLabelText('New Password'), {
+        target: { value: 'weak' },
+      });
+
       expect(screen.getByText('weak')).toBeInTheDocument();
     });
   });

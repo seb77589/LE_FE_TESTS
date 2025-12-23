@@ -232,7 +232,10 @@ test.describe('XSS Prevention Tests', () => {
       console.log('✅ Storage-based XSS prevention validated');
     });
 
-    test('should sanitize user input in profile/dashboard', async ({ page, workerCredentials }) => {
+    test('should sanitize user input in profile/dashboard', async ({
+      page,
+      workerCredentials,
+    }) => {
       // Login first
       await page.goto('/auth/login');
       await page.fill('input[name="email"]', workerCredentials.email);

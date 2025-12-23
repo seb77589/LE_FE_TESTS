@@ -28,7 +28,9 @@ jest.mock('@/lib/errors', () => ({
 import logger from '@/lib/logging';
 import { extractErrorMessage } from '@/lib/errors';
 
-const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<typeof extractErrorMessage>;
+const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
+  typeof extractErrorMessage
+>;
 
 describe('useUserPreferences', () => {
   const mockPreferences = {
@@ -358,10 +360,16 @@ describe('useUserPreferences', () => {
       );
 
       act(() => {
-        result.current.handleNestedChange('notifications', 'browserNotifications', false);
+        result.current.handleNestedChange(
+          'notifications',
+          'browserNotifications',
+          false,
+        );
       });
 
-      expect((result.current.formData as any).notifications.browserNotifications).toBe(false);
+      expect((result.current.formData as any).notifications.browserNotifications).toBe(
+        false,
+      );
     });
 
     it('should preserve other nested fields when updating one', () => {

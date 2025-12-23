@@ -221,7 +221,10 @@ async function testWebSocketConnection(
 
 test.describe('WebSocket Authentication', () => {
   test.describe('User WebSocket (/ws)', () => {
-    test('should connect successfully with valid JWT token', async ({ page, workerCredentials }) => {
+    test('should connect successfully with valid JWT token', async ({
+      page,
+      workerCredentials,
+    }) => {
       // Use direct API authentication (faster and more reliable than UI login)
       const token = await TestHelpers.setupPageWithToken(
         page,
@@ -355,7 +358,10 @@ test.describe('WebSocket Authentication', () => {
   });
 
   test.describe('Admin WebSocket (/ws/admin)', () => {
-    test('should connect successfully for admin user', async ({ page, workerCredentials }) => {
+    test('should connect successfully for admin user', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
       // Use direct API authentication (faster and more reliable than UI login)
       const token = await TestHelpers.setupPageWithToken(
@@ -374,7 +380,10 @@ test.describe('WebSocket Authentication', () => {
       console.log('✅ Admin WebSocket connection successful');
     });
 
-    test('should connect successfully for superadmin user', async ({ page, workerCredentials }) => {
+    test('should connect successfully for superadmin user', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
       // Use direct API authentication (faster and more reliable than UI login)
       const token = await TestHelpers.setupPageWithToken(
@@ -393,7 +402,10 @@ test.describe('WebSocket Authentication', () => {
       console.log('✅ Superadmin WebSocket connection successful');
     });
 
-    test('should reject regular user from admin WebSocket', async ({ page, workerCredentials }) => {
+    test('should reject regular user from admin WebSocket', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(workerCredentials.isAdmin, 'Test requires non-admin credentials');
       // Use direct API authentication (faster and more reliable than UI login)
       const token = await TestHelpers.setupPageWithToken(
@@ -414,7 +426,10 @@ test.describe('WebSocket Authentication', () => {
   });
 
   test.describe('Performance Monitoring WebSocket (/api/v1/monitoring/ws/metrics)', () => {
-    test('should connect successfully for admin user', async ({ page, workerCredentials }) => {
+    test('should connect successfully for admin user', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
       // Use direct API authentication (faster and more reliable than UI login)
       const token = await TestHelpers.setupPageWithToken(
@@ -433,7 +448,10 @@ test.describe('WebSocket Authentication', () => {
       console.log('✅ Admin performance monitoring WebSocket connection successful');
     });
 
-    test('should reject regular user from monitoring WebSocket', async ({ page, workerCredentials }) => {
+    test('should reject regular user from monitoring WebSocket', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(workerCredentials.isAdmin, 'Test requires non-admin credentials');
       // Use direct API authentication (faster and more reliable than UI login)
       const token = await TestHelpers.setupPageWithToken(
@@ -454,7 +472,10 @@ test.describe('WebSocket Authentication', () => {
   });
 
   test.describe('WebSocket Message Handling', () => {
-    test('should receive and parse WebSocket messages', async ({ page, workerCredentials }) => {
+    test('should receive and parse WebSocket messages', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
       // Use direct API authentication (faster and more reliable than UI login)
       const authToken = await TestHelpers.setupPageWithToken(

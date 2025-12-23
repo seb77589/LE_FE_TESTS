@@ -95,10 +95,9 @@ describe('useAccountUnlock - Unlock operation success', () => {
       await result.current.confirmUnlock();
     });
 
-    expect(mockApi.post).toHaveBeenCalledWith(
-      '/admin/users/1/unlock',
-      { reason: 'User verified identity' },
-    );
+    expect(mockApi.post).toHaveBeenCalledWith('/admin/users/1/unlock', {
+      reason: 'User verified identity',
+    });
     unmount();
   });
 

@@ -54,11 +54,13 @@ describe('API Client Comprehensive Tests', () => {
           data: { message: 'Password reset email sent' },
         });
 
-        const result = await authApi.requestPasswordReset({ email: 'test@example.com' });
+        const result = await authApi.requestPasswordReset({
+          email: 'test@example.com',
+        });
 
         expect(mockPost).toHaveBeenCalledWith(
           apiConfig.endpoints.auth.passwordResetRequest,
-          { email: 'test@example.com' }
+          { email: 'test@example.com' },
         );
         expect(result.message).toBe('Password reset email sent');
 
@@ -71,10 +73,11 @@ describe('API Client Comprehensive Tests', () => {
           isAxiosError: true,
         });
 
-        await expect(authApi.requestPasswordReset({ email: 'nonexistent@example.com' }))
-          .rejects.toMatchObject({
-            response: expect.objectContaining({ status: 404 }),
-          });
+        await expect(
+          authApi.requestPasswordReset({ email: 'nonexistent@example.com' }),
+        ).rejects.toMatchObject({
+          response: expect.objectContaining({ status: 404 }),
+        });
 
         mockPost.mockRestore();
       });
@@ -91,10 +94,10 @@ describe('API Client Comprehensive Tests', () => {
           new_password: 'NewSecurePassword123!',
         });
 
-        expect(mockPost).toHaveBeenCalledWith(
-          apiConfig.endpoints.auth.passwordReset,
-          { token: 'reset-token-123', new_password: 'NewSecurePassword123!' }
-        );
+        expect(mockPost).toHaveBeenCalledWith(apiConfig.endpoints.auth.passwordReset, {
+          token: 'reset-token-123',
+          new_password: 'NewSecurePassword123!',
+        });
         expect(result.message).toBe('Password reset successful');
 
         mockPost.mockRestore();
@@ -106,10 +109,12 @@ describe('API Client Comprehensive Tests', () => {
           isAxiosError: true,
         });
 
-        await expect(authApi.resetPassword({
-          token: 'invalid-token',
-          new_password: 'NewPassword123!',
-        })).rejects.toMatchObject({
+        await expect(
+          authApi.resetPassword({
+            token: 'invalid-token',
+            new_password: 'NewPassword123!',
+          }),
+        ).rejects.toMatchObject({
           response: expect.objectContaining({ status: 400 }),
         });
 
@@ -128,10 +133,10 @@ describe('API Client Comprehensive Tests', () => {
           new_password: 'NewPassword123!',
         });
 
-        expect(mockPost).toHaveBeenCalledWith(
-          apiConfig.endpoints.auth.changePassword,
-          { current_password: 'OldPassword123!', new_password: 'NewPassword123!' }
-        );
+        expect(mockPost).toHaveBeenCalledWith(apiConfig.endpoints.auth.changePassword, {
+          current_password: 'OldPassword123!',
+          new_password: 'NewPassword123!',
+        });
         expect(result.message).toBe('Password changed successfully');
 
         mockPost.mockRestore();
@@ -143,10 +148,12 @@ describe('API Client Comprehensive Tests', () => {
           isAxiosError: true,
         });
 
-        await expect(authApi.changePassword({
-          current_password: 'WrongPassword',
-          new_password: 'NewPassword123!',
-        })).rejects.toMatchObject({
+        await expect(
+          authApi.changePassword({
+            current_password: 'WrongPassword',
+            new_password: 'NewPassword123!',
+          }),
+        ).rejects.toMatchObject({
           response: expect.objectContaining({ status: 400 }),
         });
 
@@ -170,10 +177,10 @@ describe('API Client Comprehensive Tests', () => {
           last_name: 'User',
         });
 
-        expect(mockPut).toHaveBeenCalledWith(
-          apiConfig.endpoints.auth.updateProfile,
-          { first_name: 'Updated', last_name: 'User' }
-        );
+        expect(mockPut).toHaveBeenCalledWith(apiConfig.endpoints.auth.updateProfile, {
+          first_name: 'Updated',
+          last_name: 'User',
+        });
         expect(result.first_name).toBe('Updated');
 
         mockPut.mockRestore();
@@ -184,18 +191,17 @@ describe('API Client Comprehensive Tests', () => {
           response: {
             status: 422,
             data: {
-              detail: [
-                { loc: ['body', 'email'], msg: 'Invalid email format' },
-              ],
+              detail: [{ loc: ['body', 'email'], msg: 'Invalid email format' }],
             },
           },
           isAxiosError: true,
         });
 
-        await expect(authApi.updateProfile({ email: 'invalid-email' }))
-          .rejects.toMatchObject({
-            response: expect.objectContaining({ status: 422 }),
-          });
+        await expect(
+          authApi.updateProfile({ email: 'invalid-email' }),
+        ).rejects.toMatchObject({
+          response: expect.objectContaining({ status: 422 }),
+        });
 
         mockPut.mockRestore();
       });
@@ -211,7 +217,7 @@ describe('API Client Comprehensive Tests', () => {
 
         expect(mockPost).toHaveBeenCalledWith(
           apiConfig.endpoints.auth.verifyEmailRequest,
-          { email: 'test@example.com' }
+          { email: 'test@example.com' },
         );
         expect(result.message).toBe('Verification email sent');
 
@@ -227,10 +233,9 @@ describe('API Client Comprehensive Tests', () => {
 
         const result = await authApi.verifyEmail('verification-token-123');
 
-        expect(mockPost).toHaveBeenCalledWith(
-          apiConfig.endpoints.auth.verifyEmail,
-          { token: 'verification-token-123' }
-        );
+        expect(mockPost).toHaveBeenCalledWith(apiConfig.endpoints.auth.verifyEmail, {
+          token: 'verification-token-123',
+        });
         expect(result.message).toBe('Email verified successfully');
 
         mockPost.mockRestore();
@@ -242,10 +247,9 @@ describe('API Client Comprehensive Tests', () => {
           isAxiosError: true,
         });
 
-        await expect(authApi.verifyEmail('invalid-token'))
-          .rejects.toMatchObject({
-            response: expect.objectContaining({ status: 400 }),
-          });
+        await expect(authApi.verifyEmail('invalid-token')).rejects.toMatchObject({
+          response: expect.objectContaining({ status: 400 }),
+        });
 
         mockPost.mockRestore();
       });
@@ -293,7 +297,7 @@ describe('API Client Comprehensive Tests', () => {
         expect(mockPost).toHaveBeenCalledWith(
           apiConfig.endpoints.auth.refresh,
           {},
-          { headers: { 'Content-Type': 'application/json' } }
+          { headers: { 'Content-Type': 'application/json' } },
         );
         expect(result.access_token).toBe('new-access-token');
 
@@ -337,7 +341,7 @@ describe('API Client Comprehensive Tests', () => {
           expect.objectContaining({
             email: 'newuser@example.com',
             password: 'SecurePassword123!',
-          })
+          }),
         );
         expect(result.email).toBe('newuser@example.com');
 
@@ -350,12 +354,14 @@ describe('API Client Comprehensive Tests', () => {
           isAxiosError: true,
         });
 
-        await expect(authApi.register({
-          email: 'existing@example.com',
-          password: 'Password123!',
-          first_name: 'Test',
-          last_name: 'User',
-        })).rejects.toMatchObject({
+        await expect(
+          authApi.register({
+            email: 'existing@example.com',
+            password: 'Password123!',
+            first_name: 'Test',
+            last_name: 'User',
+          }),
+        ).rejects.toMatchObject({
           response: expect.objectContaining({ status: 409 }),
         });
 
@@ -376,13 +382,16 @@ describe('API Client Comprehensive Tests', () => {
             expires: 7,
             sameSite: 'lax',
             path: '/',
-          })
+          }),
         );
       });
 
       it('should set secure cookie in production', () => {
         const originalEnv = process.env.NODE_ENV;
-        Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', writable: true });
+        Object.defineProperty(process.env, 'NODE_ENV', {
+          value: 'production',
+          writable: true,
+        });
 
         tokenUtils.setToken('prod-token');
 
@@ -391,10 +400,13 @@ describe('API Client Comprehensive Tests', () => {
           'prod-token',
           expect.objectContaining({
             secure: true,
-          })
+          }),
         );
 
-        Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, writable: true });
+        Object.defineProperty(process.env, 'NODE_ENV', {
+          value: originalEnv,
+          writable: true,
+        });
       });
     });
 
@@ -586,9 +598,7 @@ describe('API Client Comprehensive Tests', () => {
       const error = {
         response: {
           data: {
-            detail: [
-              { loc: ['body', 'user', 'email'], msg: 'Invalid email' },
-            ],
+            detail: [{ loc: ['body', 'user', 'email'], msg: 'Invalid email' }],
           },
           status: 422,
         },
@@ -648,7 +658,7 @@ describe('API Client Comprehensive Tests', () => {
         expect.objectContaining({
           method: 'GET',
           credentials: 'include',
-        })
+        }),
       );
       expect(result).toEqual({ data: 'test' });
     });
@@ -663,7 +673,7 @@ describe('API Client Comprehensive Tests', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/test'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -677,7 +687,7 @@ describe('API Client Comprehensive Tests', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/test'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -693,7 +703,7 @@ describe('API Client Comprehensive Tests', () => {
         expect.any(String),
         expect.objectContaining({
           credentials: 'include',
-        })
+        }),
       );
     });
 
@@ -711,7 +721,7 @@ describe('API Client Comprehensive Tests', () => {
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
           }),
-        })
+        }),
       );
     });
 
@@ -721,8 +731,9 @@ describe('API Client Comprehensive Tests', () => {
         status: 404,
       });
 
-      await expect(fetcher('/api/v1/notfound'))
-        .rejects.toThrow('HTTP error! status: 404');
+      await expect(fetcher('/api/v1/notfound')).rejects.toThrow(
+        'HTTP error! status: 404',
+      );
     });
 
     it('should throw error on 500 status', async () => {
@@ -731,8 +742,7 @@ describe('API Client Comprehensive Tests', () => {
         status: 500,
       });
 
-      await expect(fetcher('/api/v1/error'))
-        .rejects.toThrow('HTTP error! status: 500');
+      await expect(fetcher('/api/v1/error')).rejects.toThrow('HTTP error! status: 500');
     });
 
     it('should throw error on 401 status', async () => {
@@ -741,15 +751,15 @@ describe('API Client Comprehensive Tests', () => {
         status: 401,
       });
 
-      await expect(fetcher('/api/v1/protected'))
-        .rejects.toThrow('HTTP error! status: 401');
+      await expect(fetcher('/api/v1/protected')).rejects.toThrow(
+        'HTTP error! status: 401',
+      );
     });
 
     it('should handle fetch network error', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(fetcher('/api/v1/test'))
-        .rejects.toThrow('Network error');
+      await expect(fetcher('/api/v1/test')).rejects.toThrow('Network error');
     });
 
     it('should parse JSON response', async () => {
@@ -774,7 +784,7 @@ describe('API Client Comprehensive Tests', () => {
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://secure.example.com/api/test',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -999,7 +1009,7 @@ describe('API Client Comprehensive Tests', () => {
       };
 
       const interceptor = api.interceptors.response.handlers[0];
-      
+
       await expect(interceptor?.rejected?.(mockError)).rejects.toBeDefined();
     });
 
@@ -1021,7 +1031,7 @@ describe('API Client Comprehensive Tests', () => {
       };
 
       const interceptor = api.interceptors.response.handlers[0];
-      
+
       // Should reject since max retries reached
       await expect(interceptor?.rejected?.(mockError)).rejects.toBeDefined();
     });
@@ -1041,7 +1051,7 @@ describe('API Client Comprehensive Tests', () => {
       };
 
       const interceptor = api.interceptors.response.handlers[0];
-      
+
       await expect(interceptor?.rejected?.(mockError)).rejects.toBeDefined();
     });
 
@@ -1220,7 +1230,7 @@ describe('API Client Comprehensive Tests', () => {
     it('should handle error with Symbol properties', () => {
       const detail: Record<string | symbol, unknown> = { message: 'Error' };
       detail[Symbol('hidden')] = 'hidden value';
-      
+
       const error = {
         response: {
           data: { detail },
@@ -1264,7 +1274,12 @@ describe('API Client Comprehensive Tests', () => {
         response: {
           data: {
             detail: [
-              { loc: ['body', 'email'], msg: 'Invalid email', type: 'value_error', ctx: { reason: 'missing @' } },
+              {
+                loc: ['body', 'email'],
+                msg: 'Invalid email',
+                type: 'value_error',
+                ctx: { reason: 'missing @' },
+              },
             ],
           },
           status: 422,
@@ -1348,7 +1363,9 @@ describe('API Client Comprehensive Tests', () => {
         config: { url: '/api/v1/users?page=1&limit=10' },
       });
 
-      const response = await api.get('/api/v1/users', { params: { page: 1, limit: 10 } });
+      const response = await api.get('/api/v1/users', {
+        params: { page: 1, limit: 10 },
+      });
       expect(response).toBeDefined();
       getSpy.mockRestore();
     });
@@ -1358,14 +1375,14 @@ describe('API Client Comprehensive Tests', () => {
         data: {},
         status: 200,
         headers: {},
-        config: { 
+        config: {
           url: '/api/v1/test',
           headers: { 'X-Custom-Header': 'custom-value' },
         },
       });
 
-      const response = await api.get('/api/v1/test', { 
-        headers: { 'X-Custom-Header': 'custom-value' } 
+      const response = await api.get('/api/v1/test', {
+        headers: { 'X-Custom-Header': 'custom-value' },
       });
       expect(response).toBeDefined();
       getSpy.mockRestore();
@@ -1374,7 +1391,7 @@ describe('API Client Comprehensive Tests', () => {
     it('should handle POST request with form data', async () => {
       const formData = new FormData();
       formData.append('file', new Blob(['test content']), 'test.txt');
-      
+
       const postSpy = jest.spyOn(api, 'post').mockResolvedValueOnce({
         data: { uploaded: true },
         status: 201,
@@ -1395,7 +1412,9 @@ describe('API Client Comprehensive Tests', () => {
         config: { url: '/api/v1/items/1' },
       });
 
-      const response = await api.delete('/api/v1/items/1', { data: { reason: 'test' } });
+      const response = await api.delete('/api/v1/items/1', {
+        data: { reason: 'test' },
+      });
       expect(response.data.deleted).toBe(true);
       deleteSpy.mockRestore();
     });
@@ -1534,7 +1553,7 @@ describe('API Client Comprehensive Tests', () => {
 
       expect(globalThis.fetch).toHaveBeenCalledWith(
         'http://example.com/api/test',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1548,7 +1567,7 @@ describe('API Client Comprehensive Tests', () => {
 
       expect(globalThis.fetch).toHaveBeenCalledWith(
         'https://example.com/api/test',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1563,7 +1582,7 @@ describe('API Client Comprehensive Tests', () => {
       // Should have prepended a leading slash
       expect(globalThis.fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/test'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1577,7 +1596,7 @@ describe('API Client Comprehensive Tests', () => {
 
       expect(globalThis.fetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/test'),
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -1606,9 +1625,7 @@ describe('API Client Comprehensive Tests', () => {
       const error = {
         response: {
           data: {
-            detail: [
-              { loc: ['body', 'nested', 'field'], msg: 'Required' },
-            ],
+            detail: [{ loc: ['body', 'nested', 'field'], msg: 'Required' }],
           },
           status: 422,
         },
@@ -1624,9 +1641,7 @@ describe('API Client Comprehensive Tests', () => {
       const error = {
         response: {
           data: {
-            detail: [
-              { msg: 'General error' },
-            ],
+            detail: [{ msg: 'General error' }],
           },
           status: 422,
         },
@@ -1702,7 +1717,7 @@ describe('API Client Comprehensive Tests', () => {
       const error = {
         response: {
           data: {
-            detail: { 
+            detail: {
               nonStandardField1: 'First string',
               nonStandardField2: 'Second string',
               nonStandardNum: 123,

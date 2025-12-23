@@ -123,7 +123,9 @@ describe('withErrorRecovery HOC', () => {
   });
 
   // Simple test component
-  const TestComponent: React.FC<{ readonly message?: string }> = ({ message = 'Hello' }) => {
+  const TestComponent: React.FC<{ readonly message?: string }> = ({
+    message = 'Hello',
+  }) => {
     return <div data-testid="test-component">{message}</div>;
   };
 

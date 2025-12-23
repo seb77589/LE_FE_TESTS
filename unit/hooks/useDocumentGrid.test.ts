@@ -377,7 +377,9 @@ describe('useDocumentGrid', () => {
 
       rerender();
 
-      expect(result.current.handleDocumentClick).toBe(initialHandlers.handleDocumentClick);
+      expect(result.current.handleDocumentClick).toBe(
+        initialHandlers.handleDocumentClick,
+      );
       expect(result.current.handlePreview).toBe(initialHandlers.handlePreview);
       expect(result.current.handleDownload).toBe(initialHandlers.handleDownload);
       expect(result.current.handleShare).toBe(initialHandlers.handleShare);

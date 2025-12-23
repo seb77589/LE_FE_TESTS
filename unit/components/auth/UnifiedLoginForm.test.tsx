@@ -233,9 +233,7 @@ describe('UnifiedLoginForm', () => {
       await user.click(submitButton); // Form validation mode is onSubmit
 
       await waitFor(() => {
-        expect(
-          screen.getByText('Invalid email address'),
-        ).toBeInTheDocument();
+        expect(screen.getByText('Invalid email address')).toBeInTheDocument();
       });
     });
 
@@ -692,7 +690,9 @@ describe('UnifiedLoginForm', () => {
       render(<UnifiedLoginForm />);
 
       expect(toast.error).toHaveBeenCalled();
-      expect(globalThis.window.localStorage.removeItem).toHaveBeenCalledWith('forcedLogout');
+      expect(globalThis.window.localStorage.removeItem).toHaveBeenCalledWith(
+        'forcedLogout',
+      );
     });
 
     it('should show toast for forced logout from URL parameter', () => {
@@ -843,7 +843,9 @@ describe('UnifiedLoginForm', () => {
 
     it('should handle API connectivity check timeout', async () => {
       const user = userEvent.setup();
-      (testApiConnectivity as jest.Mock).mockImplementation(createApiConnectivityTimeoutMock);
+      (testApiConnectivity as jest.Mock).mockImplementation(
+        createApiConnectivityTimeoutMock,
+      );
 
       render(<UnifiedLoginForm />);
 

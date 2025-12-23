@@ -91,11 +91,7 @@ jest.mock('@/components/documents/preview/ImagePreview', () => ({
 }));
 
 jest.mock('@/components/documents/preview/PDFPreview', () => ({
-  PDFPreview: function MockPDFPreview({
-    previewData,
-    imageError,
-    onImageError,
-  }: any) {
+  PDFPreview: function MockPDFPreview({ previewData, imageError, onImageError }: any) {
     return (
       <div data-testid="pdf-preview">
         <div>PDF Preview</div>
@@ -110,11 +106,7 @@ jest.mock('@/components/documents/preview/PDFPreview', () => ({
 }));
 
 jest.mock('@/components/documents/preview/InfoPreview', () => ({
-  InfoPreview: function MockInfoPreview({
-    previewData,
-    mimeType,
-    fileSize,
-  }: any) {
+  InfoPreview: function MockInfoPreview({ previewData, mimeType, fileSize }: any) {
     return (
       <div data-testid="info-preview">
         <div>Info Preview</div>
@@ -138,11 +130,7 @@ jest.mock('@/components/documents/preview/DocumentInfo', () => ({
 }));
 
 jest.mock('@/components/documents/preview/PreviewActions', () => ({
-  PreviewActions: function MockPreviewActions({
-    onClose,
-    onDownload,
-    onShare,
-  }: any) {
+  PreviewActions: function MockPreviewActions({ onClose, onDownload, onShare }: any) {
     return (
       <div data-testid="preview-actions">
         <button onClick={onClose} data-testid="action-close">
@@ -483,7 +471,7 @@ describe('DocumentPreview', () => {
 
       expect(mockWindowOpen).toHaveBeenCalledWith(
         '/api/v1/documents/123/download',
-        '_blank'
+        '_blank',
       );
     });
   });
@@ -505,7 +493,7 @@ describe('DocumentPreview', () => {
 
       // Should not throw
       await user.click(screen.getByTestId('action-share'));
-      
+
       // No error should occur
       expect(screen.getByTestId('action-share')).toBeInTheDocument();
     });
@@ -592,7 +580,8 @@ describe('DocumentPreview', () => {
       const wordDocument = {
         ...mockDocument,
         filename: 'document.docx',
-        mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        mime_type:
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       };
       mockHookReturn.previewData = null;
 
@@ -617,7 +606,9 @@ describe('DocumentPreview', () => {
 
     it('handles document id change', () => {
       const { useDocumentPreview } = require('@/hooks/documents/useDocumentPreview');
-      const { rerender } = render(<DocumentPreview {...defaultProps} documentId={100} />);
+      const { rerender } = render(
+        <DocumentPreview {...defaultProps} documentId={100} />,
+      );
 
       rerender(<DocumentPreview {...defaultProps} documentId={200} />);
 
@@ -634,7 +625,7 @@ describe('DocumentPreview', () => {
           document={mockDocument}
           isOpen={true}
           onClose={jest.fn()}
-        />
+        />,
       );
 
       expect(screen.getByRole('dialog')).toBeInTheDocument();

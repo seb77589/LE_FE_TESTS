@@ -8,7 +8,10 @@
  */
 
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useDocumentSearch, UseDocumentSearchOptions } from '@/hooks/documents/useDocumentSearch';
+import {
+  useDocumentSearch,
+  UseDocumentSearchOptions,
+} from '@/hooks/documents/useDocumentSearch';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({
@@ -178,10 +181,16 @@ describe('useDocumentSearch', () => {
       const { result } = renderHook(() => useDocumentSearch(defaultOptions));
 
       act(() => {
-        result.current.handleFilterChange('dateRange', { start: '2024-01-01', end: '2024-12-31' });
+        result.current.handleFilterChange('dateRange', {
+          start: '2024-01-01',
+          end: '2024-12-31',
+        });
       });
 
-      expect(result.current.filters.dateRange).toEqual({ start: '2024-01-01', end: '2024-12-31' });
+      expect(result.current.filters.dateRange).toEqual({
+        start: '2024-01-01',
+        end: '2024-12-31',
+      });
       expect(result.current.hasActiveFilters).toBe(true);
     });
 
@@ -522,7 +531,10 @@ describe('useDocumentSearch', () => {
       const { result } = renderHook(() => useDocumentSearch(defaultOptions));
 
       act(() => {
-        result.current.handleFilterChange('dateRange', { start: '2024-01-01', end: '' });
+        result.current.handleFilterChange('dateRange', {
+          start: '2024-01-01',
+          end: '',
+        });
       });
 
       expect(result.current.hasActiveFilters).toBe(true);
@@ -532,7 +544,10 @@ describe('useDocumentSearch', () => {
       const { result } = renderHook(() => useDocumentSearch(defaultOptions));
 
       act(() => {
-        result.current.handleFilterChange('dateRange', { start: '', end: '2024-12-31' });
+        result.current.handleFilterChange('dateRange', {
+          start: '',
+          end: '2024-12-31',
+        });
       });
 
       expect(result.current.hasActiveFilters).toBe(true);
@@ -542,7 +557,10 @@ describe('useDocumentSearch', () => {
       const { result } = renderHook(() => useDocumentSearch(defaultOptions));
 
       act(() => {
-        result.current.handleFilterChange('sizeRange', { min: 1000, max: 100 * 1024 * 1024 });
+        result.current.handleFilterChange('sizeRange', {
+          min: 1000,
+          max: 100 * 1024 * 1024,
+        });
       });
 
       expect(result.current.hasActiveFilters).toBe(true);
@@ -552,7 +570,10 @@ describe('useDocumentSearch', () => {
       const { result } = renderHook(() => useDocumentSearch(defaultOptions));
 
       act(() => {
-        result.current.handleFilterChange('sizeRange', { min: 0, max: 50 * 1024 * 1024 });
+        result.current.handleFilterChange('sizeRange', {
+          min: 0,
+          max: 50 * 1024 * 1024,
+        });
       });
 
       expect(result.current.hasActiveFilters).toBe(true);

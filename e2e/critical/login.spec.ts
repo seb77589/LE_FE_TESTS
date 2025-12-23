@@ -165,9 +165,7 @@ test.describe.serial('User Login', () => {
         workerCredentials.isAdmin,
       );
 
-      console.log(
-        '✅ Successfully navigated to dashboard after login',
-      );
+      console.log('✅ Successfully navigated to dashboard after login');
 
       // Refresh the page
       await page.reload();

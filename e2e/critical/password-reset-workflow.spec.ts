@@ -444,7 +444,9 @@ test.describe('Password Reset - Integration with Login', () => {
     );
 
     const isDashboard =
-      page.url().includes('/dashboard') || page.url().includes('/admin') || page.url().includes('/cases');
+      page.url().includes('/dashboard') ||
+      page.url().includes('/admin') ||
+      page.url().includes('/cases');
     expect(isDashboard).toBe(true);
   });
 

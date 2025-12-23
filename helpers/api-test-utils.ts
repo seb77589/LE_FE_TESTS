@@ -124,8 +124,7 @@ export async function cleanupTestSession(): Promise<void> {
   // Clear cookies if in browser environment
   if (typeof document !== 'undefined') {
     document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    document.cookie =
-      'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   }
 
   // Clear localStorage if available
@@ -154,7 +153,7 @@ export async function cleanupTestSession(): Promise<void> {
  */
 export async function waitForAPI<T>(
   apiCall: () => Promise<T>,
-  options: { maxRetries?: number; retryDelay?: number } = {}
+  options: { maxRetries?: number; retryDelay?: number } = {},
 ): Promise<T> {
   const { maxRetries = 3, retryDelay = 1000 } = options;
 

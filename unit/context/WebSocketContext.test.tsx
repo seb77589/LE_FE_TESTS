@@ -377,9 +377,9 @@ describe('WebSocketContext', () => {
       return mockWebSocketInstance;
     };
 
-    const createCountingMockWebSocket = (
-      counter: { count: number },
-    ): ((url: string) => MockWebSocket) => {
+    const createCountingMockWebSocket = (counter: {
+      count: number;
+    }): ((url: string) => MockWebSocket) => {
       return (url: string) => {
         counter.count++;
         mockWebSocketInstance = new MockWebSocket(url);

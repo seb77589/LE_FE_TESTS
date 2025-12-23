@@ -44,8 +44,10 @@ jest.mock('@/lib/errors', () => ({
 jest.mock('@/lib/api', () => ({
   handleApiError: jest.fn((error: unknown, context?: Record<string, unknown>) => {
     // Import the real implementation directly
-     
-    const realModule: { handleApiError: (error: unknown, context?: Record<string, unknown>) => string } = jest.requireActual('@/lib/api');
+
+    const realModule: {
+      handleApiError: (error: unknown, context?: Record<string, unknown>) => string;
+    } = jest.requireActual('@/lib/api');
     return realModule.handleApiError(error, context);
   }),
 }));

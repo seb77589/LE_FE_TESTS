@@ -95,8 +95,12 @@ import { parseAuthError } from '@/lib/errors';
 
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 const mockIsRateLimited = isRateLimited as jest.MockedFunction<typeof isRateLimited>;
-const mockGetRateLimitStatus = getRateLimitStatus as jest.MockedFunction<typeof getRateLimitStatus>;
-const mockTestApiConnectivity = testApiConnectivity as jest.MockedFunction<typeof testApiConnectivity>;
+const mockGetRateLimitStatus = getRateLimitStatus as jest.MockedFunction<
+  typeof getRateLimitStatus
+>;
+const mockTestApiConnectivity = testApiConnectivity as jest.MockedFunction<
+  typeof testApiConnectivity
+>;
 const mockParseAuthError = parseAuthError as jest.MockedFunction<typeof parseAuthError>;
 
 describe('useLoginForm', () => {

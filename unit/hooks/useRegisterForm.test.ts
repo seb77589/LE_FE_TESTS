@@ -71,11 +71,21 @@ import {
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 const mockIsRateLimited = isRateLimited as jest.MockedFunction<typeof isRateLimited>;
-const mockGetRateLimitStatus = getRateLimitStatus as jest.MockedFunction<typeof getRateLimitStatus>;
-const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<typeof extractErrorMessage>;
-const mockExtractErrorContext = extractErrorContext as jest.MockedFunction<typeof extractErrorContext>;
-const mockIsValidationError = isValidationError as jest.MockedFunction<typeof isValidationError>;
-const mockIsRateLimitError = isRateLimitError as jest.MockedFunction<typeof isRateLimitError>;
+const mockGetRateLimitStatus = getRateLimitStatus as jest.MockedFunction<
+  typeof getRateLimitStatus
+>;
+const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
+  typeof extractErrorMessage
+>;
+const mockExtractErrorContext = extractErrorContext as jest.MockedFunction<
+  typeof extractErrorContext
+>;
+const mockIsValidationError = isValidationError as jest.MockedFunction<
+  typeof isValidationError
+>;
+const mockIsRateLimitError = isRateLimitError as jest.MockedFunction<
+  typeof isRateLimitError
+>;
 
 describe('useRegisterForm', () => {
   const mockRegister = jest.fn().mockResolvedValue(undefined);

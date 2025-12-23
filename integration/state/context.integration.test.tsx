@@ -134,7 +134,6 @@ describe('State Management Integration Tests', () => {
             email: FRONTEND_TEST_CREDENTIALS.USER.email,
             password: FRONTEND_TEST_CREDENTIALS.USER.password,
           });
-           
         }, []); // Run once on mount
 
         return <div>Test</div>;
@@ -174,7 +173,6 @@ describe('State Management Integration Tests', () => {
 
         React.useEffect(() => {
           logoutRef.current();
-           
         }, []); // Run once on mount
 
         return <div>Test</div>;

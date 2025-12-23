@@ -246,7 +246,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <div data-testid="child">Child content</div>
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       expect(screen.getByTestId('child')).toBeInTheDocument();
@@ -256,7 +256,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <DefaultStateComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       expect(screen.getByTestId('theme')).toHaveTextContent('system');
@@ -271,7 +271,7 @@ describe('AppStateContext', () => {
       const consoleError = jest.spyOn(console, 'error').mockImplementation(noop);
 
       expect(() => render(<UseAppStateOutsideProvider />)).toThrow(
-        'useAppState must be used within AppStateProvider'
+        'useAppState must be used within AppStateProvider',
       );
 
       consoleError.mockRestore();
@@ -299,7 +299,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <ThemeLightComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Set Light'));
@@ -312,7 +312,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <ThemeDarkComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Set Dark'));
@@ -328,7 +328,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <ThemeSwitchToLightComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Set Light'));
@@ -340,7 +340,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <ThemeSystemComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Set System'));
@@ -354,7 +354,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <LocaleSpanishComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Set Spanish'));
@@ -366,7 +366,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <LocaleMultipleComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Set French'));
@@ -382,7 +382,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <OnlineOfflineComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Go Offline'));
@@ -394,7 +394,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <OnlineToggleComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Go Offline'));
@@ -410,7 +410,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <LoadingStartComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Start Loading'));
@@ -422,7 +422,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <LoadingToggleComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Start Loading'));
@@ -438,7 +438,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <DebugToggleComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       const initialDebug = screen.getByTestId('debug').textContent;
@@ -452,7 +452,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <DebugExplicitComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Enable Debug'));
@@ -468,7 +468,7 @@ describe('AppStateContext', () => {
       render(
         <AppStateProvider>
           <MultipleUpdatesComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       fireEvent.click(screen.getByText('Update All'));
@@ -499,13 +499,15 @@ describe('AppStateContext', () => {
   describe('Context Value Memoization', () => {
     it('memoizes context value', () => {
       let renderCount = 0;
-      const onRender = () => { renderCount++; };
+      const onRender = () => {
+        renderCount++;
+      };
       const MemoTestComponent = createMemoTestComponent(onRender);
 
       const { rerender } = render(
         <AppStateProvider>
           <MemoTestComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       const initialRenderCount = renderCount;
@@ -514,7 +516,7 @@ describe('AppStateContext', () => {
       rerender(
         <AppStateProvider>
           <MemoTestComponent />
-        </AppStateProvider>
+        </AppStateProvider>,
       );
 
       // Render count may increase due to provider re-render,

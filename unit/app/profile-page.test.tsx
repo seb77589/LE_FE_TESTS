@@ -263,7 +263,9 @@ describe('ProfilePage Component', () => {
       await waitFor(() => {
         const emailInput = screen.getByTestId('profile-username');
         expect(emailInput).toBeInTheDocument();
-        expect((emailInput as HTMLInputElement).value).toBe(FRONTEND_TEST_CREDENTIALS.JOHN.email);
+        expect((emailInput as HTMLInputElement).value).toBe(
+          FRONTEND_TEST_CREDENTIALS.JOHN.email,
+        );
         expect(emailInput).toBeDisabled();
       });
     });

@@ -23,8 +23,14 @@ test.describe('Token Lifecycle Management', () => {
     await TestHelpers.clearApplicationData(page);
   });
 
-  test('should create and store tokens on successful login', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+  test('should create and store tokens on successful login', async ({
+    page,
+    workerCredentials,
+  }) => {
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing token creation on login (HttpOnly cookies)...');
 
@@ -65,8 +71,14 @@ test.describe('Token Lifecycle Management', () => {
     }
   });
 
-  test('should maintain authenticated session with stored tokens', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+  test('should maintain authenticated session with stored tokens', async ({
+    page,
+    workerCredentials,
+  }) => {
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing session persistence with tokens...');
 
@@ -102,7 +114,10 @@ test.describe('Token Lifecycle Management', () => {
   });
 
   test('should clear tokens on logout', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing token cleanup on logout...');
 
@@ -194,8 +209,15 @@ test.describe('Token Lifecycle Management', () => {
     }
   });
 
-  test('should synchronize tokens across multiple tabs', async ({ page, context, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+  test('should synchronize tokens across multiple tabs', async ({
+    page,
+    context,
+    workerCredentials,
+  }) => {
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing multi-tab token synchronization...');
 
@@ -295,8 +317,14 @@ test.describe('Token Lifecycle Management', () => {
     }
   });
 
-  test('should handle token expiration gracefully', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+  test('should handle token expiration gracefully', async ({
+    page,
+    workerCredentials,
+  }) => {
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing token expiration handling...');
 
@@ -350,8 +378,14 @@ test.describe('Token Lifecycle Management', () => {
     }
   });
 
-  test('should maintain authentication during navigation', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+  test('should maintain authentication during navigation', async ({
+    page,
+    workerCredentials,
+  }) => {
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing token persistence during navigation...');
 
@@ -401,8 +435,14 @@ test.describe('Token Lifecycle Management', () => {
     }
   });
 
-  test('should have working token metadata retrieval', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials for /admin redirect');
+  test('should have working token metadata retrieval', async ({
+    page,
+    workerCredentials,
+  }) => {
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Test requires admin credentials for /admin redirect',
+    );
     try {
       console.log('🔐 Testing token metadata retrieval (HttpOnly cookies)...');
 

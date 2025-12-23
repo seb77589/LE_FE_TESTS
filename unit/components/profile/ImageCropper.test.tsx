@@ -22,8 +22,10 @@ jest.mock('@/components/ui/Button', () => ({
       const childType = children?.type;
       const displayName = childType?.displayName || childType?.name || '';
       if (displayName.includes('ZoomIn') || displayName === 'ZoomIn') return 'Zoom in';
-      if (displayName.includes('ZoomOut') || displayName === 'ZoomOut') return 'Zoom out';
-      if (displayName.includes('RotateCcw') || displayName === 'RotateCcw') return 'Rotate';
+      if (displayName.includes('ZoomOut') || displayName === 'ZoomOut')
+        return 'Zoom out';
+      if (displayName.includes('RotateCcw') || displayName === 'RotateCcw')
+        return 'Rotate';
       return undefined;
     };
     return (
@@ -157,7 +159,11 @@ describe('ImageCropper', () => {
 
     it('should render image with correct src', () => {
       render(
-        <ImageCropper image="test-image.png" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
+        <ImageCropper
+          image="test-image.png"
+          onCrop={mockOnCrop}
+          onCancel={mockOnCancel}
+        />,
       );
       const img = screen.getByRole('img');
       expect(img).toHaveAttribute('src', 'test-image.png');
@@ -278,7 +284,7 @@ describe('ImageCropper', () => {
       );
       const buttons = screen.getAllByRole('button');
       const outlineButtons = buttons.filter(
-        (btn) => (btn as HTMLButtonElement).dataset.variant === 'outline'
+        (btn) => (btn as HTMLButtonElement).dataset.variant === 'outline',
       );
       expect(outlineButtons.length).toBeGreaterThanOrEqual(3); // zoom in, zoom out, rotate
     });
@@ -356,7 +362,11 @@ describe('ImageCropper', () => {
 
     it('should pass image prop to hook', () => {
       render(
-        <ImageCropper image="my-image.png" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
+        <ImageCropper
+          image="my-image.png"
+          onCrop={mockOnCrop}
+          onCancel={mockOnCancel}
+        />,
       );
       expect(mockUseImageCropper).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -368,7 +378,11 @@ describe('ImageCropper', () => {
     it('should pass onCrop callback to hook', () => {
       const customCropHandler = jest.fn();
       render(
-        <ImageCropper image="test.jpg" onCrop={customCropHandler} onCancel={mockOnCancel} />,
+        <ImageCropper
+          image="test.jpg"
+          onCrop={customCropHandler}
+          onCancel={mockOnCancel}
+        />,
       );
       expect(mockUseImageCropper).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -401,7 +415,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       // Should have resize handles
       expect(screen.getByLabelText('Resize bottom-right')).toBeInTheDocument();
       expect(screen.getByLabelText('Resize bottom-left')).toBeInTheDocument();
@@ -417,10 +431,13 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const seHandle = screen.getByLabelText('Resize bottom-right');
       fireEvent.mouseDown(seHandle);
-      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith('se', expect.any(Object));
+      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith(
+        'se',
+        expect.any(Object),
+      );
     });
 
     it('should call handleResize when sw resize handle is clicked', () => {
@@ -431,10 +448,13 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const swHandle = screen.getByLabelText('Resize bottom-left');
       fireEvent.mouseDown(swHandle);
-      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith('sw', expect.any(Object));
+      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith(
+        'sw',
+        expect.any(Object),
+      );
     });
 
     it('should call handleResize when ne resize handle is clicked', () => {
@@ -445,10 +465,13 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const neHandle = screen.getByLabelText('Resize top-right');
       fireEvent.mouseDown(neHandle);
-      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith('ne', expect.any(Object));
+      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith(
+        'ne',
+        expect.any(Object),
+      );
     });
 
     it('should call handleResize when nw resize handle is clicked', () => {
@@ -459,10 +482,13 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const nwHandle = screen.getByLabelText('Resize top-left');
       fireEvent.mouseDown(nwHandle);
-      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith('nw', expect.any(Object));
+      expect(defaultMockReturn.handleResize).toHaveBeenCalledWith(
+        'nw',
+        expect.any(Object),
+      );
     });
 
     it('should handle mouse events on crop area', () => {
@@ -473,7 +499,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       // Find the crop area button (the main draggable area)
       const cropArea = document.querySelector('button[type="button"]');
       if (cropArea && !cropArea.getAttribute('aria-label')?.includes('Resize')) {
@@ -490,7 +516,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       expect(screen.queryByLabelText('Resize bottom-right')).not.toBeInTheDocument();
     });
   });
@@ -544,7 +570,10 @@ describe('ImageCropper', () => {
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
       const cancelButtons = screen.getAllByText('Cancel');
-      expect(cancelButtons[0].closest('button')).toHaveAttribute('data-variant', 'outline');
+      expect(cancelButtons[0].closest('button')).toHaveAttribute(
+        'data-variant',
+        'outline',
+      );
     });
   });
 
@@ -557,7 +586,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const cropArea = screen.getByLabelText(/crop area/i);
       // Simulate keydown - component should handle it without error
       fireEvent.keyDown(cropArea, { key: 'ArrowLeft' });
@@ -573,7 +602,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const cropArea = screen.getByLabelText(/crop area/i);
       fireEvent.keyDown(cropArea, { key: 'ArrowRight' });
       expect(cropArea).toBeInTheDocument();
@@ -587,7 +616,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const cropArea = screen.getByLabelText(/crop area/i);
       fireEvent.keyDown(cropArea, { key: 'ArrowUp' });
       expect(cropArea).toBeInTheDocument();
@@ -601,7 +630,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const cropArea = screen.getByLabelText(/crop area/i);
       fireEvent.keyDown(cropArea, { key: 'ArrowDown' });
       expect(cropArea).toBeInTheDocument();
@@ -615,7 +644,7 @@ describe('ImageCropper', () => {
       render(
         <ImageCropper image="test.jpg" onCrop={mockOnCrop} onCancel={mockOnCancel} />,
       );
-      
+
       const cropArea = screen.getByLabelText(/crop area/i);
       fireEvent.keyDown(cropArea, { key: 'Enter' });
       fireEvent.keyDown(cropArea, { key: 'Space' });

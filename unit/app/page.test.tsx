@@ -324,7 +324,9 @@ describe('HomePage', () => {
     it('should display correct loading message', () => {
       render(<HomePage />);
 
-      expect(screen.getByText('Loading LegalEase (Modernized Dev Environment)...')).toBeInTheDocument();
+      expect(
+        screen.getByText('Loading LegalEase (Modernized Dev Environment)...'),
+      ).toBeInTheDocument();
     });
 
     it('should display hot reload indicator', () => {

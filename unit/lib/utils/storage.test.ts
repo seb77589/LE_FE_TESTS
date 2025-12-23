@@ -67,7 +67,9 @@ function createStorageMock(): StorageMock {
 
   return {
     getItem: jest.fn((key: string) => storageGetItem(wrapper, key)),
-    setItem: jest.fn((key: string, value: string) => storageSetItem(wrapper, key, value)),
+    setItem: jest.fn((key: string, value: string) =>
+      storageSetItem(wrapper, key, value),
+    ),
     removeItem: jest.fn((key: string) => storageRemoveItem(wrapper, key)),
     clear: jest.fn(() => storageClear(wrapper)),
     key: jest.fn((index: number) => storageKey(wrapper, index)),

@@ -48,7 +48,9 @@ describe('lib/features/index - Barrel Exports', () => {
     });
 
     it('should export FeatureFlagProvider from the correct source module', () => {
-      expect(featuresModule.FeatureFlagProvider).toBe(providerModule.FeatureFlagProvider);
+      expect(featuresModule.FeatureFlagProvider).toBe(
+        providerModule.FeatureFlagProvider,
+      );
     });
 
     it('should export useFeatureFlag hook', () => {
@@ -222,7 +224,7 @@ describe('lib/features/index - Barrel Exports', () => {
 
     it('should maintain API stability for hooks', () => {
       const { useFeatureFlag, useFeatureFlags } = featuresModule;
-      
+
       // Hooks should be callable (will need React context in real usage)
       expect(typeof useFeatureFlag).toBe('function');
       expect(typeof useFeatureFlags).toBe('function');
@@ -230,10 +232,10 @@ describe('lib/features/index - Barrel Exports', () => {
 
     it('should maintain API stability for config functions', () => {
       const { getFeatureFlags, getFeatureFlag } = featuresModule;
-      
+
       expect(typeof getFeatureFlags).toBe('function');
       expect(typeof getFeatureFlag).toBe('function');
-      
+
       // Should be callable
       expect(() => getFeatureFlags()).not.toThrow();
     });
@@ -244,7 +246,7 @@ describe('lib/features/index - Barrel Exports', () => {
       const startTime = performance.now();
       const { FeatureFlagProvider } = featuresModule;
       const endTime = performance.now();
-      
+
       expect(FeatureFlagProvider).toBeDefined();
       expect(endTime - startTime).toBeLessThan(10); // Should be nearly instant
     });
@@ -254,7 +256,7 @@ describe('lib/features/index - Barrel Exports', () => {
       const startTime = performance.now();
       const reImported = require('@/lib/features');
       const endTime = performance.now();
-      
+
       expect(reImported).toBeDefined();
       expect(endTime - startTime).toBeLessThan(5);
     });
@@ -279,7 +281,7 @@ describe('lib/features/index - Barrel Exports', () => {
 
     it('should handle partial destructuring', () => {
       const { FeatureFlagProvider, ...rest } = featuresModule;
-      
+
       expect(FeatureFlagProvider).toBeDefined();
       expect(Object.keys(rest)).toHaveLength(4);
       expect(rest).toHaveProperty('useFeatureFlag');

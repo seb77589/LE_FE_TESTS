@@ -78,7 +78,9 @@ describe('Health Check API Integration Tests (Real Backend)', () => {
       const response = await api.get(endpoint);
 
       expect(response.status).toBe(200);
-      expect(Object.keys(response.data).sort((a, b) => a.localeCompare(b))).toEqual(['service', 'status', 'timestamp'].sort((a, b) => a.localeCompare(b)));
+      expect(Object.keys(response.data).sort((a, b) => a.localeCompare(b))).toEqual(
+        ['service', 'status', 'timestamp'].sort((a, b) => a.localeCompare(b)),
+      );
     });
   });
 

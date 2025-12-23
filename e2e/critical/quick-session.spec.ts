@@ -7,7 +7,10 @@ import { TEST_CONFIG } from '../../test-credentials';
 // Admin endpoint access test (Phase 2.4 - Simplified)
 // Uses page.request API which automatically includes HttpOnly cookies
 test.describe('Admin Endpoint Access', () => {
-  test('admin can access admin endpoints after login', async ({ page, workerCredentials }) => {
+  test('admin can access admin endpoints after login', async ({
+    page,
+    workerCredentials,
+  }) => {
     // Skip if not admin - this test requires admin credentials
     test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
 

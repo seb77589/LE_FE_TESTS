@@ -528,7 +528,9 @@ test.describe('Token Revocation', () => {
       await page.fill('input[name="password"]', workerCredentials.password);
       await page.click('button[type="submit"]');
       // Admin users redirect to /admin, regular users to /dashboard
-      await page.waitForURL(workerCredentials.isAdmin ? /\/admin/ : /\/dashboard/, { timeout: 15000 });
+      await page.waitForURL(workerCredentials.isAdmin ? /\/admin/ : /\/dashboard/, {
+        timeout: 15000,
+      });
       console.log('✅ Login successful');
 
       // Get the current access token

@@ -62,7 +62,9 @@ describe('getSeverityColor', () => {
 
   it('should handle null/undefined severity', () => {
     expect(getSeverityColor('')).toBe('bg-gray-500 text-white');
-    expect(getSeverityColor(undefined as unknown as string)).toBe('bg-gray-500 text-white');
+    expect(getSeverityColor(undefined as unknown as string)).toBe(
+      'bg-gray-500 text-white',
+    );
   });
 });
 
@@ -187,7 +189,9 @@ describe('filterActivities', () => {
   });
 
   it('should filter by activity_type (action)', () => {
-    const result = filterActivities(mockActivities, { activity_type: 'document_upload' });
+    const result = filterActivities(mockActivities, {
+      activity_type: 'document_upload',
+    });
     expect(result).toHaveLength(1);
     expect(result[0].action).toBe('document_upload');
   });
@@ -242,8 +246,12 @@ describe('exportActivities', () => {
       click: jest.fn(),
       remove: jest.fn(),
     };
-    jest.spyOn(globalThis.document, 'createElement').mockReturnValue(mockAnchor as unknown as HTMLElement);
-    jest.spyOn(globalThis.document.body, 'appendChild').mockImplementation((node) => node);
+    jest
+      .spyOn(globalThis.document, 'createElement')
+      .mockReturnValue(mockAnchor as unknown as HTMLElement);
+    jest
+      .spyOn(globalThis.document.body, 'appendChild')
+      .mockImplementation((node) => node);
   });
 
   afterEach(() => {
@@ -271,16 +279,18 @@ describe('exportActivities', () => {
 
   it('should create blob with correct MIME type for JSON', () => {
     exportActivities(mockActivities, 'json');
-    
-    const createObjectURLCalls = (globalThis.URL.createObjectURL as jest.Mock).mock.calls;
+
+    const createObjectURLCalls = (globalThis.URL.createObjectURL as jest.Mock).mock
+      .calls;
     const blob = createObjectURLCalls[0][0] as Blob;
     expect(blob.type).toBe('application/json');
   });
 
   it('should create blob with correct MIME type for CSV', () => {
     exportActivities(mockActivities, 'csv');
-    
-    const createObjectURLCalls = (globalThis.URL.createObjectURL as jest.Mock).mock.calls;
+
+    const createObjectURLCalls = (globalThis.URL.createObjectURL as jest.Mock).mock
+      .calls;
     const blob = createObjectURLCalls[0][0] as Blob;
     expect(blob.type).toBe('text/csv');
   });
@@ -291,6 +301,8 @@ describe('exportActivities', () => {
       throw new Error('Blob creation failed');
     });
 
-    expect(() => exportActivities(mockActivities, 'json')).toThrow('Failed to export activities');
+    expect(() => exportActivities(mockActivities, 'json')).toThrow(
+      'Failed to export activities',
+    );
   });
 });

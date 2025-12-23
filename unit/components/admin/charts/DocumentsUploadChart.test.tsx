@@ -56,9 +56,7 @@ jest.mock('recharts', () => ({
   Tooltip: ({ contentStyle, cursor, ...props }: any) => (
     <div data-testid="tooltip" {...props} />
   ),
-  Legend: ({ wrapperStyle, ...props }: any) => (
-    <div data-testid="legend" {...props} />
-  ),
+  Legend: ({ wrapperStyle, ...props }: any) => <div data-testid="legend" {...props} />,
 }));
 
 // Mock ChartContainer
@@ -91,11 +89,11 @@ describe('DocumentsUploadChart', () => {
   describe('rendering', () => {
     it('should render without props using sample data', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.getByTestId('chart-container')).toBeInTheDocument();
     });
 
@@ -104,39 +102,39 @@ describe('DocumentsUploadChart', () => {
         { date: 'Day 1', documents: 100 },
         { date: 'Day 2', documents: 200 },
       ];
-      
+
       render(<DocumentsUploadChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.getByTestId('chart-container')).toBeInTheDocument();
     });
 
     it('should render loading state when isLoading is true', () => {
       render(<DocumentsUploadChart isLoading={true} />);
-      
+
       expect(screen.getByTestId('chart-loading')).toBeInTheDocument();
     });
 
     it('should not render loading state when isLoading is false', async () => {
       render(<DocumentsUploadChart isLoading={false} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.queryByTestId('chart-loading')).not.toBeInTheDocument();
     });
 
     it('should render BarChart component', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
       });
@@ -144,11 +142,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render bar with correct dataKey', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const bar = screen.getByTestId('bar');
         expect(bar).toHaveAttribute('data-datakey', 'documents');
@@ -157,11 +155,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render bar with correct fill color', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const bar = screen.getByTestId('bar');
         expect(bar).toHaveAttribute('data-fill', '#f59e0b');
@@ -170,11 +168,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render bar with correct name', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const bar = screen.getByTestId('bar');
         expect(bar).toHaveAttribute('data-name', 'Documents Uploaded');
@@ -183,11 +181,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render XAxis with date dataKey', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const xAxis = screen.getByTestId('x-axis');
         expect(xAxis).toHaveAttribute('data-datakey', 'date');
@@ -196,11 +194,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render YAxis', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('y-axis')).toBeInTheDocument();
       });
@@ -208,11 +206,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render CartesianGrid', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('cartesian-grid')).toBeInTheDocument();
       });
@@ -220,11 +218,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render Tooltip', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('tooltip')).toBeInTheDocument();
       });
@@ -232,11 +230,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render Legend', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('legend')).toBeInTheDocument();
       });
@@ -246,11 +244,11 @@ describe('DocumentsUploadChart', () => {
   describe('data handling', () => {
     it('should use sample data when data prop is undefined', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const barChart = screen.getByTestId('bar-chart');
         expect(barChart).toHaveAttribute('data-length', '7');
@@ -263,13 +261,13 @@ describe('DocumentsUploadChart', () => {
         { date: 'Feb', documents: 20 },
         { date: 'Mar', documents: 30 },
       ];
-      
+
       render(<DocumentsUploadChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const barChart = screen.getByTestId('bar-chart');
         expect(barChart).toHaveAttribute('data-length', '3');
@@ -278,11 +276,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should handle empty data array', async () => {
       render(<DocumentsUploadChart data={[]} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const barChart = screen.getByTestId('bar-chart');
         expect(barChart).toHaveAttribute('data-length', '0');
@@ -295,13 +293,13 @@ describe('DocumentsUploadChart', () => {
         { date: 'B', documents: 1000 },
         { date: 'C', documents: 500 },
       ];
-      
+
       render(<DocumentsUploadChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
       });
@@ -311,18 +309,18 @@ describe('DocumentsUploadChart', () => {
   describe('ChartWrapper deferred rendering', () => {
     it('should not render chart immediately', () => {
       render(<DocumentsUploadChart />);
-      
+
       // Before timers run, ChartWrapper should not render the chart
       expect(screen.queryByTestId('bar-chart')).not.toBeInTheDocument();
     });
 
     it('should render chart after RAF chain completes', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('bar-chart')).toBeInTheDocument();
       });
@@ -334,27 +332,27 @@ describe('DocumentsUploadChart', () => {
       const readonlyData: readonly { date: string; documents: number }[] = [
         { date: 'Mon', documents: 45 },
       ];
-      
+
       render(<DocumentsUploadChart data={readonlyData as any} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.getByTestId('chart-container')).toBeInTheDocument();
     });
 
     it('should handle isLoading prop changes', async () => {
       const { rerender } = render(<DocumentsUploadChart isLoading={true} />);
-      
+
       expect(screen.getByTestId('chart-loading')).toBeInTheDocument();
-      
+
       rerender(<DocumentsUploadChart isLoading={false} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.queryByTestId('chart-loading')).not.toBeInTheDocument();
     });
   });
@@ -362,11 +360,11 @@ describe('DocumentsUploadChart', () => {
   describe('styling', () => {
     it('should render XAxis with correct stroke color', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const xAxis = screen.getByTestId('x-axis');
         expect(xAxis).toHaveAttribute('data-stroke', '#6b7280');
@@ -375,11 +373,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render YAxis with correct stroke color', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const yAxis = screen.getByTestId('y-axis');
         expect(yAxis).toHaveAttribute('data-stroke', '#6b7280');
@@ -388,11 +386,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render CartesianGrid with correct stroke dasharray', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const grid = screen.getByTestId('cartesian-grid');
         expect(grid).toHaveAttribute('data-strokedasharray', '3 3');
@@ -401,11 +399,11 @@ describe('DocumentsUploadChart', () => {
 
     it('should render CartesianGrid with correct stroke color', async () => {
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const grid = screen.getByTestId('cartesian-grid');
         expect(grid).toHaveAttribute('data-stroke', '#e5e7eb');
@@ -418,11 +416,11 @@ describe('DocumentsUploadChart', () => {
       // Access the module to verify sample data exists
       // This tests that the component can work standalone with sample data
       render(<DocumentsUploadChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const barChart = screen.getByTestId('bar-chart');
         // Sample data has 7 days (Mon-Sun)

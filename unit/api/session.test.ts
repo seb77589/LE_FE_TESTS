@@ -17,7 +17,12 @@
  * @module __tests__/unit/api/session
  */
 
-import { sessionApi, SessionStatus, SessionExtensionResponse, SessionInfo } from '@/lib/api/session';
+import {
+  sessionApi,
+  SessionStatus,
+  SessionExtensionResponse,
+  SessionInfo,
+} from '@/lib/api/session';
 import api from '@/lib/api';
 import logger from '@/lib/logging';
 
@@ -319,7 +324,9 @@ describe('sessionApi', () => {
     it('should handle network errors', async () => {
       mockApi.delete.mockRejectedValueOnce(new Error('Network error'));
 
-      await expect(sessionApi.terminateSession('session-123')).rejects.toThrow('Network error');
+      await expect(sessionApi.terminateSession('session-123')).rejects.toThrow(
+        'Network error',
+      );
     });
   });
 
@@ -349,7 +356,9 @@ describe('sessionApi', () => {
     it('should handle API errors', async () => {
       mockApi.delete.mockRejectedValueOnce(new Error('Server error'));
 
-      await expect(sessionApi.terminateAllOtherSessions()).rejects.toThrow('Server error');
+      await expect(sessionApi.terminateAllOtherSessions()).rejects.toThrow(
+        'Server error',
+      );
     });
   });
 
@@ -404,7 +413,7 @@ describe('sessionApi', () => {
         expect.objectContaining({
           headers: { 'X-CSRFToken': 'test-csrf-token' },
           params: { exclude_current: true },
-        })
+        }),
       );
       expect(result.message).toBe('Logged out from 2 devices');
     });
@@ -424,7 +433,7 @@ describe('sessionApi', () => {
         '/api/v1/auth/sessions',
         expect.objectContaining({
           params: { exclude_current: false },
-        })
+        }),
       );
       expect(result.message).toBe('Logged out from all devices');
     });
@@ -452,7 +461,7 @@ describe('sessionApi', () => {
         expect.objectContaining({
           headers: {},
           params: { exclude_current: true },
-        })
+        }),
       );
       expect(result).toEqual(mockResponse);
     });
@@ -473,7 +482,7 @@ describe('sessionApi', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'api',
         'Failed to get CSRF token',
-        expect.objectContaining({ error: expect.any(Error) })
+        expect.objectContaining({ error: expect.any(Error) }),
       );
     });
   });
@@ -503,7 +512,7 @@ describe('sessionApi', () => {
         null,
         expect.objectContaining({
           headers: { 'X-CSRFToken': 'test-csrf-token' },
-        })
+        }),
       );
       expect(result.message).toBe('All tokens revoked');
     });
@@ -528,7 +537,7 @@ describe('sessionApi', () => {
         null,
         expect.objectContaining({
           headers: {},
-        })
+        }),
       );
       expect(result).toEqual(mockResponse);
     });
@@ -560,7 +569,7 @@ describe('sessionApi', () => {
         null,
         expect.objectContaining({
           headers: { 'X-CSRFToken': 'abc+def/123' },
-        })
+        }),
       );
     });
   });
@@ -687,7 +696,7 @@ describe('sessionApi', () => {
         '/api/v1/auth/sessions',
         expect.objectContaining({
           headers: { 'X-CSRFToken': 'emergency-token' },
-        })
+        }),
       );
 
       expect(mockApi.post).toHaveBeenCalledWith(
@@ -695,7 +704,7 @@ describe('sessionApi', () => {
         null,
         expect.objectContaining({
           headers: { 'X-CSRFToken': 'emergency-token' },
-        })
+        }),
       );
     });
   });

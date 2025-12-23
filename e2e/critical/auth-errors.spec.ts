@@ -72,7 +72,10 @@ test.describe('Authentication Error Handling E2E', () => {
     expect(errorText.toLowerCase()).toMatch(/email.*verified|verification|verify/i);
   });
 
-  test('should display incorrect credentials error', async ({ page, workerCredentials }) => {
+  test('should display incorrect credentials error', async ({
+    page,
+    workerCredentials,
+  }) => {
     // Check if form exists
     const formExists = await TestHelpers.checkUIElementExists(page, 'form', 10000);
     if (!formExists) {
@@ -119,7 +122,10 @@ test.describe('Authentication Error Handling E2E', () => {
     expect(hasError || stillOnLoginPage).toBe(true);
   });
 
-  test('should display account lockout message', async ({ page, workerCredentials }) => {
+  test('should display account lockout message', async ({
+    page,
+    workerCredentials,
+  }) => {
     // Navigate to login (already done in beforeEach, but ensure we're there)
     await page.goto('/auth/login');
     await page.waitForLoadState('networkidle');

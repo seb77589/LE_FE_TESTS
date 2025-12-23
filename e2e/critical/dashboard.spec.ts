@@ -64,7 +64,10 @@ test.describe('Dashboard Module', () => {
       await expect(dashboardContent).toBeVisible();
     });
 
-    test('should display welcome message with user email', async ({ page, workerCredentials }) => {
+    test('should display welcome message with user email', async ({
+      page,
+      workerCredentials,
+    }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
 

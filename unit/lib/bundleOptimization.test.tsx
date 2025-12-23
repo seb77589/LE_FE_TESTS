@@ -16,8 +16,8 @@ describe('createLazyComponent', () => {
     const TestComponent = () => <div data-testid="test-component">Loaded</div>;
 
     // Create lazy version
-    const LazyComponent = createLazyComponent(
-      () => Promise.resolve({ default: TestComponent }),
+    const LazyComponent = createLazyComponent(() =>
+      Promise.resolve({ default: TestComponent }),
     );
 
     render(

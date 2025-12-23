@@ -171,7 +171,10 @@ describe('useUserManagement', () => {
       renderHook(() => useUserManagement({ showAnalytics: true }));
 
       // Second SWR call should be for analytics
-      expect(mockUseSWR).toHaveBeenCalledWith('/api/v1/admin/users/analytics', expect.any(Function));
+      expect(mockUseSWR).toHaveBeenCalledWith(
+        '/api/v1/admin/users/analytics',
+        expect.any(Function),
+      );
     });
 
     it('should not fetch analytics when showAnalytics is false', () => {
@@ -248,7 +251,10 @@ describe('useUserManagement', () => {
 
       rerender();
 
-      expect(mockUseSWR).toHaveBeenCalledWith(expect.stringContaining('q=john'), expect.any(Function));
+      expect(mockUseSWR).toHaveBeenCalledWith(
+        expect.stringContaining('q=john'),
+        expect.any(Function),
+      );
     });
 
     it('should combine multiple filters in query string', () => {
@@ -266,9 +272,9 @@ describe('useUserManagement', () => {
 
       // Find the LATEST users API call (after filters are applied)
       // We need to reverse-search because find() returns the first match
-      const usersCall = mockUseSWR.mock.calls.toReversed().find(
-        (call) => call[0]?.includes?.('/api/v1/admin/users'),
-      );
+      const usersCall = mockUseSWR.mock.calls
+        .toReversed()
+        .find((call) => call[0]?.includes?.('/api/v1/admin/users'));
       const url = usersCall?.[0] as string;
 
       expect(url).toContain('role=admin');

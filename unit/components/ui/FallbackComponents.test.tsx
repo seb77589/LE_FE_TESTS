@@ -44,13 +44,17 @@ describe('LoginFormFallback', () => {
     const onRetry = jest.fn();
     render(<LoginFormFallback onRetry={onRetry} />);
 
-    expect(screen.getByRole('button', { name: /Try Loading Again/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Try Loading Again/i }),
+    ).toBeInTheDocument();
   });
 
   it('should not render retry button when onRetry is not provided', () => {
     render(<LoginFormFallback />);
 
-    expect(screen.queryByRole('button', { name: /Try Loading Again/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Try Loading Again/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('should call onRetry when retry button is clicked', () => {
@@ -82,7 +86,9 @@ describe('AuthContextFallback', () => {
     render(<AuthContextFallback />);
 
     expect(screen.getByText('Authentication Error')).toBeInTheDocument();
-    expect(screen.getByText('Unable to initialize authentication system')).toBeInTheDocument();
+    expect(
+      screen.getByText('Unable to initialize authentication system'),
+    ).toBeInTheDocument();
   });
 
   it('should render system error alert', () => {
@@ -148,7 +154,9 @@ describe('ErrorFallback', () => {
   it('should not render try again button when resetErrorBoundary is not provided', () => {
     render(<ErrorFallback error={mockError} />);
 
-    expect(screen.queryByRole('button', { name: /Try Again/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Try Again/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('should call resetErrorBoundary when try again button is clicked', () => {

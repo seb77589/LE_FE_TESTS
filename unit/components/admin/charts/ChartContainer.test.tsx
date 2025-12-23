@@ -23,7 +23,9 @@ jest.mock('@/hooks/useChartContainer', () => ({
 
 import { useChartContainer } from '@/hooks/useChartContainer';
 
-const mockUseChartContainer = useChartContainer as jest.MockedFunction<typeof useChartContainer>;
+const mockUseChartContainer = useChartContainer as jest.MockedFunction<
+  typeof useChartContainer
+>;
 
 describe('ChartLoadingSpinner', () => {
   it('should render with default message', () => {

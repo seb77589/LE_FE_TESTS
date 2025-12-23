@@ -118,7 +118,7 @@ describe('ActivityTracker', () => {
       tracker = new ActivityTracker();
       expect(mockLogger.info).toHaveBeenCalledWith(
         'activity',
-        'Activity tracking started'
+        'Activity tracking started',
       );
     });
 
@@ -138,7 +138,7 @@ describe('ActivityTracker', () => {
       // Should not log again since already tracking
       expect(mockLogger.info).not.toHaveBeenCalledWith(
         'activity',
-        'Activity tracking started'
+        'Activity tracking started',
       );
     });
 
@@ -153,41 +153,31 @@ describe('ActivityTracker', () => {
         trackFormInputs: true,
       });
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'click',
-        expect.any(Function),
-        { passive: true }
-      );
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'scroll',
-        expect.any(Function),
-        { passive: true }
-      );
+      expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), {
+        passive: true,
+      });
+      expect(addEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function), {
+        passive: true,
+      });
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         'keydown',
         expect.any(Function),
-        { passive: true }
+        { passive: true },
       );
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         'mousemove',
         expect.any(Function),
-        { passive: true }
+        { passive: true },
       );
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'focus',
-        expect.any(Function),
-        { passive: true }
-      );
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'blur',
-        expect.any(Function),
-        { passive: true }
-      );
-      expect(addEventListenerSpy).toHaveBeenCalledWith(
-        'input',
-        expect.any(Function),
-        { passive: true }
-      );
+      expect(addEventListenerSpy).toHaveBeenCalledWith('focus', expect.any(Function), {
+        passive: true,
+      });
+      expect(addEventListenerSpy).toHaveBeenCalledWith('blur', expect.any(Function), {
+        passive: true,
+      });
+      expect(addEventListenerSpy).toHaveBeenCalledWith('input', expect.any(Function), {
+        passive: true,
+      });
 
       addEventListenerSpy.mockRestore();
     });
@@ -206,7 +196,7 @@ describe('ActivityTracker', () => {
       expect(addEventListenerSpy).not.toHaveBeenCalledWith(
         'click',
         expect.any(Function),
-        expect.anything()
+        expect.anything(),
       );
 
       addEventListenerSpy.mockRestore();
@@ -221,7 +211,7 @@ describe('ActivityTracker', () => {
 
       expect(removeEventListenerSpy).toHaveBeenCalledWith(
         'click',
-        expect.any(Function)
+        expect.any(Function),
       );
 
       removeEventListenerSpy.mockRestore();
@@ -233,12 +223,12 @@ describe('ActivityTracker', () => {
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'activity',
-        'Activity tracking stopped'
+        'Activity tracking stopped',
       );
     });
 
     it('should flush remaining events before stopping', async () => {
-      tracker = new ActivityTracker({ 
+      tracker = new ActivityTracker({
         enableServerSync: true,
         syncBatchSize: 100, // High so it doesn't auto-sync
         debounceMs: 10,
@@ -271,7 +261,7 @@ describe('ActivityTracker', () => {
       // Note: Errors during flush are caught inside syncToServer and logged there,
       // not in the stopTracking .catch() handler.
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
-      tracker = new ActivityTracker({ 
+      tracker = new ActivityTracker({
         enableServerSync: true,
         syncBatchSize: 100, // High so it doesn't auto-sync
         debounceMs: 10,
@@ -296,7 +286,7 @@ describe('ActivityTracker', () => {
       for (let i = 0; i < 10; i++) {
         await Promise.resolve();
       }
-      
+
       // Run any remaining timers
       jest.runAllTimers();
       await Promise.resolve();
@@ -307,7 +297,7 @@ describe('ActivityTracker', () => {
         'Failed to sync events to server',
         expect.objectContaining({
           error: 'Network error',
-        })
+        }),
       );
     });
 
@@ -318,7 +308,7 @@ describe('ActivityTracker', () => {
 
       expect(mockLogger.info).not.toHaveBeenCalledWith(
         'activity',
-        'Activity tracking stopped'
+        'Activity tracking stopped',
       );
     });
   });
@@ -369,7 +359,7 @@ describe('ActivityTracker', () => {
         expect.objectContaining({
           type: 'click',
           timestamp: expect.any(Number),
-        })
+        }),
       );
     });
 
@@ -454,7 +444,7 @@ describe('ActivityTracker', () => {
               y: 250,
               button: 0,
             }),
-          })
+          }),
         );
       });
     });
@@ -473,7 +463,7 @@ describe('ActivityTracker', () => {
         expect(listener).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'scroll',
-          })
+          }),
         );
       });
     });
@@ -499,7 +489,7 @@ describe('ActivityTracker', () => {
               key: 'a',
               code: 'KeyA',
             }),
-          })
+          }),
         );
       });
 
@@ -541,7 +531,7 @@ describe('ActivityTracker', () => {
               x: 200,
               y: 300,
             }),
-          })
+          }),
         );
       });
 
@@ -561,7 +551,7 @@ describe('ActivityTracker', () => {
         expect(listener).not.toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'mousemove',
-          })
+          }),
         );
       });
     });
@@ -580,7 +570,7 @@ describe('ActivityTracker', () => {
         expect(listener).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'focus',
-          })
+          }),
         );
       });
 
@@ -597,7 +587,7 @@ describe('ActivityTracker', () => {
         expect(listener).toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'blur',
-          })
+          }),
         );
       });
     });
@@ -625,7 +615,7 @@ describe('ActivityTracker', () => {
               inputType: 'text',
               valueLength: 4,
             }),
-          })
+          }),
         );
 
         input.remove();
@@ -647,7 +637,7 @@ describe('ActivityTracker', () => {
         expect(listener).not.toHaveBeenCalledWith(
           expect.objectContaining({
             type: 'form_input',
-          })
+          }),
         );
 
         div.remove();
@@ -731,7 +721,7 @@ describe('ActivityTracker', () => {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-        })
+        }),
       );
     });
 
@@ -772,7 +762,7 @@ describe('ActivityTracker', () => {
       expect(mockFetch).not.toHaveBeenCalled();
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'activity',
-        'Cannot sync events: no session ID'
+        'Cannot sync events: no session ID',
       );
     });
 
@@ -796,7 +786,7 @@ describe('ActivityTracker', () => {
       expect(mockFetch).not.toHaveBeenCalled();
       expect(mockLogger.debug).toHaveBeenCalledWith(
         'activity',
-        'Skipping sync - user not authenticated'
+        'Skipping sync - user not authenticated',
       );
     });
 
@@ -816,7 +806,7 @@ describe('ActivityTracker', () => {
       document.dispatchEvent(clickEvent);
 
       jest.advanceTimersByTime(15);
-      
+
       // Multiple promise resolutions for:
       // processActivity -> syncToServer -> checkAuthentication -> fetch -> processSyncResponse
       for (let i = 0; i < 6; i++) {
@@ -825,12 +815,14 @@ describe('ActivityTracker', () => {
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'activity',
-        'Authentication failed, clearing event queue'
+        'Authentication failed, clearing event queue',
       );
     });
 
     it('should handle error response', async () => {
-      mockFetch.mockResolvedValueOnce(createMockFetchErrorResponse(500, 'Internal Server Error'));
+      mockFetch.mockResolvedValueOnce(
+        createMockFetchErrorResponse(500, 'Internal Server Error'),
+      );
 
       tracker = new ActivityTracker({
         enableServerSync: true,
@@ -845,7 +837,7 @@ describe('ActivityTracker', () => {
       document.dispatchEvent(clickEvent);
 
       jest.advanceTimersByTime(15);
-      
+
       // Multiple promise resolutions for async chain
       for (let i = 0; i < 8; i++) {
         await Promise.resolve();
@@ -873,7 +865,7 @@ describe('ActivityTracker', () => {
       document.dispatchEvent(clickEvent);
 
       jest.advanceTimersByTime(15);
-      
+
       // Multiple promise resolutions for async chain
       for (let i = 0; i < 8; i++) {
         await Promise.resolve();
@@ -884,7 +876,7 @@ describe('ActivityTracker', () => {
         'Failed to sync events to server',
         expect.objectContaining({
           error: 'Network error',
-        })
+        }),
       );
     });
 
@@ -919,7 +911,7 @@ describe('ActivityTracker', () => {
         'Some events failed to sync',
         expect.objectContaining({
           failedCount: 2,
-        })
+        }),
       );
     });
 
@@ -1024,7 +1016,7 @@ describe('ActivityTracker', () => {
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
           element: '#test-button',
-        })
+        }),
       );
 
       button.remove();
@@ -1047,7 +1039,7 @@ describe('ActivityTracker', () => {
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
           element: '.btn',
-        })
+        }),
       );
 
       button.remove();
@@ -1069,7 +1061,7 @@ describe('ActivityTracker', () => {
       expect(listener).toHaveBeenCalledWith(
         expect.objectContaining({
           element: 'button',
-        })
+        }),
       );
 
       button.remove();
@@ -1121,7 +1113,7 @@ describe('ActivityTracker', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'activity',
         'Error in activity listener:',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });

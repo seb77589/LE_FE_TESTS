@@ -31,12 +31,23 @@ jest.mock('@/lib/i18n', () => {
       numberFormat: { decimal: '.', thousands: ',', currency: '$' },
       pluralRules: () => 'other' as const,
     })),
-    getSupportedLocales: jest.fn(() => ['en', 'es', 'fr', 'de', 'ar', 'he', 'ja', 'zh']),
+    getSupportedLocales: jest.fn(() => [
+      'en',
+      'es',
+      'fr',
+      'de',
+      'ar',
+      'he',
+      'ja',
+      'zh',
+    ]),
     getLoadedLocales: jest.fn(() => ['en']),
     translate: jest.fn((key: string) => key),
     translatePlural: jest.fn((key: string) => key),
     formatNumber: jest.fn(String),
-    formatCurrency: jest.fn((amount: number, currency = 'USD') => `${currency} ${amount}`),
+    formatCurrency: jest.fn(
+      (amount: number, currency = 'USD') => `${currency} ${amount}`,
+    ),
     setLocale: jest.fn(() => Promise.resolve()),
     loadLocale: jest.fn(() => Promise.resolve()),
     isRTL: jest.fn(() => false),
@@ -98,7 +109,13 @@ jest.mock('@/lib/i18n', () => {
   });
 
   // Mock Trans component - matches actual TransProps interface
-  const Trans = ({ i18nKey, values }: { i18nKey: string; values?: Record<string, unknown> }) => {
+  const Trans = ({
+    i18nKey,
+    values,
+  }: {
+    i18nKey: string;
+    values?: Record<string, unknown>;
+  }) => {
     let text = i18nKey;
     if (values) {
       for (const [k, v] of Object.entries(values)) {
@@ -431,7 +448,7 @@ describe('i18n Module', () => {
       render(
         <I18nProvider locale="en" messages={{}}>
           <div>Test Child</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
       expect(screen.getByText('Test Child')).toBeInTheDocument();
     });
@@ -440,7 +457,7 @@ describe('i18n Module', () => {
       render(
         <I18nProvider locale="en" messages={{}}>
           <span>Content</span>
-        </I18nProvider>
+        </I18nProvider>,
       );
       expect(screen.getByTestId('i18n-provider')).toBeInTheDocument();
     });

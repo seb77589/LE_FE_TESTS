@@ -29,14 +29,19 @@ beforeAll(() => {
   globalThis.fetch = jest.fn(() =>
     Promise.resolve({
       ok: true,
-      json: () => Promise.resolve({
-        meta: { name: 'English', direction: 'ltr' },
-        translations: {
-          welcome: { title: 'Welcome', message: 'Hello {{name}}!' },
-          items: { zero: 'No items', one: '{{count}} item', other: '{{count}} items' },
-        },
-      }),
-    })
+      json: () =>
+        Promise.resolve({
+          meta: { name: 'English', direction: 'ltr' },
+          translations: {
+            welcome: { title: 'Welcome', message: 'Hello {{name}}!' },
+            items: {
+              zero: 'No items',
+              one: '{{count}} item',
+              other: '{{count}} items',
+            },
+          },
+        }),
+    }),
   ) as jest.Mock;
 
   // Mock localStorage
@@ -319,9 +324,11 @@ describe('InternationalizationManager Synchronous Methods', () => {
     });
 
     it('does not throw when updating interpolation', () => {
-      expect(() => i18n.updateConfig({
-        interpolation: { prefix: '${', suffix: '}' },
-      })).not.toThrow();
+      expect(() =>
+        i18n.updateConfig({
+          interpolation: { prefix: '${', suffix: '}' },
+        }),
+      ).not.toThrow();
     });
 
     it('does not throw when updating persistLocale', () => {
@@ -336,32 +343,24 @@ describe('InternationalizationManager Synchronous Methods', () => {
 
 describe('i18n Concurrent Operations', () => {
   it('handles concurrent translate calls', () => {
-    const results = Array.from({ length: 100 }, (_, i) =>
-      i18n.translate(`key.${i}`)
-    );
+    const results = Array.from({ length: 100 }, (_, i) => i18n.translate(`key.${i}`));
     expect(results.every((r) => typeof r === 'string')).toBe(true);
     expect(results.length).toBe(100);
   });
 
   it('handles concurrent formatNumber calls', () => {
-    const results = Array.from({ length: 100 }, (_, i) =>
-      i18n.formatNumber(i * 1000)
-    );
+    const results = Array.from({ length: 100 }, (_, i) => i18n.formatNumber(i * 1000));
     expect(results.every((r) => typeof r === 'string')).toBe(true);
     expect(results.length).toBe(100);
   });
 
   it('handles concurrent formatCurrency calls', () => {
-    const results = Array.from({ length: 100 }, (_, i) =>
-      i18n.formatCurrency(i * 10)
-    );
+    const results = Array.from({ length: 100 }, (_, i) => i18n.formatCurrency(i * 10));
     expect(results.every((r) => typeof r === 'string')).toBe(true);
   });
 
   it('handles concurrent getSupportedLocales calls', () => {
-    const results = Array.from({ length: 100 }, () =>
-      i18n.getSupportedLocales()
-    );
+    const results = Array.from({ length: 100 }, () => i18n.getSupportedLocales());
     expect(results.every((r) => Array.isArray(r))).toBe(true);
     expect(results.every((r) => r.length === 8)).toBe(true);
   });

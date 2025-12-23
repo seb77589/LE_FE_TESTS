@@ -43,7 +43,8 @@ const mockResults: SearchResultItem[] = [
       original_filename: 'agreement.docx',
       file_path: '/uploads/agreement.docx',
       file_size: 512 * 1024, // 512KB
-      mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      mime_type:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       upload_date: '2024-12-02T14:30:00Z',
       status: 'processed',
       owner_id: 1,
@@ -65,7 +66,9 @@ describe('SearchResults', () => {
     });
 
     it('renders singular "document" when total is 1', () => {
-      const { container } = render(<SearchResults results={[mockResults[0]]} total={1} />);
+      const { container } = render(
+        <SearchResults results={[mockResults[0]]} total={1} />,
+      );
 
       // The text is "Found 1 document" vs "Found 2 documents"
       expect(container.textContent).toContain('Found');
@@ -91,9 +94,7 @@ describe('SearchResults', () => {
       render(<SearchResults results={[]} query="missing" />);
 
       expect(screen.getByText('No results found')).toBeInTheDocument();
-      expect(
-        screen.getByText(/No documents match "missing"/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/No documents match "missing"/)).toBeInTheDocument();
     });
 
     it('shows empty state message for no query', () => {
@@ -101,7 +102,7 @@ describe('SearchResults', () => {
 
       expect(screen.getByText('No results found')).toBeInTheDocument();
       expect(
-        screen.getByText('Enter a search query to find documents.')
+        screen.getByText('Enter a search query to find documents.'),
       ).toBeInTheDocument();
     });
   });
@@ -140,9 +141,7 @@ describe('SearchResults', () => {
   describe('actions', () => {
     it('calls onPreview when preview button clicked', () => {
       const onPreview = jest.fn();
-      render(
-        <SearchResults results={mockResults} total={2} onPreview={onPreview} />
-      );
+      render(<SearchResults results={mockResults} total={2} onPreview={onPreview} />);
 
       const previewButtons = screen.getAllByTitle('Preview');
       fireEvent.click(previewButtons[0]);
@@ -152,9 +151,7 @@ describe('SearchResults', () => {
 
     it('calls onDownload when download button clicked', () => {
       const onDownload = jest.fn();
-      render(
-        <SearchResults results={mockResults} total={2} onDownload={onDownload} />
-      );
+      render(<SearchResults results={mockResults} total={2} onDownload={onDownload} />);
 
       const downloadButtons = screen.getAllByTitle('Download');
       fireEvent.click(downloadButtons[0]);
@@ -164,9 +161,7 @@ describe('SearchResults', () => {
 
     it('calls onShare when share button clicked', () => {
       const onShare = jest.fn();
-      render(
-        <SearchResults results={mockResults} total={2} onShare={onShare} />
-      );
+      render(<SearchResults results={mockResults} total={2} onShare={onShare} />);
 
       const shareButtons = screen.getAllByTitle('Share');
       fireEvent.click(shareButtons[0]);
@@ -193,7 +188,7 @@ describe('SearchResults', () => {
       ];
 
       const { container } = render(
-        <SearchResults results={highRelevanceResult} total={1} />
+        <SearchResults results={highRelevanceResult} total={1} />,
       );
 
       const badge = container.querySelector('.bg-green-100');
@@ -209,7 +204,7 @@ describe('SearchResults', () => {
       ];
 
       const { container } = render(
-        <SearchResults results={mediumRelevanceResult} total={1} />
+        <SearchResults results={mediumRelevanceResult} total={1} />,
       );
 
       const badge = container.querySelector('.bg-yellow-100');
@@ -225,7 +220,7 @@ describe('SearchResults', () => {
       ];
 
       const { container } = render(
-        <SearchResults results={lowRelevanceResult} total={1} />
+        <SearchResults results={lowRelevanceResult} total={1} />,
       );
 
       const badge = container.querySelector('.bg-gray-100');

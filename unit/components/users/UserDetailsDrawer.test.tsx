@@ -49,7 +49,7 @@ jest.mock('@/lib/logging', () => ({
 
 jest.mock('@/lib/errors', () => ({
   extractErrorMessage: jest.fn((err, defaultMsg) =>
-    err instanceof Error ? err.message : defaultMsg
+    err instanceof Error ? err.message : defaultMsg,
   ),
 }));
 
@@ -129,7 +129,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={false}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -141,7 +141,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
@@ -153,7 +153,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByText('User Details')).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       const overlay = document.querySelector('[aria-hidden="true"]');
       expect(overlay).toBeInTheDocument();
@@ -181,7 +181,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('Test User')).toBeInTheDocument();
     });
@@ -193,7 +193,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('noname')).toBeInTheDocument();
     });
@@ -205,7 +205,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('test@example.com')).toBeInTheDocument();
     });
@@ -217,7 +217,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('1')).toBeInTheDocument();
     });
@@ -229,7 +229,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('Active')).toBeInTheDocument();
     });
@@ -241,7 +241,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('Inactive')).toBeInTheDocument();
     });
@@ -253,7 +253,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('Verified')).toBeInTheDocument();
     });
@@ -265,7 +265,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.queryByText('Verified')).not.toBeInTheDocument();
     });
@@ -277,7 +277,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText(/Jan.*15.*2024/)).toBeInTheDocument();
     });
@@ -290,7 +290,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByText('Never')).toBeInTheDocument();
     });
@@ -302,7 +302,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       // Should have dash placeholder for missing dates
       const dashes = screen.getAllByText('—');
@@ -318,7 +318,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByLabelText(/role/i)).toBeInTheDocument();
     });
@@ -330,7 +330,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       const select = screen.getByLabelText(/role/i);
       expect(select).toBeInTheDocument();
@@ -357,7 +357,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       expect(screen.getByRole('option', { name: 'Super Admin' })).toBeInTheDocument();
     });
@@ -369,7 +369,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       const select = screen.getByLabelText(/role/i);
       expect(select).toBeDisabled();
@@ -382,9 +382,11 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
-      expect(screen.getByText(/only superadmins can change user roles/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/only superadmins can change user roles/i),
+      ).toBeInTheDocument();
     });
 
     it('should enable role select for superadmin users', () => {
@@ -406,7 +408,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
       const select = screen.getByLabelText(/role/i);
       expect(select).not.toBeDisabled();
@@ -432,7 +434,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText(/role/i);
@@ -460,10 +462,12 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      expect(screen.queryByRole('button', { name: /^update$/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /^update$/i }),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -489,7 +493,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText(/role/i);
@@ -499,7 +503,9 @@ describe('UserDetailsDrawer', () => {
       await user.click(updateButton);
 
       await waitFor(() => {
-        expect(mockApi.put).toHaveBeenCalledWith('/api/v1/users/1', { role: 'MANAGER' });
+        expect(mockApi.put).toHaveBeenCalledWith('/api/v1/users/1', {
+          role: 'MANAGER',
+        });
       });
     });
 
@@ -524,7 +530,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText(/role/i);
@@ -559,7 +565,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText(/role/i);
@@ -594,7 +600,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText(/role/i);
@@ -604,7 +610,9 @@ describe('UserDetailsDrawer', () => {
       await user.click(updateButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to update role. Please try again.')).toBeInTheDocument();
+        expect(
+          screen.getByText('Failed to update role. Please try again.'),
+        ).toBeInTheDocument();
       });
     });
 
@@ -624,7 +632,10 @@ describe('UserDetailsDrawer', () => {
 
       let resolveUpdate: (value: any) => void;
       mockApi.put.mockImplementation(
-        () => new Promise((resolve) => { resolveUpdate = resolve; })
+        () =>
+          new Promise((resolve) => {
+            resolveUpdate = resolve;
+          }),
       );
 
       render(
@@ -633,7 +644,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText(/role/i);
@@ -669,7 +680,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // The ID field should show dash
@@ -697,7 +708,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       expect(screen.getByText('Admin Actions')).toBeInTheDocument();
@@ -710,7 +721,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       expect(screen.queryByText('Admin Actions')).not.toBeInTheDocument();
@@ -735,7 +746,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       expect(screen.getByRole('button', { name: /force logout/i })).toBeInTheDocument();
@@ -762,7 +773,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const forceLogoutButton = screen.getByRole('button', { name: /force logout/i });
@@ -794,7 +805,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const forceLogoutButton = screen.getByRole('button', { name: /force logout/i });
@@ -826,14 +837,16 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const forceLogoutButton = screen.getByRole('button', { name: /force logout/i });
       await user.click(forceLogoutButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to force logout. Please try again.')).toBeInTheDocument();
+        expect(
+          screen.getByText('Failed to force logout. Please try again.'),
+        ).toBeInTheDocument();
       });
     });
 
@@ -853,7 +866,10 @@ describe('UserDetailsDrawer', () => {
 
       let resolveLogout: (value: any) => void;
       mockApi.post.mockImplementation(
-        () => new Promise((resolve) => { resolveLogout = resolve; })
+        () =>
+          new Promise((resolve) => {
+            resolveLogout = resolve;
+          }),
       );
 
       render(
@@ -862,7 +878,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const forceLogoutButton = screen.getByRole('button', { name: /force logout/i });
@@ -895,10 +911,12 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      expect(screen.getByRole('button', { name: /send verification email/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /send verification email/i }),
+      ).toBeInTheDocument();
     });
 
     it('should not show Send Verification Email button for verified users', () => {
@@ -920,10 +938,12 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      expect(screen.queryByRole('button', { name: /send verification email/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('button', { name: /send verification email/i }),
+      ).not.toBeInTheDocument();
     });
 
     it('should call send verification API when button is clicked', async () => {
@@ -947,14 +967,18 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      const sendVerifyButton = screen.getByRole('button', { name: /send verification email/i });
+      const sendVerifyButton = screen.getByRole('button', {
+        name: /send verification email/i,
+      });
       await user.click(sendVerifyButton);
 
       await waitFor(() => {
-        expect(mockApi.post).toHaveBeenCalledWith('/api/v1/admin/users/2/send-verification');
+        expect(mockApi.post).toHaveBeenCalledWith(
+          '/api/v1/admin/users/2/send-verification',
+        );
       });
     });
 
@@ -979,14 +1003,18 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      const sendVerifyButton = screen.getByRole('button', { name: /send verification email/i });
+      const sendVerifyButton = screen.getByRole('button', {
+        name: /send verification email/i,
+      });
       await user.click(sendVerifyButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Verification email sent successfully')).toBeInTheDocument();
+        expect(
+          screen.getByText('Verification email sent successfully'),
+        ).toBeInTheDocument();
       });
     });
 
@@ -1011,14 +1039,18 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      const sendVerifyButton = screen.getByRole('button', { name: /send verification email/i });
+      const sendVerifyButton = screen.getByRole('button', {
+        name: /send verification email/i,
+      });
       await user.click(sendVerifyButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Failed to send verification email. Please try again.')).toBeInTheDocument();
+        expect(
+          screen.getByText('Failed to send verification email. Please try again.'),
+        ).toBeInTheDocument();
       });
     });
 
@@ -1038,7 +1070,10 @@ describe('UserDetailsDrawer', () => {
 
       let resolveSend: (value: any) => void;
       mockApi.post.mockImplementation(
-        () => new Promise((resolve) => { resolveSend = resolve; })
+        () =>
+          new Promise((resolve) => {
+            resolveSend = resolve;
+          }),
       );
 
       render(
@@ -1047,10 +1082,12 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
-      const sendVerifyButton = screen.getByRole('button', { name: /send verification email/i });
+      const sendVerifyButton = screen.getByRole('button', {
+        name: /send verification email/i,
+      });
       await user.click(sendVerifyButton);
 
       expect(screen.getByText('Sending...')).toBeInTheDocument();
@@ -1069,7 +1106,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const closeButton = screen.getByRole('button', { name: /close drawer/i });
@@ -1086,7 +1123,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const overlay = document.querySelector('[aria-hidden="true"]');
@@ -1103,7 +1140,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const dialog = screen.getByRole('dialog');
@@ -1121,7 +1158,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Rerender with different user
@@ -1131,11 +1168,13 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Error should be cleared (component resets on user change)
-      expect(screen.queryByText('Failed to update role. Please try again.')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Failed to update role. Please try again.'),
+      ).not.toBeInTheDocument();
     });
 
     it('should update selectedRole when user changes', () => {
@@ -1145,7 +1184,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const managerUser = { ...mockUser, id: 10, role: 'MANAGER' };
@@ -1155,7 +1194,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       const select = screen.getByLabelText<HTMLSelectElement>(/role/i);
@@ -1179,13 +1218,7 @@ describe('UserDetailsDrawer', () => {
       } as any);
       mockApi.put.mockResolvedValue({ data: { success: true } });
 
-      render(
-        <UserDetailsDrawer
-          user={mockUser}
-          isOpen={true}
-          onClose={mockOnClose}
-        />
-      );
+      render(<UserDetailsDrawer user={mockUser} isOpen={true} onClose={mockOnClose} />);
 
       const select = screen.getByLabelText(/role/i);
       await user.selectOptions(select, 'MANAGER');
@@ -1213,7 +1246,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Should display dash for missing name
@@ -1238,7 +1271,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Role select should be disabled for undefined role (not superadmin)
@@ -1270,7 +1303,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Change role to trigger update
@@ -1310,7 +1343,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Role select should show current role (ASSISTANT)
@@ -1346,7 +1379,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Select should be rendered with empty value when role is null
@@ -1370,20 +1403,16 @@ describe('UserDetailsDrawer', () => {
       mockApi.post.mockResolvedValueOnce({ data: { success: true } });
 
       // Render without onUpdate callback
-      render(
-        <UserDetailsDrawer
-          user={mockUser}
-          isOpen={true}
-          onClose={mockOnClose}
-        />
-      );
+      render(<UserDetailsDrawer user={mockUser} isOpen={true} onClose={mockOnClose} />);
 
       // Click force logout button
       const forceLogoutButton = screen.getByText('Force Logout');
       fireEvent.click(forceLogoutButton);
 
       await waitFor(() => {
-        expect(mockApi.post).toHaveBeenCalledWith(`/api/v1/admin/users/${mockUser.id}/force-logout`);
+        expect(mockApi.post).toHaveBeenCalledWith(
+          `/api/v1/admin/users/${mockUser.id}/force-logout`,
+        );
         expect(screen.getByText('User logged out successfully')).toBeInTheDocument();
       });
     });
@@ -1409,7 +1438,7 @@ describe('UserDetailsDrawer', () => {
           user={mockUnverifiedUser}
           isOpen={true}
           onClose={mockOnClose}
-        />
+        />,
       );
 
       // Click send verification button
@@ -1417,8 +1446,12 @@ describe('UserDetailsDrawer', () => {
       fireEvent.click(verificationButton);
 
       await waitFor(() => {
-        expect(mockApi.post).toHaveBeenCalledWith(`/api/v1/admin/users/${mockUnverifiedUser.id}/send-verification`);
-        expect(screen.getByText('Verification email sent successfully')).toBeInTheDocument();
+        expect(mockApi.post).toHaveBeenCalledWith(
+          `/api/v1/admin/users/${mockUnverifiedUser.id}/send-verification`,
+        );
+        expect(
+          screen.getByText('Verification email sent successfully'),
+        ).toBeInTheDocument();
       });
     });
 
@@ -1438,13 +1471,7 @@ describe('UserDetailsDrawer', () => {
       mockApi.put.mockResolvedValueOnce({ data: { success: true } });
 
       // Render without onUpdate callback
-      render(
-        <UserDetailsDrawer
-          user={mockUser}
-          isOpen={true}
-          onClose={mockOnClose}
-        />
-      );
+      render(<UserDetailsDrawer user={mockUser} isOpen={true} onClose={mockOnClose} />);
 
       // Change role to MANAGER (different from current ASSISTANT)
       const select = screen.getByLabelText(/role/i);
@@ -1460,7 +1487,9 @@ describe('UserDetailsDrawer', () => {
       fireEvent.click(updateButton);
 
       await waitFor(() => {
-        expect(mockApi.put).toHaveBeenCalledWith(`/api/v1/users/${mockUser.id}`, { role: 'MANAGER' });
+        expect(mockApi.put).toHaveBeenCalledWith(`/api/v1/users/${mockUser.id}`, {
+          role: 'MANAGER',
+        });
         expect(screen.getByText('Role updated successfully')).toBeInTheDocument();
       });
     });
@@ -1489,7 +1518,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Try to click force logout if it exists
@@ -1497,7 +1526,7 @@ describe('UserDetailsDrawer', () => {
       if (forceLogoutButton) {
         mockApi.post.mockClear();
         fireEvent.click(forceLogoutButton);
-        
+
         // API should not be called because user.id is undefined
         expect(mockApi.post).not.toHaveBeenCalled();
       }
@@ -1527,7 +1556,7 @@ describe('UserDetailsDrawer', () => {
           isOpen={true}
           onClose={mockOnClose}
           onUpdate={mockOnUpdate}
-        />
+        />,
       );
 
       // Try to click send verification if it exists
@@ -1535,7 +1564,7 @@ describe('UserDetailsDrawer', () => {
       if (verificationButton) {
         mockApi.post.mockClear();
         fireEvent.click(verificationButton);
-        
+
         // API should not be called because user.id is undefined
         expect(mockApi.post).not.toHaveBeenCalled();
       }

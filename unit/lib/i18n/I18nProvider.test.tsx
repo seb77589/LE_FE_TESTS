@@ -17,7 +17,11 @@ import I18nProvider from '@/lib/i18n/I18nProvider';
 // Mock next-intl
 jest.mock('next-intl', () => ({
   NextIntlClientProvider: ({ children, locale, messages }: any) => (
-    <div data-testid="next-intl-provider" data-locale={locale} data-messages={JSON.stringify(messages)}>
+    <div
+      data-testid="next-intl-provider"
+      data-locale={locale}
+      data-messages={JSON.stringify(messages)}
+    >
       {children}
     </div>
   ),
@@ -44,7 +48,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Test Child</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Test Child')).toBeInTheDocument();
@@ -57,7 +61,7 @@ describe('I18nProvider', () => {
           <div>First Child</div>
           <div>Second Child</div>
           <span>Third Child</span>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('First Child')).toBeInTheDocument();
@@ -71,11 +75,10 @@ describe('I18nProvider', () => {
           <div>
             Parent
             <div>
-              Child{' '}
-              <span>Nested Child</span>
+              Child <span>Nested Child</span>
             </div>
           </div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Parent')).toBeInTheDocument();
@@ -87,18 +90,20 @@ describe('I18nProvider', () => {
       const { container } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <></>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toBeInTheDocument();
-      expect(container.querySelector('[data-testid="next-intl-provider"]')).toBeEmptyDOMElement();
+      expect(
+        container.querySelector('[data-testid="next-intl-provider"]'),
+      ).toBeEmptyDOMElement();
     });
 
     it('should render with null children (React fragments)', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           {null}
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toBeInTheDocument();
@@ -110,7 +115,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -124,7 +129,7 @@ describe('I18nProvider', () => {
         const { unmount } = render(
           <I18nProvider locale={locale} messages={mockMessages}>
             <div>{locale}</div>
-          </I18nProvider>
+          </I18nProvider>,
         );
 
         const provider = screen.getByTestId('next-intl-provider');
@@ -137,7 +142,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en-US" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -148,7 +153,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="zh-Hans-CN" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -159,7 +164,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -172,7 +177,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId<HTMLElement>('next-intl-provider');
@@ -186,7 +191,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={emptyMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -197,7 +202,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={null}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -208,7 +213,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={undefined}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -232,7 +237,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={nestedMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -252,11 +257,14 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={specialMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
-      expect(provider).toHaveAttribute('data-messages', JSON.stringify(specialMessages));
+      expect(provider).toHaveAttribute(
+        'data-messages',
+        JSON.stringify(specialMessages),
+      );
     });
 
     it('should handle large messages object', () => {
@@ -267,7 +275,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={largeMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -288,7 +296,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <ChildComponent />
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Welcome')).toBeInTheDocument();
@@ -306,12 +314,14 @@ describe('I18nProvider', () => {
           <I18nProvider locale="es" messages={esMessages}>
             <div data-testid="es-provider">Spanish Content</div>
           </I18nProvider>
-        </>
+        </>,
       );
 
       expect(screen.getByTestId('en-provider')).toBeInTheDocument();
       expect(screen.getByTestId('es-provider')).toBeInTheDocument();
-      expect(container.querySelectorAll('[data-testid="next-intl-provider"]')).toHaveLength(2);
+      expect(
+        container.querySelectorAll('[data-testid="next-intl-provider"]'),
+      ).toHaveLength(2);
     });
 
     it('should support nested providers (override scenario)', () => {
@@ -324,7 +334,7 @@ describe('I18nProvider', () => {
           <I18nProvider locale="es" messages={innerMessages}>
             <div>Inner Provider</div>
           </I18nProvider>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const providers = screen.getAllByTestId('next-intl-provider');
@@ -385,19 +395,19 @@ describe('I18nProvider', () => {
       const { rerender } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       rerender(
         <I18nProvider locale="es" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       rerender(
         <I18nProvider locale="fr" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -412,19 +422,19 @@ describe('I18nProvider', () => {
       const { rerender } = render(
         <I18nProvider locale="en" messages={messages1}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       rerender(
         <I18nProvider locale="en" messages={messages2}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       rerender(
         <I18nProvider locale="en" messages={messages3}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -435,7 +445,7 @@ describe('I18nProvider', () => {
       const { rerender } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Original Child</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Original Child')).toBeInTheDocument();
@@ -443,7 +453,7 @@ describe('I18nProvider', () => {
       rerender(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Updated Child</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.queryByText('Original Child')).not.toBeInTheDocument();
@@ -454,7 +464,7 @@ describe('I18nProvider', () => {
       const { unmount } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Content')).toBeInTheDocument();
@@ -469,7 +479,7 @@ describe('I18nProvider', () => {
             <div>Fragment Child 1</div>
             <div>Fragment Child 2</div>
           </>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Fragment Child 1')).toBeInTheDocument();
@@ -482,7 +492,7 @@ describe('I18nProvider', () => {
         <I18nProvider locale="en" messages={mockMessages}>
           {showHidden && <div>Hidden</div>}
           <div>Visible</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.queryByText('Hidden')).not.toBeInTheDocument();
@@ -495,7 +505,7 @@ describe('I18nProvider', () => {
         <I18nProvider locale="en" messages={mockMessages}>
           {condition ? <div>Conditional</div> : null}
           <div>Always Visible</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.queryByText('Conditional')).not.toBeInTheDocument();
@@ -511,7 +521,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           {validChildren}
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Valid')).toBeInTheDocument();
@@ -524,7 +534,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale={validLocale} messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -538,7 +548,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={validMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -549,7 +559,7 @@ describe('I18nProvider', () => {
   describe('Performance Characteristics', () => {
     it('should render efficiently with minimal re-renders', () => {
       const renderSpy = jest.fn();
-      
+
       const TestChild = () => {
         renderSpy();
         return <div>Child</div>;
@@ -558,7 +568,7 @@ describe('I18nProvider', () => {
       const { rerender } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <TestChild />
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(renderSpy).toHaveBeenCalledTimes(1);
@@ -567,7 +577,7 @@ describe('I18nProvider', () => {
       rerender(
         <I18nProvider locale="en" messages={mockMessages}>
           <TestChild />
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       // Child should re-render (no memoization in simple wrapper)
@@ -575,16 +585,14 @@ describe('I18nProvider', () => {
     });
 
     it('should handle large component trees efficiently', () => {
-      const items = Array.from({ length: 100 }, (_, i) => (
-        <div key={i}>Item {i}</div>
-      ));
+      const items = Array.from({ length: 100 }, (_, i) => <div key={i}>Item {i}</div>);
 
       const LargeTree = () => <div>{items}</div>;
 
       const { container } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <LargeTree />
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(container.querySelectorAll('div').length).toBeGreaterThan(100);

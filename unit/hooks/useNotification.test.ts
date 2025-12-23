@@ -115,7 +115,9 @@ describe('useNotification Hook Tests', () => {
         isValidating: false,
       } as any);
 
-      const { result: _result } = renderHook(() => useNotification({ filter: 'unread' }));
+      const { result: _result } = renderHook(() =>
+        useNotification({ filter: 'unread' }),
+      );
 
       expect(mockUseSWR).toHaveBeenCalledWith(
         buildUrl('/api/v1/notifications/unread'),

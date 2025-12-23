@@ -29,7 +29,16 @@ jest.mock('recharts', () => ({
       {children}
     </div>
   ),
-  Line: ({ type, dataKey, stroke, strokeWidth, dot, activeDot, name, ...props }: any) => (
+  Line: ({
+    type,
+    dataKey,
+    stroke,
+    strokeWidth,
+    dot,
+    activeDot,
+    name,
+    ...props
+  }: any) => (
     <div
       data-testid={`line-${dataKey}`}
       data-type={type}
@@ -57,9 +66,7 @@ jest.mock('recharts', () => ({
   Tooltip: ({ contentStyle, ...props }: any) => (
     <div data-testid="tooltip" {...props} />
   ),
-  Legend: ({ wrapperStyle, ...props }: any) => (
-    <div data-testid="legend" {...props} />
-  ),
+  Legend: ({ wrapperStyle, ...props }: any) => <div data-testid="legend" {...props} />,
 }));
 
 // Mock ChartContainer
@@ -92,11 +99,11 @@ describe('UsersOverTimeChart', () => {
   describe('rendering', () => {
     it('should render without props using sample data', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.getByTestId('chart-container')).toBeInTheDocument();
     });
 
@@ -105,39 +112,39 @@ describe('UsersOverTimeChart', () => {
         { date: 'Q1', users: 100, activeUsers: 80 },
         { date: 'Q2', users: 200, activeUsers: 160 },
       ];
-      
+
       render(<UsersOverTimeChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.getByTestId('chart-container')).toBeInTheDocument();
     });
 
     it('should render loading state when isLoading is true', () => {
       render(<UsersOverTimeChart isLoading={true} />);
-      
+
       expect(screen.getByTestId('chart-loading')).toBeInTheDocument();
     });
 
     it('should not render loading state when isLoading is false', async () => {
       render(<UsersOverTimeChart isLoading={false} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.queryByTestId('chart-loading')).not.toBeInTheDocument();
     });
 
     it('should render LineChart component', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('line-chart')).toBeInTheDocument();
       });
@@ -145,11 +152,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render two Line components', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('line-users')).toBeInTheDocument();
         expect(screen.getByTestId('line-activeUsers')).toBeInTheDocument();
@@ -158,11 +165,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render XAxis with date dataKey', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const xAxis = screen.getByTestId('x-axis');
         expect(xAxis).toHaveAttribute('data-datakey', 'date');
@@ -171,11 +178,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render YAxis', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('y-axis')).toBeInTheDocument();
       });
@@ -183,11 +190,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render CartesianGrid', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('cartesian-grid')).toBeInTheDocument();
       });
@@ -195,11 +202,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render Tooltip', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('tooltip')).toBeInTheDocument();
       });
@@ -207,11 +214,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render Legend', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('legend')).toBeInTheDocument();
       });
@@ -221,11 +228,11 @@ describe('UsersOverTimeChart', () => {
   describe('users line properties', () => {
     it('should render users line with correct dataKey', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const usersLine = screen.getByTestId('line-users');
         expect(usersLine).toHaveAttribute('data-datakey', 'users');
@@ -234,11 +241,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render users line with correct stroke color (blue)', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const usersLine = screen.getByTestId('line-users');
         expect(usersLine).toHaveAttribute('data-stroke', '#3b82f6');
@@ -247,11 +254,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render users line with correct name', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const usersLine = screen.getByTestId('line-users');
         expect(usersLine).toHaveAttribute('data-name', 'Total Users');
@@ -260,11 +267,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render users line with monotone type', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const usersLine = screen.getByTestId('line-users');
         expect(usersLine).toHaveAttribute('data-type', 'monotone');
@@ -273,11 +280,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render users line with correct stroke width', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const usersLine = screen.getByTestId('line-users');
         expect(usersLine).toHaveAttribute('data-strokewidth', '2');
@@ -288,11 +295,11 @@ describe('UsersOverTimeChart', () => {
   describe('activeUsers line properties', () => {
     it('should render activeUsers line with correct dataKey', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const activeUsersLine = screen.getByTestId('line-activeUsers');
         expect(activeUsersLine).toHaveAttribute('data-datakey', 'activeUsers');
@@ -301,11 +308,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render activeUsers line with correct stroke color (green)', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const activeUsersLine = screen.getByTestId('line-activeUsers');
         expect(activeUsersLine).toHaveAttribute('data-stroke', '#10b981');
@@ -314,11 +321,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render activeUsers line with correct name', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const activeUsersLine = screen.getByTestId('line-activeUsers');
         expect(activeUsersLine).toHaveAttribute('data-name', 'Active Users');
@@ -327,11 +334,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render activeUsers line with monotone type', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const activeUsersLine = screen.getByTestId('line-activeUsers');
         expect(activeUsersLine).toHaveAttribute('data-type', 'monotone');
@@ -340,11 +347,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render activeUsers line with correct stroke width', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const activeUsersLine = screen.getByTestId('line-activeUsers');
         expect(activeUsersLine).toHaveAttribute('data-strokewidth', '2');
@@ -355,11 +362,11 @@ describe('UsersOverTimeChart', () => {
   describe('data handling', () => {
     it('should use sample data when data prop is undefined', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const lineChart = screen.getByTestId('line-chart');
         expect(lineChart).toHaveAttribute('data-length', '6');
@@ -373,13 +380,13 @@ describe('UsersOverTimeChart', () => {
         { date: 'Mar', users: 30, activeUsers: 24 },
         { date: 'Apr', users: 40, activeUsers: 32 },
       ];
-      
+
       render(<UsersOverTimeChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const lineChart = screen.getByTestId('line-chart');
         expect(lineChart).toHaveAttribute('data-length', '4');
@@ -388,11 +395,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should handle empty data array', async () => {
       render(<UsersOverTimeChart data={[]} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const lineChart = screen.getByTestId('line-chart');
         expect(lineChart).toHaveAttribute('data-length', '0');
@@ -405,13 +412,13 @@ describe('UsersOverTimeChart', () => {
         { date: 'B', users: 10000, activeUsers: 5000 },
         { date: 'C', users: 500, activeUsers: 250 },
       ];
-      
+
       render(<UsersOverTimeChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('line-chart')).toBeInTheDocument();
       });
@@ -422,13 +429,13 @@ describe('UsersOverTimeChart', () => {
         { date: 'Jan', users: 100, activeUsers: 100 },
         { date: 'Feb', users: 200, activeUsers: 200 },
       ];
-      
+
       render(<UsersOverTimeChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('line-chart')).toBeInTheDocument();
       });
@@ -439,13 +446,13 @@ describe('UsersOverTimeChart', () => {
         { date: 'Jan', users: 100, activeUsers: 0 },
         { date: 'Feb', users: 200, activeUsers: 0 },
       ];
-      
+
       render(<UsersOverTimeChart data={customData} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('line-chart')).toBeInTheDocument();
       });
@@ -455,17 +462,17 @@ describe('UsersOverTimeChart', () => {
   describe('ChartWrapper deferred rendering', () => {
     it('should not render chart immediately', () => {
       render(<UsersOverTimeChart />);
-      
+
       expect(screen.queryByTestId('line-chart')).not.toBeInTheDocument();
     });
 
     it('should render chart after RAF chain completes', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('line-chart')).toBeInTheDocument();
       });
@@ -474,36 +481,38 @@ describe('UsersOverTimeChart', () => {
 
   describe('props', () => {
     it('should accept readonly data prop', async () => {
-      const readonlyData: readonly { date: string; users: number; activeUsers: number }[] = [
-        { date: 'Jan', users: 100, activeUsers: 80 },
-      ];
-      
+      const readonlyData: readonly {
+        date: string;
+        users: number;
+        activeUsers: number;
+      }[] = [{ date: 'Jan', users: 100, activeUsers: 80 }];
+
       render(<UsersOverTimeChart data={readonlyData as any} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.getByTestId('chart-container')).toBeInTheDocument();
     });
 
     it('should handle isLoading prop changes', async () => {
       const { rerender } = render(<UsersOverTimeChart isLoading={true} />);
-      
+
       expect(screen.getByTestId('chart-loading')).toBeInTheDocument();
-      
+
       rerender(<UsersOverTimeChart isLoading={false} />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       expect(screen.queryByTestId('chart-loading')).not.toBeInTheDocument();
     });
 
     it('should default isLoading to false', async () => {
       render(<UsersOverTimeChart />);
-      
+
       expect(screen.queryByTestId('chart-loading')).not.toBeInTheDocument();
     });
   });
@@ -511,11 +520,11 @@ describe('UsersOverTimeChart', () => {
   describe('styling', () => {
     it('should render XAxis with correct stroke color', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const xAxis = screen.getByTestId('x-axis');
         expect(xAxis).toHaveAttribute('data-stroke', '#6b7280');
@@ -524,11 +533,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render YAxis with correct stroke color', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const yAxis = screen.getByTestId('y-axis');
         expect(yAxis).toHaveAttribute('data-stroke', '#6b7280');
@@ -537,11 +546,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render CartesianGrid with correct stroke dasharray', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const grid = screen.getByTestId('cartesian-grid');
         expect(grid).toHaveAttribute('data-strokedasharray', '3 3');
@@ -550,11 +559,11 @@ describe('UsersOverTimeChart', () => {
 
     it('should render CartesianGrid with correct stroke color', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const grid = screen.getByTestId('cartesian-grid');
         expect(grid).toHaveAttribute('data-stroke', '#e5e7eb');
@@ -565,11 +574,11 @@ describe('UsersOverTimeChart', () => {
   describe('sample data', () => {
     it('should have correct sample data values', async () => {
       render(<UsersOverTimeChart />);
-      
+
       await act(async () => {
         jest.runAllTimers();
       });
-      
+
       await waitFor(() => {
         const lineChart = screen.getByTestId('line-chart');
         // Sample data has 6 months (Jan-Jun)

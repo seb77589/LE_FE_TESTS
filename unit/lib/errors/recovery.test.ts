@@ -22,11 +22,7 @@ jest.mock('@/lib/logging', () => ({
   },
 }));
 
-import {
-  retryWithBackoff,
-  withFallback,
-  NetworkMonitor,
-} from '@/lib/errors/recovery';
+import { retryWithBackoff, withFallback, NetworkMonitor } from '@/lib/errors/recovery';
 import logger from '@/lib/logging';
 
 const mockLogger = logger as jest.Mocked<typeof logger>;
@@ -52,7 +48,8 @@ describe('errors/recovery', () => {
     });
 
     it('retries on failure and eventually succeeds', async () => {
-      const operation = jest.fn()
+      const operation = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Attempt 1'))
         .mockRejectedValueOnce(new Error('Attempt 2'))
         .mockResolvedValueOnce('success');
@@ -76,12 +73,15 @@ describe('errors/recovery', () => {
       // Use real timers for this test to avoid async timing issues
       jest.useRealTimers();
 
-      await expect(retryWithBackoff(operation, 2, 10)).rejects.toThrow('Persistent failure');
+      await expect(retryWithBackoff(operation, 2, 10)).rejects.toThrow(
+        'Persistent failure',
+      );
       expect(operation).toHaveBeenCalledTimes(2);
     });
 
     it('uses exponential backoff delays', async () => {
-      const operation = jest.fn()
+      const operation = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Fail 1'))
         .mockRejectedValueOnce(new Error('Fail 2'))
         .mockResolvedValueOnce('success');
@@ -116,7 +116,8 @@ describe('errors/recovery', () => {
 
     it('retries on 408 Request Timeout', async () => {
       const timeoutError = { response: { status: 408 } };
-      const operation = jest.fn()
+      const operation = jest
+        .fn()
         .mockRejectedValueOnce(timeoutError)
         .mockResolvedValueOnce('success');
 
@@ -130,7 +131,8 @@ describe('errors/recovery', () => {
 
     it('retries on 429 Too Many Requests', async () => {
       const rateLimitError = { response: { status: 429 } };
-      const operation = jest.fn()
+      const operation = jest
+        .fn()
         .mockRejectedValueOnce(rateLimitError)
         .mockResolvedValueOnce('success');
 
@@ -144,7 +146,8 @@ describe('errors/recovery', () => {
 
     it('retries on 5xx server errors', async () => {
       const serverError = { response: { status: 500 } };
-      const operation = jest.fn()
+      const operation = jest
+        .fn()
         .mockRejectedValueOnce(serverError)
         .mockResolvedValueOnce('success');
 
@@ -158,7 +161,8 @@ describe('errors/recovery', () => {
 
     it('retries on network errors without response', async () => {
       const networkError = new Error('Network offline');
-      const operation = jest.fn()
+      const operation = jest
+        .fn()
         .mockRejectedValueOnce(networkError)
         .mockResolvedValueOnce('success');
 
@@ -206,7 +210,7 @@ describe('errors/recovery', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'general',
         expect.stringContaining('Operation failed'),
-        expect.objectContaining({ error: expect.anything() })
+        expect.objectContaining({ error: expect.anything() }),
       );
     });
 
@@ -306,13 +310,19 @@ describe('errors/recovery', () => {
       it('subscribes to window online event', () => {
         const _monitor = new NetworkMonitor();
 
-        expect(addEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
+        expect(addEventListenerSpy).toHaveBeenCalledWith(
+          'online',
+          expect.any(Function),
+        );
       });
 
       it('subscribes to window offline event', () => {
         const _monitor = new NetworkMonitor();
 
-        expect(addEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
+        expect(addEventListenerSpy).toHaveBeenCalledWith(
+          'offline',
+          expect.any(Function),
+        );
       });
 
       it('updates status on online event', () => {
@@ -322,7 +332,9 @@ describe('errors/recovery', () => {
 
         // Find and call the online handler
         const calls = addEventListenerSpy.mock.calls;
-        const onlineCall = calls.find((call: [string, unknown]) => call[0] === 'online');
+        const onlineCall = calls.find(
+          (call: [string, unknown]) => call[0] === 'online',
+        );
         const onlineHandler = onlineCall?.[1] as (() => void) | undefined;
 
         onlineHandler?.();
@@ -338,7 +350,9 @@ describe('errors/recovery', () => {
 
         // Find and call the offline handler
         const calls = addEventListenerSpy.mock.calls;
-        const offlineCall = calls.find((call: [string, unknown]) => call[0] === 'offline');
+        const offlineCall = calls.find(
+          (call: [string, unknown]) => call[0] === 'offline',
+        );
         const offlineHandler = offlineCall?.[1] as (() => void) | undefined;
 
         offlineHandler?.();

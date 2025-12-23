@@ -183,7 +183,8 @@ describe('ClientErrorTrackingProvider', () => {
 
     // Restore original properties
     (globalThis.window as any).errorTracking = originalWindowProps.errorTracking;
-    (globalThis.window as any).testFrontendError = originalWindowProps.testFrontendError;
+    (globalThis.window as any).testFrontendError =
+      originalWindowProps.testFrontendError;
     (globalThis.window as any).testUserAction = originalWindowProps.testUserAction;
   });
 });

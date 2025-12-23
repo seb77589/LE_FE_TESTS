@@ -152,11 +152,11 @@ describe('rum (Real User Monitoring)', () => {
     // Note: Due to module state not being reset between tests, we need to be careful
     // about test order. The first test that calls initWebVitals will set vitalsInitialized=true
     // and subsequent calls become no-ops.
-    
+
     it('should initialize web vitals tracking and set up listeners', () => {
       // This test should run first - it verifies both initialization and listener setup
       const addEventListenerSpy = jest.spyOn(globalThis.window, 'addEventListener');
-      
+
       initWebVitals();
 
       expect(onLCP).toHaveBeenCalled();
@@ -164,7 +164,7 @@ describe('rum (Real User Monitoring)', () => {
       expect(onFCP).toHaveBeenCalled();
       expect(onTTFB).toHaveBeenCalled();
       expect(onINP).toHaveBeenCalled();
-      
+
       // Verify listeners were set up
       expect(addEventListenerSpy).toHaveBeenCalledWith(
         'visibilitychange',
@@ -174,14 +174,14 @@ describe('rum (Real User Monitoring)', () => {
         'beforeunload',
         expect.any(Function),
       );
-      
+
       addEventListenerSpy.mockRestore();
     });
 
     it('should prevent double initialization', () => {
       // At this point, vitalsInitialized is already true from first test
       const callsBefore = (onLCP as jest.Mock).mock.calls.length;
-      
+
       // Second call should be a no-op
       initWebVitals();
 
@@ -328,7 +328,9 @@ describe('rum (Real User Monitoring)', () => {
     it('should create a performance mark', () => {
       markPerformanceEvent('test-event');
 
-      expect(mockPerformance.mark).toHaveBeenCalledWith('test-event', { detail: undefined });
+      expect(mockPerformance.mark).toHaveBeenCalledWith('test-event', {
+        detail: undefined,
+      });
     });
 
     it('should include detail in mark', () => {
@@ -379,7 +381,11 @@ describe('rum (Real User Monitoring)', () => {
 
       const duration = measurePerformance('test-measure', 'start', 'end');
 
-      expect(mockPerformance.measure).toHaveBeenCalledWith('test-measure', 'start', 'end');
+      expect(mockPerformance.measure).toHaveBeenCalledWith(
+        'test-measure',
+        'start',
+        'end',
+      );
       expect(duration).toBe(100);
     });
 

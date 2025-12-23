@@ -69,7 +69,10 @@ test.describe('CSRF Protection Tests', () => {
       console.log('✅ CSRF token presence validated');
     });
 
-    test('should regenerate CSRF token after login', async ({ page, workerCredentials }) => {
+    test('should regenerate CSRF token after login', async ({
+      page,
+      workerCredentials,
+    }) => {
       await page.goto('/auth/login');
       await expect(page.locator('form')).toBeVisible();
 
@@ -246,7 +249,11 @@ test.describe('CSRF Protection Tests', () => {
       console.log('✅ Cookie Secure flag validation completed');
     });
 
-    test('should set HttpOnly flag on session cookies', async ({ page, context, workerCredentials }) => {
+    test('should set HttpOnly flag on session cookies', async ({
+      page,
+      context,
+      workerCredentials,
+    }) => {
       await page.goto('/auth/login');
       await page.fill('input[name="email"]', workerCredentials.email);
       await page.fill('input[name="password"]', workerCredentials.password);
@@ -672,7 +679,10 @@ test.describe('CSRF Protection Tests', () => {
       }
     });
 
-    test('should reject replay attack with old CSRF token', async ({ page, workerCredentials }) => {
+    test('should reject replay attack with old CSRF token', async ({
+      page,
+      workerCredentials,
+    }) => {
       await page.goto('/auth/login');
 
       // Get initial CSRF token

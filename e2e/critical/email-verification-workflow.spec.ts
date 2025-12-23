@@ -328,7 +328,10 @@ test.describe('Email Verification - Integration with Login', () => {
     expect(hasVerificationError || isVerifyPage).toBe(true);
   });
 
-  test('should allow login after email verification', async ({ page, workerCredentials }) => {
+  test('should allow login after email verification', async ({
+    page,
+    workerCredentials,
+  }) => {
     // This would require actual email verification flow
     // For now, verify that verified users can login
     await TestHelpers.loginAndWaitForRedirect(

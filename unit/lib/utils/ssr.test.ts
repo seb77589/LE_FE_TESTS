@@ -45,10 +45,10 @@ describe('SSR Utilities', () => {
     });
 
     it('handles complex return types', () => {
-      const result = browserOnly(
-        () => ({ width: 1920, height: 1080 }),
-        { width: 1024, height: 768 }
-      );
+      const result = browserOnly(() => ({ width: 1920, height: 1080 }), {
+        width: 1024,
+        height: 768,
+      });
       expect(result).toHaveProperty('width');
       expect(result).toHaveProperty('height');
     });

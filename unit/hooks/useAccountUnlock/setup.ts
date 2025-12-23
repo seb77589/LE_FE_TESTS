@@ -64,13 +64,11 @@ export const mockUnlockResponse = {
 
 // Helper to get typed mock API
 export function getMockApi(): jest.Mocked<typeof import('@/lib/api').default> {
-   
   return require('@/lib/api').default;
 }
 
 // Helper to get typed mock logger
 export function getMockLogger(): jest.Mocked<typeof import('@/lib/logging').default> {
-   
   return require('@/lib/logging').default;
 }
 

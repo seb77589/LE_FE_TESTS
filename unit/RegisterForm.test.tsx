@@ -126,7 +126,10 @@ import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import { useRouter } from 'next/navigation';
 import { isRateLimited, recordAttempt, getRateLimitStatus } from '@/lib/network';
 import { usePasswordValidation } from '@/hooks/usePasswordPolicy';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
+import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
 import {
   extractErrorMessage,
   extractErrorContext,

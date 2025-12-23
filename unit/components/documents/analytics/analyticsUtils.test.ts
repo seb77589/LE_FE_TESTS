@@ -69,7 +69,11 @@ describe('analyticsUtils', () => {
 
     it('should return text emoji for word documents', () => {
       expect(getFileTypeIcon('application/msword')).toBe('📝');
-      expect(getFileTypeIcon('application/vnd.openxmlformats-officedocument.wordprocessingml.document')).toBe('📝');
+      expect(
+        getFileTypeIcon(
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ),
+      ).toBe('📝');
     });
 
     it('should return paperclip emoji for unknown types', () => {

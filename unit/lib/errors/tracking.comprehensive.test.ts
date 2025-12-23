@@ -57,7 +57,7 @@ describe('Error Tracking Comprehensive Tests', () => {
     jest.resetModules();
     jest.clearAllMocks();
     // Don't use fake timers globally - only in specific tests that need them
-    
+
     mockFetch.mockReset();
     mockFetch.mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
 
@@ -66,9 +66,15 @@ describe('Error Tracking Comprehensive Tests', () => {
     Object.defineProperty(globalThis, 'localStorage', {
       value: {
         getItem: (key: string) => store[key] || null,
-        setItem: (key: string, value: string) => { store[key] = value; },
-        removeItem: (key: string) => { delete store[key]; },
-        clear: () => { for (const key of Object.keys(store)) delete store[key]; },
+        setItem: (key: string, value: string) => {
+          store[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete store[key];
+        },
+        clear: () => {
+          for (const key of Object.keys(store)) delete store[key];
+        },
       },
       writable: true,
     });
@@ -89,7 +95,11 @@ describe('Error Tracking Comprehensive Tests', () => {
   afterEach(() => {
     // Clean up any created services
     if (service?.disable) {
-      try { service.disable(); } catch { /* ignore */ }
+      try {
+        service.disable();
+      } catch {
+        /* ignore */
+      }
     }
   });
 
@@ -110,7 +120,7 @@ describe('Error Tracking Comprehensive Tests', () => {
       expect(service.isFallbackMode()).toBe(true);
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
-        expect.stringContaining('Fallback mode enabled')
+        expect.stringContaining('Fallback mode enabled'),
       );
     });
 
@@ -120,7 +130,7 @@ describe('Error Tracking Comprehensive Tests', () => {
       expect(service.isFallbackMode()).toBe(false);
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
-        expect.stringContaining('Fallback mode disabled')
+        expect.stringContaining('Fallback mode disabled'),
       );
     });
 
@@ -135,7 +145,7 @@ describe('Error Tracking Comprehensive Tests', () => {
         expect.objectContaining({
           level: 'error',
           message: expect.stringContaining('Fallback test error'),
-        })
+        }),
       );
     });
 
@@ -149,7 +159,7 @@ describe('Error Tracking Comprehensive Tests', () => {
         expect.objectContaining({
           level: 'warning',
           message: 'Test message',
-        })
+        }),
       );
     });
 
@@ -163,7 +173,7 @@ describe('Error Tracking Comprehensive Tests', () => {
         expect.objectContaining({
           level: 'info',
           message: expect.stringContaining('button_click'),
-        })
+        }),
       );
     });
 
@@ -176,7 +186,7 @@ describe('Error Tracking Comprehensive Tests', () => {
         '📊 Error Tracking (Fallback):',
         expect.objectContaining({
           level: 'debug',
-        })
+        }),
       );
     });
   });
@@ -199,16 +209,16 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should clear user and track logout', () => {
       service.setUser('user-123', { email: 'test@test.com' });
       mockLoggerInfo.mockClear();
-      
+
       service.clearUser();
-      
+
       // Should have tracked user_logout
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Captured message (info):',
         expect.objectContaining({
           message: 'User logged out',
-        })
+        }),
       );
     });
   });
@@ -245,7 +255,7 @@ describe('Error Tracking Comprehensive Tests', () => {
 
     it('should limit queue size to maxStoredErrors', () => {
       service = createService({ maxStoredErrors: 5 });
-      
+
       // Add more than max errors
       for (let i = 0; i < 10; i++) {
         service.trackUserAction(`action_${i}`);
@@ -270,16 +280,19 @@ describe('Error Tracking Comprehensive Tests', () => {
       mockFetch.mockRejectedValue(new Error('Network error'));
 
       // Create service that will hit circuit breaker
-      service = createService({ enableConsoleLogging: true, enableFallbackMode: false });
-      
+      service = createService({
+        enableConsoleLogging: true,
+        enableFallbackMode: false,
+      });
+
       // Trigger multiple error sends to trip circuit breaker
       // The circuit breaker opens after 3 failures (circuitBreakerMaxFailures = 3)
       for (let i = 0; i < 5; i++) {
         service.captureException(new Error(`Error ${i}`));
       }
-      
+
       // Allow time for async error sends to complete
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Circuit breaker should enter fallback mode after failures
       expect(service.isFallbackMode()).toBe(true);
@@ -287,21 +300,24 @@ describe('Error Tracking Comprehensive Tests', () => {
 
     it('should log circuit breaker state changes', async () => {
       mockFetch.mockRejectedValue(new Error('Network error'));
-      service = createService({ enableConsoleLogging: true, enableFallbackMode: false });
-      
+      service = createService({
+        enableConsoleLogging: true,
+        enableFallbackMode: false,
+      });
+
       // Trigger failures
       for (let i = 0; i < 4; i++) {
         service.captureException(new Error(`Error ${i}`));
       }
-      
+
       // Allow time for async error sends
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       // Should have logged warning about circuit breaker opening
       // The message is: '[ErrorTracking] Circuit breaker opened, entering fallback mode'
       expect(mockLoggerWarn).toHaveBeenCalledWith(
         'general',
-        '[ErrorTracking] Circuit breaker opened, entering fallback mode'
+        '[ErrorTracking] Circuit breaker opened, entering fallback mode',
       );
     });
   });
@@ -316,31 +332,31 @@ describe('Error Tracking Comprehensive Tests', () => {
 
     it('should send errors when queue has unsent items', async () => {
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       service.captureException(new Error('Test error'));
-      
+
       // Wait for async send
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       expect(mockFetch).toHaveBeenCalledWith(
         expect.stringContaining('/api/v1/frontend-errors/report'),
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-        })
+        }),
       );
     });
 
     it('should handle failed batch send', async () => {
       mockFetch.mockResolvedValue({ ok: false, status: 500 });
-      
+
       service.captureException(new Error('Test error'));
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       expect(mockLoggerWarn).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Failed to send error batch:',
-        expect.objectContaining({ status: 500 })
+        expect.objectContaining({ status: 500 }),
       );
     });
 
@@ -348,25 +364,25 @@ describe('Error Tracking Comprehensive Tests', () => {
       mockFetch
         .mockRejectedValueOnce(new Error('Primary failed'))
         .mockResolvedValueOnce({ ok: true });
-      
+
       service.captureException(new Error('Test error'));
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       expect(mockFetch).toHaveBeenCalledWith(
         '/api/v1/analytics/errors',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
     it('should log successful error batch send', async () => {
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       service.captureException(new Error('Success test'));
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
-        expect.stringMatching(/Successfully sent \d+ errors/)
+        expect.stringMatching(/Successfully sent \d+ errors/),
       );
     });
   });
@@ -398,12 +414,12 @@ describe('Error Tracking Comprehensive Tests', () => {
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked user action:',
-        expect.objectContaining({ action: 'myFunction_start' })
+        expect.objectContaining({ action: 'myFunction_start' }),
       );
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked user action:',
-        expect.objectContaining({ action: 'myFunction_success' })
+        expect.objectContaining({ action: 'myFunction_success' }),
       );
     });
 
@@ -417,7 +433,7 @@ describe('Error Tracking Comprehensive Tests', () => {
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked user action:',
-        expect.objectContaining({ action: 'failingFn_failed' })
+        expect.objectContaining({ action: 'failingFn_failed' }),
       );
     });
 
@@ -431,7 +447,7 @@ describe('Error Tracking Comprehensive Tests', () => {
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked user action:',
-        expect.objectContaining({ action: 'delayedFn_success' })
+        expect.objectContaining({ action: 'delayedFn_success' }),
       );
     });
   });
@@ -442,30 +458,30 @@ describe('Error Tracking Comprehensive Tests', () => {
   describe('Performance Tracking', () => {
     it('should track performance metrics', () => {
       service = createService({ enablePerformanceTracking: true });
-      
+
       service.trackPerformance('api_latency', 250, { endpoint: '/api/users' });
 
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked performance metric:',
-        { metric: 'api_latency' }
+        { metric: 'api_latency' },
       );
     });
 
     it('should not track performance when disabled', () => {
-      service = createService({ 
+      service = createService({
         enablePerformanceTracking: false,
         enableConsoleLogging: true,
       });
       mockLoggerInfo.mockClear();
-      
+
       service.trackPerformance('disabled_metric', 100);
 
       // Should not have logged performance tracking
       expect(mockLoggerInfo).not.toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked performance metric:',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -476,30 +492,30 @@ describe('Error Tracking Comprehensive Tests', () => {
   describe('User Tracking', () => {
     it('should track user actions when enabled', () => {
       service = createService({ enableUserTracking: true });
-      
+
       service.trackUserAction('click_button', { buttonId: 'submit' });
 
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked user action:',
-        { action: 'click_button' }
+        { action: 'click_button' },
       );
     });
 
     it('should not track user actions when disabled', () => {
-      service = createService({ 
+      service = createService({
         enableUserTracking: false,
         enableConsoleLogging: true,
       });
       mockLoggerInfo.mockClear();
-      
+
       service.trackUserAction('disabled_action');
 
       // Should not have logged user action tracking
       expect(mockLoggerInfo).not.toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked user action:',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
   });
@@ -511,21 +527,21 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should clear interval on disable', () => {
       service = createService();
       const clearIntervalSpy = jest.spyOn(globalThis, 'clearInterval');
-      
+
       service.disable();
-      
+
       expect(clearIntervalSpy).toHaveBeenCalled();
     });
 
     it('should log successful disable', () => {
       service = createService();
       mockLoggerInfo.mockClear();
-      
+
       service.disable();
-      
+
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
-        '[ErrorTracking] Disabled successfully'
+        '[ErrorTracking] Disabled successfully',
       );
     });
   });
@@ -537,42 +553,44 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should save errors to localStorage', () => {
       service = createService({ enableLocalStorage: true });
       const setItemSpy = jest.spyOn(globalThis.localStorage, 'setItem');
-      
+
       service.captureException(new Error('Stored error'));
-      
+
       expect(setItemSpy).toHaveBeenCalledWith(
         'errorTracking_queue',
-        expect.any(String)
+        expect.any(String),
       );
     });
 
     it('should load errors from localStorage on init', () => {
       // Pre-populate localStorage
-      const storedErrors = JSON.stringify([{
-        id: 'stored-1',
-        timestamp: new Date().toISOString(),
-        type: 'error',
-        data: { message: 'Stored error' },
-        sent: false,
-        retryCount: 0,
-      }]);
+      const storedErrors = JSON.stringify([
+        {
+          id: 'stored-1',
+          timestamp: new Date().toISOString(),
+          type: 'error',
+          data: { message: 'Stored error' },
+          sent: false,
+          retryCount: 0,
+        },
+      ]);
       localStorage.setItem('errorTracking_queue', storedErrors);
-      
+
       service = createService({ enableLocalStorage: true });
-      
+
       const status = service.getQueueStatus();
       expect(status.total).toBeGreaterThan(0);
     });
 
     it('should handle localStorage parse errors', () => {
       localStorage.setItem('errorTracking_queue', 'invalid json');
-      
+
       service = createService({ enableLocalStorage: true });
-      
+
       expect(mockLoggerWarn).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Failed to load stored errors:',
-        expect.any(Object)
+        expect.any(Object),
       );
     });
 
@@ -596,9 +614,9 @@ describe('Error Tracking Comprehensive Tests', () => {
         },
       ]);
       localStorage.setItem('errorTracking_queue', storedErrors);
-      
+
       service = createService({ enableLocalStorage: true });
-      
+
       // Should only have the valid error plus initial page_view
       const status = service.getQueueStatus();
       expect(status.total).toBeLessThanOrEqual(3);
@@ -607,9 +625,9 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should not use localStorage when disabled', () => {
       service = createService({ enableLocalStorage: false });
       jest.spyOn(globalThis.localStorage, 'setItem');
-      
+
       service.captureException(new Error('Not stored'));
-      
+
       // localStorage.setItem may be called for other things, but not for errorTracking_queue
       // during error capture
     });
@@ -632,63 +650,64 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should skip tracking for Next.js internal routes', async () => {
       // Create service with network tracking
       mockFetch.mockResolvedValue({ ok: true });
-      
-      service = createService({ 
+
+      service = createService({
         enableNetworkErrorTracking: true,
         enableConsoleLogging: false,
       });
-      
+
       // Make a request to internal route
       await globalThis.fetch('/_next/static/chunks/main.js');
-      
+
       // Should have been called (not blocked)
       expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should track slow requests', async () => {
       jest.useRealTimers();
-      
+
       // Mock a slow response that resolves after a delay
       const slowFetch = jest.fn().mockImplementation(
-        () => new Promise(resolve => { 
-          setTimeout(() => resolve({ ok: true, status: 200 }), 100); 
-        })
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ ok: true, status: 200 }), 100);
+          }),
       );
       globalThis.fetch = slowFetch;
-      
+
       service = createService({ enableNetworkErrorTracking: true });
-      
+
       // The fetch override is set in constructor, so we need to use it directly
       // This is testing the tracking setup, not the actual slow detection
       await globalThis.fetch('/api/test');
-      
+
       jest.useFakeTimers();
     });
 
     it('should track failed requests', async () => {
-      mockFetch.mockResolvedValue({ 
-        ok: false, 
-        status: 500, 
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 500,
         statusText: 'Internal Server Error',
         type: 'basic',
       });
-      
-      service = createService({ 
+
+      service = createService({
         enableNetworkErrorTracking: true,
         enableConsoleLogging: true,
       });
-      
+
       await globalThis.fetch('/api/users');
-      
+
       // Should have captured the failure
       // The actual tracking depends on the internal implementation
     });
 
     it('should handle fetch errors', async () => {
       mockFetch.mockRejectedValue(new Error('Network failed'));
-      
+
       service = createService({ enableNetworkErrorTracking: true });
-      
+
       await globalThis.fetch('/api/data').catch(() => {
         // Expected to throw - error handled
       });
@@ -698,13 +717,13 @@ describe('Error Tracking Comprehensive Tests', () => {
       const abortError = new Error('The operation was aborted');
       abortError.name = 'AbortError';
       mockFetch.mockRejectedValue(abortError);
-      
+
       service = createService({ enableNetworkErrorTracking: true });
-      
+
       await globalThis.fetch('/api/data').catch(() => {
         // Expected AbortError - error handled
       });
-      
+
       // Should not have tracked the aborted request
     });
   });
@@ -716,13 +735,13 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should track page view with title', () => {
       service = createService();
       mockLoggerInfo.mockClear();
-      
+
       service.trackPageView('/dashboard', { custom: 'data' });
 
       expect(mockLoggerInfo).toHaveBeenCalledWith(
         'general',
         '[ErrorTracking] Tracked page view:',
-        { page: '/dashboard' }
+        { page: '/dashboard' },
       );
     });
   });
@@ -734,9 +753,9 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should skip tracking for __flight URLs', async () => {
       service = createService({ enableNetworkErrorTracking: true });
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       await globalThis.fetch('/__flight/data');
-      
+
       // Should not have captured any network-related errors
       // The fetch was called but no tracking should happen
       expect(mockFetch).toHaveBeenCalled();
@@ -745,64 +764,65 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should skip tracking for __RSC URLs', async () => {
       service = createService({ enableNetworkErrorTracking: true });
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       await globalThis.fetch('/__RSC/chunk');
-      
+
       expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should skip tracking for data: URLs', async () => {
       service = createService({ enableNetworkErrorTracking: true });
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       await globalThis.fetch('data:application/json;base64,e30=');
-      
+
       expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should skip tracking for blob: URLs', async () => {
       service = createService({ enableNetworkErrorTracking: true });
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       await globalThis.fetch('blob:http://localhost/abcd1234');
-      
+
       expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should extract URL from Request object', async () => {
       service = createService({ enableNetworkErrorTracking: true });
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       const request = new Request('/api/users');
       await globalThis.fetch(request);
-      
+
       expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should extract URL from URL object', async () => {
       service = createService({ enableNetworkErrorTracking: true });
       mockFetch.mockResolvedValue({ ok: true });
-      
+
       const url = new URL('/api/users', 'http://localhost');
       await globalThis.fetch(url);
-      
+
       expect(mockFetch).toHaveBeenCalled();
     });
 
     it('should skip analytics endpoints from slow request tracking', async () => {
       jest.useRealTimers();
       service = createService({ enableNetworkErrorTracking: true });
-      
+
       // Mock a slow response to analytics endpoint
       const slowFetch = jest.fn().mockImplementation(
-        () => new Promise(resolve => { 
-          setTimeout(() => resolve({ ok: true, status: 200 }), 100); 
-        })
+        () =>
+          new Promise((resolve) => {
+            setTimeout(() => resolve({ ok: true, status: 200 }), 100);
+          }),
       );
       globalThis.fetch = slowFetch;
-      
+
       await globalThis.fetch('/api/v1/analytics/events');
-      
+
       // Should not track slow analytics requests
       jest.useFakeTimers();
     });
@@ -814,7 +834,7 @@ describe('Error Tracking Comprehensive Tests', () => {
   describe('Global Error Handlers', () => {
     it('should capture unhandled errors', () => {
       service = createService({ enableConsoleLogging: true });
-      
+
       // Simulate window error event
       const errorEvent = new ErrorEvent('error', {
         message: 'Test error',
@@ -823,28 +843,28 @@ describe('Error Tracking Comprehensive Tests', () => {
         colno: 5,
         error: new Error('Test error'),
       });
-      
+
       globalThis.window.dispatchEvent(errorEvent);
-      
+
       // The error handler was set up during construction
     });
 
     it('should setup unhandled rejection tracking when enabled', () => {
-      service = createService({ 
+      service = createService({
         enableConsoleLogging: true,
         enableUnhandledRejectionTracking: true,
       });
-      
+
       // Verify service was created with unhandled rejection tracking
       // The handler is registered internally - we just verify it doesn't throw
       expect(service.isFallbackMode()).toBe(false);
     });
 
     it('should disable unhandled rejection tracking when configured', () => {
-      service = createService({ 
+      service = createService({
         enableUnhandledRejectionTracking: false,
       });
-      
+
       // Unhandled rejection handler should not be set up
       expect(service.isFallbackMode()).toBe(false);
     });
@@ -856,7 +876,7 @@ describe('Error Tracking Comprehensive Tests', () => {
   describe('Circuit Breaker State Transitions', () => {
     it('should track circuit breaker failures via logger', () => {
       service = createService({ enableConsoleLogging: true });
-      
+
       // The circuit breaker tracking is tested in other tests
       // This verifies the service was configured correctly
       expect(service.isFallbackMode()).toBe(false);
@@ -870,10 +890,10 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should handle empty queue', async () => {
       mockFetch.mockResolvedValue({ ok: true });
       service = createService();
-      
+
       // Clear the queue (includes the initial page_view)
       service.clearQueue();
-      
+
       // Verify queue is empty
       const status = service.getQueueStatus();
       expect(status.total).toBe(0);
@@ -882,12 +902,12 @@ describe('Error Tracking Comprehensive Tests', () => {
     it('should add multiple errors to queue', () => {
       mockFetch.mockResolvedValue({ ok: true });
       service = createService({ maxStoredErrors: 50 });
-      
+
       // Add multiple errors
       for (let i = 0; i < 15; i++) {
         service.captureException(new Error(`Error ${i}`));
       }
-      
+
       // Queue should have errors (page_view + 15 errors)
       const status = service.getQueueStatus();
       expect(status.total).toBeGreaterThan(10);

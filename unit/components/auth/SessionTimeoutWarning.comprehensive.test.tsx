@@ -1,6 +1,6 @@
 /**
  * Comprehensive Tests for SessionTimeoutWarning component and useSessionTimeout hook
- * 
+ *
  * @description Tests covering all code paths including:
  * - Component rendering states
  * - Warning level configurations
@@ -12,14 +12,25 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act, renderHook } from '@testing-library/react';
-import { SessionTimeoutWarning, useSessionTimeout } from '@/components/auth/SessionTimeoutWarning';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+  renderHook,
+} from '@testing-library/react';
+import {
+  SessionTimeoutWarning,
+  useSessionTimeout,
+} from '@/components/auth/SessionTimeoutWarning';
 
 // Helper functions to avoid deep nesting in tests
 function createDelayedResolve(ms: number): () => Promise<void> {
-  return () => new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+  return () =>
+    new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
 }
 
 // Mock UI components
@@ -73,10 +84,18 @@ jest.mock('@/components/ui/Progress', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  Clock: ({ className }: { className?: string }) => <div data-testid="clock-icon" className={className} />,
-  Shield: ({ className }: { className?: string }) => <div data-testid="shield-icon" className={className} />,
-  LogOut: ({ className }: { className?: string }) => <div data-testid="logout-icon" className={className} />,
-  RefreshCw: ({ className }: { className?: string }) => <div data-testid="refresh-icon" className={className} />,
+  Clock: ({ className }: { className?: string }) => (
+    <div data-testid="clock-icon" className={className} />
+  ),
+  Shield: ({ className }: { className?: string }) => (
+    <div data-testid="shield-icon" className={className} />
+  ),
+  LogOut: ({ className }: { className?: string }) => (
+    <div data-testid="logout-icon" className={className} />
+  ),
+  RefreshCw: ({ className }: { className?: string }) => (
+    <div data-testid="refresh-icon" className={className} />
+  ),
 }));
 
 // Mock logger - define inside mock factory
@@ -143,7 +162,9 @@ describe('SessionTimeoutWarning Component', () => {
     describe('subtle warning level', () => {
       it('shows correct title for subtle warning', () => {
         render(<SessionTimeoutWarning {...defaultProps} warningLevel="subtle" />);
-        expect(screen.getByTestId('card-title')).toHaveTextContent('Session Expiring Soon');
+        expect(screen.getByTestId('card-title')).toHaveTextContent(
+          'Session Expiring Soon',
+        );
       });
 
       it('shows correct description for subtle warning', () => {
@@ -172,7 +193,9 @@ describe('SessionTimeoutWarning Component', () => {
     describe('prominent warning level', () => {
       it('shows correct title for prominent warning', () => {
         render(<SessionTimeoutWarning {...defaultProps} warningLevel="prominent" />);
-        expect(screen.getByTestId('card-title')).toHaveTextContent('Session Timeout Warning');
+        expect(screen.getByTestId('card-title')).toHaveTextContent(
+          'Session Timeout Warning',
+        );
       });
 
       it('shows countdown in description for prominent warning', () => {
@@ -624,66 +647,66 @@ describe('useSessionTimeout Hook', () => {
   describe('updateTimeout Function', () => {
     it('sets time remaining', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(300000); // 5 minutes
       });
-      
+
       expect(result.current.timeRemaining).toBe(300000);
     });
 
     it('shows warning and sets subtle level for time <= 5 minutes', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(300000); // 5 minutes
       });
-      
+
       expect(result.current.isVisible).toBe(true);
       expect(result.current.warningLevel).toBe('subtle');
     });
 
     it('shows warning and sets prominent level for time <= 2 minutes', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(120000); // 2 minutes
       });
-      
+
       expect(result.current.isVisible).toBe(true);
       expect(result.current.warningLevel).toBe('prominent');
     });
 
     it('shows warning and sets critical level for time <= 30 seconds', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(30000); // 30 seconds
       });
-      
+
       expect(result.current.isVisible).toBe(true);
       expect(result.current.warningLevel).toBe('critical');
     });
 
     it('hides warning when time > 5 minutes', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(600000); // 10 minutes
       });
-      
+
       expect(result.current.isVisible).toBe(false);
     });
 
     it('hides warning when time is 0', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       // First show the warning
       act(() => {
         result.current.updateTimeout(30000);
       });
       expect(result.current.isVisible).toBe(true);
-      
+
       // Then set to 0
       act(() => {
         result.current.updateTimeout(0);
@@ -693,11 +716,11 @@ describe('useSessionTimeout Hook', () => {
 
     it('hides warning when time is negative', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(-1000);
       });
-      
+
       expect(result.current.isVisible).toBe(false);
     });
   });
@@ -705,18 +728,18 @@ describe('useSessionTimeout Hook', () => {
   describe('hideWarning Function', () => {
     it('hides the warning when called', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       // First show the warning
       act(() => {
         result.current.updateTimeout(30000);
       });
       expect(result.current.isVisible).toBe(true);
-      
+
       // Then hide it
       act(() => {
         result.current.hideWarning();
       });
-      
+
       expect(result.current.isVisible).toBe(false);
     });
   });
@@ -724,61 +747,61 @@ describe('useSessionTimeout Hook', () => {
   describe('Warning Level Thresholds', () => {
     it('sets critical at exactly 30 seconds', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(30000);
       });
-      
+
       expect(result.current.warningLevel).toBe('critical');
     });
 
     it('sets prominent at 31 seconds (just over critical threshold)', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(31000);
       });
-      
+
       expect(result.current.warningLevel).toBe('prominent');
     });
 
     it('sets prominent at exactly 2 minutes', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(120000);
       });
-      
+
       expect(result.current.warningLevel).toBe('prominent');
     });
 
     it('sets subtle at 121 seconds (just over prominent threshold)', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(121000);
       });
-      
+
       expect(result.current.warningLevel).toBe('subtle');
     });
 
     it('sets subtle at exactly 5 minutes', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(300000);
       });
-      
+
       expect(result.current.warningLevel).toBe('subtle');
     });
 
     it('hides at 301 seconds (just over subtle threshold)', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       act(() => {
         result.current.updateTimeout(301000);
       });
-      
+
       expect(result.current.isVisible).toBe(false);
     });
   });
@@ -786,19 +809,19 @@ describe('useSessionTimeout Hook', () => {
   describe('State Transitions', () => {
     it('transitions from subtle to prominent to critical', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       // Start at subtle
       act(() => {
         result.current.updateTimeout(300000);
       });
       expect(result.current.warningLevel).toBe('subtle');
-      
+
       // Move to prominent
       act(() => {
         result.current.updateTimeout(120000);
       });
       expect(result.current.warningLevel).toBe('prominent');
-      
+
       // Move to critical
       act(() => {
         result.current.updateTimeout(30000);
@@ -808,13 +831,13 @@ describe('useSessionTimeout Hook', () => {
 
     it('can transition back from critical to subtle', () => {
       const { result } = renderHook(() => useSessionTimeout());
-      
+
       // Start at critical
       act(() => {
         result.current.updateTimeout(30000);
       });
       expect(result.current.warningLevel).toBe('critical');
-      
+
       // User extends session, move back to subtle
       act(() => {
         result.current.updateTimeout(300000);

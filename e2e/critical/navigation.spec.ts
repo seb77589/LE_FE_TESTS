@@ -80,14 +80,15 @@ test.describe('Navigation Component', () => {
       await expect(page).toHaveURL(/\/notifications/);
     });
 
-    test('should display user email in navigation', async ({ page, workerCredentials }) => {
+    test('should display user email in navigation', async ({
+      page,
+      workerCredentials,
+    }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
 
       // User email should be visible in nav - use .first() to handle multiple nav elements
-      const userEmail = page
-        .locator(`nav >> text=${workerCredentials.email}`)
-        .first();
+      const userEmail = page.locator(`nav >> text=${workerCredentials.email}`).first();
       await expect(userEmail).toBeVisible();
     });
   });
@@ -216,7 +217,10 @@ test.describe('Navigation Component', () => {
       await expect(page).toHaveURL(/\/auth\/login/);
     });
 
-    test('should redirect authenticated users to dashboard', async ({ page, workerCredentials }) => {
+    test('should redirect authenticated users to dashboard', async ({
+      page,
+      workerCredentials,
+    }) => {
       // Login first
       await TestHelpers.loginAndWaitForRedirect(
         page,

@@ -16,7 +16,10 @@ import { render, screen, waitFor, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom';
 import { useRouter } from 'next/navigation';
 import { AuthProvider, useAuth, withAuth } from '@/lib/context/ConsolidatedAuthContext';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
+import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
 import type { User } from '@/types/auth';
 
 // Mock dependencies
@@ -249,7 +252,11 @@ const createAsyncHandler = <T extends unknown[]>(
  * Extracts nested async register pattern
  */
 const createRegisterHandler = (
-  register: (data: { email: string; password: string; full_name: string }) => Promise<void>,
+  register: (data: {
+    email: string;
+    password: string;
+    full_name: string;
+  }) => Promise<void>,
   setError: (error: string | null) => void,
 ) => {
   return createAsyncHandler(
@@ -323,7 +330,11 @@ const performLogin = async (
  * Extracts nested register pattern with try-catch
  */
 const performRegister = async (
-  registerFn: (data: { email: string; password: string; full_name: string }) => Promise<void>,
+  registerFn: (data: {
+    email: string;
+    password: string;
+    full_name: string;
+  }) => Promise<void>,
   data: { email: string; password: string; full_name: string },
   setError: (error: string | null) => void,
 ) => {
@@ -338,7 +349,9 @@ const performRegister = async (
  * Factory function to create an error test component
  * Used by error normalization tests to avoid duplicate code (S4144)
  */
-const createErrorTestComponent = (useAuthHook: typeof import('@/lib/context/ConsolidatedAuthContext').useAuth) => {
+const createErrorTestComponent = (
+  useAuthHook: typeof import('@/lib/context/ConsolidatedAuthContext').useAuth,
+) => {
   return function ErrorTestComponent() {
     const { login } = useAuthHook();
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
@@ -1440,7 +1453,10 @@ describe('ConsolidatedAuthContext', () => {
         const { user, updateUserProfile } = useAuthHook();
         const [error, setError] = React.useState<string | null>(null);
 
-        const handleUpdateClick = createUpdateProfileHandler(updateUserProfile, setError);
+        const handleUpdateClick = createUpdateProfileHandler(
+          updateUserProfile,
+          setError,
+        );
 
         return (
           <div>

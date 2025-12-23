@@ -15,7 +15,10 @@
 import React from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AdvancedFilters, AdvancedFiltersProps } from '@/components/documents/search/AdvancedFilters';
+import {
+  AdvancedFilters,
+  AdvancedFiltersProps,
+} from '@/components/documents/search/AdvancedFilters';
 import { SearchFilters } from '@/components/documents/search/types';
 
 // ==============================================================================
@@ -75,7 +78,10 @@ describe('AdvancedFilters', () => {
     it('should render file type filter', () => {
       renderAdvancedFilters();
       expect(screen.getByLabelText('File Type')).toBeInTheDocument();
-      expect(screen.getByLabelText('File Type')).toHaveAttribute('id', 'filter-file-type');
+      expect(screen.getByLabelText('File Type')).toHaveAttribute(
+        'id',
+        'filter-file-type',
+      );
     });
 
     it('should render status filter', () => {
@@ -114,9 +120,15 @@ describe('AdvancedFilters', () => {
     it('should render size preset buttons', () => {
       renderAdvancedFilters();
       expect(screen.getByRole('button', { name: 'Small (< 1MB)' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Medium (1-10MB)' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Large (10-100MB)' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Very Large (> 100MB)' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Medium (1-10MB)' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Large (10-100MB)' }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Very Large (> 100MB)' }),
+      ).toBeInTheDocument();
     });
 
     it('should render date preset buttons', () => {
@@ -444,7 +456,9 @@ describe('AdvancedFilters', () => {
       const { props } = renderAdvancedFilters();
       const user = userEvent.setup();
 
-      const veryLargeButton = screen.getByRole('button', { name: 'Very Large (> 100MB)' });
+      const veryLargeButton = screen.getByRole('button', {
+        name: 'Very Large (> 100MB)',
+      });
       await user.click(veryLargeButton);
 
       expect(props.onFilterChange).toHaveBeenCalledWith('sizeRange', {
@@ -636,14 +650,19 @@ describe('AdvancedFilters', () => {
         'type',
         'button',
       );
-      expect(screen.getByRole('button', { name: 'Very Large (> 100MB)' })).toHaveAttribute(
+      expect(
+        screen.getByRole('button', { name: 'Very Large (> 100MB)' }),
+      ).toHaveAttribute('type', 'button');
+
+      // Date preset buttons
+      expect(screen.getByRole('button', { name: 'Today' })).toHaveAttribute(
         'type',
         'button',
       );
-
-      // Date preset buttons
-      expect(screen.getByRole('button', { name: 'Today' })).toHaveAttribute('type', 'button');
-      expect(screen.getByRole('button', { name: 'Last 7 days' })).toHaveAttribute('type', 'button');
+      expect(screen.getByRole('button', { name: 'Last 7 days' })).toHaveAttribute(
+        'type',
+        'button',
+      );
       expect(screen.getByRole('button', { name: 'Last 30 days' })).toHaveAttribute(
         'type',
         'button',
@@ -652,20 +671,38 @@ describe('AdvancedFilters', () => {
         'type',
         'button',
       );
-      expect(screen.getByRole('button', { name: 'Last year' })).toHaveAttribute('type', 'button');
+      expect(screen.getByRole('button', { name: 'Last year' })).toHaveAttribute(
+        'type',
+        'button',
+      );
     });
 
     it('should have proper ID attributes on form controls', () => {
       renderAdvancedFilters();
 
-      expect(screen.getByLabelText('File Type')).toHaveAttribute('id', 'filter-file-type');
+      expect(screen.getByLabelText('File Type')).toHaveAttribute(
+        'id',
+        'filter-file-type',
+      );
       expect(screen.getByLabelText('Status')).toHaveAttribute('id', 'filter-status');
-      expect(screen.getByLabelText('From Date')).toHaveAttribute('id', 'filter-date-from');
+      expect(screen.getByLabelText('From Date')).toHaveAttribute(
+        'id',
+        'filter-date-from',
+      );
       expect(screen.getByLabelText('To Date')).toHaveAttribute('id', 'filter-date-to');
-      expect(screen.getByLabelText('Min Size')).toHaveAttribute('id', 'filter-size-min');
-      expect(screen.getByLabelText('Max Size')).toHaveAttribute('id', 'filter-size-max');
+      expect(screen.getByLabelText('Min Size')).toHaveAttribute(
+        'id',
+        'filter-size-min',
+      );
+      expect(screen.getByLabelText('Max Size')).toHaveAttribute(
+        'id',
+        'filter-size-max',
+      );
       expect(screen.getByLabelText('Sort By')).toHaveAttribute('id', 'filter-sort-by');
-      expect(screen.getByLabelText('Sort Order')).toHaveAttribute('id', 'filter-sort-order');
+      expect(screen.getByLabelText('Sort Order')).toHaveAttribute(
+        'id',
+        'filter-sort-order',
+      );
     });
 
     it('should use date input type for date fields', () => {

@@ -154,9 +154,7 @@ describe('Modal', () => {
 
     it('does not call onClose when content is clicked', async () => {
       const onClose = jest.fn();
-      render(
-        <Modal {...defaultProps} isOpen={true} onClose={onClose} />,
-      );
+      render(<Modal {...defaultProps} isOpen={true} onClose={onClose} />);
 
       const content = screen.getByText('Modal content');
       await userEvent.click(content);

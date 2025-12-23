@@ -366,7 +366,9 @@ describe('rateLimiter', () => {
       const config = { maxAttempts: 1, timeWindowMs: SHORT_WINDOW_MS };
 
       recordAttempt('status_action', undefined, config);
-      expect(getRateLimitStatus('status_action', undefined, config).allowed).toBe(false);
+      expect(getRateLimitStatus('status_action', undefined, config).allowed).toBe(
+        false,
+      );
 
       // Wait for window to expire
       await new Promise((resolve) => setTimeout(resolve, SHORT_WINDOW_MS + 50));
@@ -405,7 +407,9 @@ describe('rateLimiter', () => {
 
       // Record many attempts to increase chance of triggering cleanup
       for (let i = 0; i < 20; i++) {
-        expect(() => recordAttempt(`cleanup_test_${i}`, undefined, config)).not.toThrow();
+        expect(() =>
+          recordAttempt(`cleanup_test_${i}`, undefined, config),
+        ).not.toThrow();
       }
     });
   });

@@ -56,7 +56,7 @@ describe('rateLimitConfig', () => {
       expect(logger.info).toHaveBeenCalledWith(
         'rate-limit',
         'Rate limit configurations fetched',
-        mockConfigs
+        mockConfigs,
       );
     });
 
@@ -86,7 +86,14 @@ describe('rateLimitConfig', () => {
       mockApi.get.mockClear();
 
       // Prepare new configs for forced refresh
-      const newConfigs = { ...mockConfigs, api: { max_attempts: 100, time_window_seconds: 60, block_duration_seconds: 300 } };
+      const newConfigs = {
+        ...mockConfigs,
+        api: {
+          max_attempts: 100,
+          time_window_seconds: 60,
+          block_duration_seconds: 300,
+        },
+      };
       mockApi.get.mockResolvedValueOnce({ data: newConfigs } as any);
 
       // Force refresh
@@ -104,7 +111,7 @@ describe('rateLimitConfig', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'rate-limit',
         'Failed to fetch rate limit configurations',
-        expect.any(Error)
+        expect.any(Error),
       );
       expect(configs).toHaveProperty('login');
       expect(configs).toHaveProperty('register');
@@ -112,8 +119,11 @@ describe('rateLimitConfig', () => {
     });
 
     it('should reuse in-flight fetch promise', async () => {
-      mockApi.get.mockImplementation(() =>
-        new Promise(resolve => setTimeout(() => resolve({ data: mockConfigs } as any), 100))
+      mockApi.get.mockImplementation(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(() => resolve({ data: mockConfigs } as any), 100),
+          ),
       );
 
       // Start two fetches simultaneously
@@ -272,9 +282,12 @@ describe('rateLimitConfig', () => {
       const oldAttempt = now - 901000; // 901 seconds ago (outside 900s window)
 
       // Add old attempt
-      localStorage.setItem('rate_limit_login', JSON.stringify({
-        attempts: [{ timestamp: oldAttempt }],
-      }));
+      localStorage.setItem(
+        'rate_limit_login',
+        JSON.stringify({
+          attempts: [{ timestamp: oldAttempt }],
+        }),
+      );
 
       // Make 5 new attempts
       for (let i = 0; i < 5; i++) {
@@ -288,10 +301,13 @@ describe('rateLimitConfig', () => {
 
     it('should handle existing block correctly', async () => {
       const blockedUntil = Date.now() + 60000;
-      localStorage.setItem('rate_limit_login', JSON.stringify({
-        attempts: [],
-        blockedUntil,
-      }));
+      localStorage.setItem(
+        'rate_limit_login',
+        JSON.stringify({
+          attempts: [],
+          blockedUntil,
+        }),
+      );
 
       const result = await rateLimitConfig.trackRequest('login');
 
@@ -320,7 +336,7 @@ describe('rateLimitConfig', () => {
         expect.objectContaining({
           attempts: expect.any(Number),
           blockedFor: 1800,
-        })
+        }),
       );
     });
 
@@ -335,7 +351,10 @@ describe('rateLimitConfig', () => {
 
   describe('clearRateLimit', () => {
     it('should clear rate limit for specific action', () => {
-      localStorage.setItem('rate_limit_login', JSON.stringify({ blockedUntil: Date.now() + 60000 }));
+      localStorage.setItem(
+        'rate_limit_login',
+        JSON.stringify({ blockedUntil: Date.now() + 60000 }),
+      );
 
       rateLimitConfig.clearRateLimit('login');
 
@@ -343,8 +362,14 @@ describe('rateLimitConfig', () => {
     });
 
     it('should not affect other rate limits', () => {
-      localStorage.setItem('rate_limit_login', JSON.stringify({ blockedUntil: Date.now() + 60000 }));
-      localStorage.setItem('rate_limit_register', JSON.stringify({ blockedUntil: Date.now() + 60000 }));
+      localStorage.setItem(
+        'rate_limit_login',
+        JSON.stringify({ blockedUntil: Date.now() + 60000 }),
+      );
+      localStorage.setItem(
+        'rate_limit_register',
+        JSON.stringify({ blockedUntil: Date.now() + 60000 }),
+      );
 
       rateLimitConfig.clearRateLimit('login');
 
@@ -357,8 +382,14 @@ describe('rateLimitConfig', () => {
 
   describe('clearAllRateLimits', () => {
     it('should clear all rate limit keys', () => {
-      localStorage.setItem('rate_limit_login', JSON.stringify({ blockedUntil: Date.now() }));
-      localStorage.setItem('rate_limit_register', JSON.stringify({ blockedUntil: Date.now() }));
+      localStorage.setItem(
+        'rate_limit_login',
+        JSON.stringify({ blockedUntil: Date.now() }),
+      );
+      localStorage.setItem(
+        'rate_limit_register',
+        JSON.stringify({ blockedUntil: Date.now() }),
+      );
       localStorage.setItem('other_key', 'value');
 
       rateLimitConfig.clearAllRateLimits();

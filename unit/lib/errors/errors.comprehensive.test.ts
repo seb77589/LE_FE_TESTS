@@ -126,23 +126,26 @@ describe('lib/errors/errors.ts', () => {
           data: {
             detail: [
               { loc: ['body', 'email'], msg: 'value is not a valid email' },
-              { loc: ['body', 'password'], msg: 'ensure this value has at least 8 characters' },
+              {
+                loc: ['body', 'password'],
+                msg: 'ensure this value has at least 8 characters',
+              },
             ],
           },
         },
       };
       const message = extractErrorMessage(error);
       expect(message).toContain('email: value is not a valid email');
-      expect(message).toContain('password: ensure this value has at least 8 characters');
+      expect(message).toContain(
+        'password: ensure this value has at least 8 characters',
+      );
     });
 
     it('should handle validation errors with missing loc field', () => {
       const error = {
         response: {
           data: {
-            detail: [
-              { msg: 'validation failed' },
-            ],
+            detail: [{ msg: 'validation failed' }],
           },
         },
       };
@@ -445,9 +448,7 @@ describe('lib/errors/errors.ts', () => {
         response: {
           status: 422,
           data: {
-            detail: [
-              { msg: 'general validation error' },
-            ],
+            detail: [{ msg: 'general validation error' }],
           },
         },
       };
@@ -539,19 +540,27 @@ describe('lib/errors/errors.ts', () => {
   // ==========================================================================
   describe('classifyError', () => {
     it('should classify 401 as AUTHENTICATION', () => {
-      expect(classifyError({ response: { status: 401 } })).toBe(ErrorType.AUTHENTICATION);
+      expect(classifyError({ response: { status: 401 } })).toBe(
+        ErrorType.AUTHENTICATION,
+      );
     });
 
     it('should classify error with "unauthorized" message as AUTHENTICATION', () => {
-      expect(classifyError({ message: 'Unauthorized access' })).toBe(ErrorType.AUTHENTICATION);
+      expect(classifyError({ message: 'Unauthorized access' })).toBe(
+        ErrorType.AUTHENTICATION,
+      );
     });
 
     it('should classify 403 as AUTHORIZATION', () => {
-      expect(classifyError({ response: { status: 403 } })).toBe(ErrorType.AUTHORIZATION);
+      expect(classifyError({ response: { status: 403 } })).toBe(
+        ErrorType.AUTHORIZATION,
+      );
     });
 
     it('should classify error with "forbidden" message as AUTHORIZATION', () => {
-      expect(classifyError({ message: 'Forbidden action' })).toBe(ErrorType.AUTHORIZATION);
+      expect(classifyError({ message: 'Forbidden action' })).toBe(
+        ErrorType.AUTHORIZATION,
+      );
     });
 
     it('should classify 4xx errors as VALIDATION', () => {
@@ -571,7 +580,9 @@ describe('lib/errors/errors.ts', () => {
     });
 
     it('should classify error with "network" in message as NETWORK', () => {
-      expect(classifyError({ message: 'Network connection failed' })).toBe(ErrorType.NETWORK);
+      expect(classifyError({ message: 'Network connection failed' })).toBe(
+        ErrorType.NETWORK,
+      );
     });
 
     it('should classify error with CLIENT_ code prefix as CLIENT', () => {
@@ -764,7 +775,9 @@ describe('lib/errors/errors.ts', () => {
         response: { status: 401 },
       };
 
-      expect(getUserFriendlyMessage(errorDetailsWithResponse)).toBe('Please log in to continue.');
+      expect(getUserFriendlyMessage(errorDetailsWithResponse)).toBe(
+        'Please log in to continue.',
+      );
     });
 
     it('should return permission message for AUTHORIZATION errors', () => {
@@ -774,7 +787,9 @@ describe('lib/errors/errors.ts', () => {
         response: { status: 403 },
       };
 
-      expect(getUserFriendlyMessage(errorDetails)).toBe('You do not have permission to perform this action.');
+      expect(getUserFriendlyMessage(errorDetails)).toBe(
+        'You do not have permission to perform this action.',
+      );
     });
 
     it('should return validation message for VALIDATION errors', () => {
@@ -784,7 +799,9 @@ describe('lib/errors/errors.ts', () => {
         response: { status: 422 },
       };
 
-      expect(getUserFriendlyMessage(errorDetails)).toBe('Please check your input and try again.');
+      expect(getUserFriendlyMessage(errorDetails)).toBe(
+        'Please check your input and try again.',
+      );
     });
 
     it('should return network message for NETWORK errors', () => {
@@ -794,7 +811,9 @@ describe('lib/errors/errors.ts', () => {
         name: 'NetworkError',
       };
 
-      expect(getUserFriendlyMessage(errorDetails)).toBe('Network connection error. Please check your internet connection.');
+      expect(getUserFriendlyMessage(errorDetails)).toBe(
+        'Network connection error. Please check your internet connection.',
+      );
     });
 
     it('should return server message for SERVER errors', () => {
@@ -804,7 +823,9 @@ describe('lib/errors/errors.ts', () => {
         response: { status: 500 },
       };
 
-      expect(getUserFriendlyMessage(errorDetails)).toBe('Server error. Please try again later.');
+      expect(getUserFriendlyMessage(errorDetails)).toBe(
+        'Server error. Please try again later.',
+      );
     });
 
     it('should return generic message for UNKNOWN errors', () => {
@@ -813,7 +834,9 @@ describe('lib/errors/errors.ts', () => {
         userFriendly: false,
       };
 
-      expect(getUserFriendlyMessage(errorDetails)).toBe('An unexpected error occurred. Please try again.');
+      expect(getUserFriendlyMessage(errorDetails)).toBe(
+        'An unexpected error occurred. Please try again.',
+      );
     });
   });
 
@@ -863,7 +886,11 @@ describe('lib/errors/errors.ts', () => {
 
       handleError(new Error('Dev error'), { logToConsole: true });
 
-      expect(mockLogger.error).toHaveBeenCalledWith('general', 'Error:', expect.any(Object));
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'general',
+        'Error:',
+        expect.any(Object),
+      );
 
       process.env.NODE_ENV = originalEnv;
     });
@@ -921,7 +948,9 @@ describe('lib/errors/errors.ts', () => {
       it('should throw after max retries', async () => {
         const operation = jest.fn().mockRejectedValue(new Error('Persistent failure'));
 
-        await expect(errorRecovery.withRetry(operation, 2, 10)).rejects.toThrow('Persistent failure');
+        await expect(errorRecovery.withRetry(operation, 2, 10)).rejects.toThrow(
+          'Persistent failure',
+        );
         expect(operation).toHaveBeenCalledTimes(2);
       });
 
@@ -983,7 +1012,7 @@ describe('lib/errors/errors.ts', () => {
                 swrKey: '/api/users',
               }),
             }),
-          })
+          }),
         );
 
         process.env.NODE_ENV = originalEnv;

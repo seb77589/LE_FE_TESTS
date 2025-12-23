@@ -71,9 +71,7 @@ describe('searchConstants', () => {
     });
 
     it('should have icons for non-All options', () => {
-      const optionsWithIcons = fileTypes.filter(
-        (t) => t.value !== '' && 'icon' in t,
-      );
+      const optionsWithIcons = fileTypes.filter((t) => t.value !== '' && 'icon' in t);
       expect(optionsWithIcons.length).toBeGreaterThan(0);
 
       for (const option of optionsWithIcons) {

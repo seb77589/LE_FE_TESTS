@@ -28,15 +28,20 @@ beforeAll(() => {
   globalThis.fetch = jest.fn(() =>
     Promise.resolve({
       ok: true,
-      json: () => Promise.resolve({
-        meta: { name: 'English', direction: 'ltr' },
-        translations: {
-          welcome: { title: 'Welcome', message: 'Hello {{name}}!' },
-          buttons: { save: 'Save', cancel: 'Cancel' },
-          items: { zero: 'No items', one: '{{count}} item', other: '{{count}} items' },
-        },
-      }),
-    })
+      json: () =>
+        Promise.resolve({
+          meta: { name: 'English', direction: 'ltr' },
+          translations: {
+            welcome: { title: 'Welcome', message: 'Hello {{name}}!' },
+            buttons: { save: 'Save', cancel: 'Cancel' },
+            items: {
+              zero: 'No items',
+              one: '{{count}} item',
+              other: '{{count}} items',
+            },
+          },
+        }),
+    }),
   ) as jest.Mock;
 
   // Mock localStorage
@@ -305,7 +310,7 @@ describe('Trans Component', () => {
         <>
           <Trans i18nKey="key1" />
           <Trans i18nKey="key2" />
-        </>
+        </>,
       );
       expect(screen.getByText(/key1/)).toBeInTheDocument();
       expect(screen.getByText(/key2/)).toBeInTheDocument();
@@ -325,7 +330,7 @@ describe('Hook Integration', () => {
       const { result: translationResult } = renderHook(() => useTranslation());
       const { result: localeResult } = renderHook(() => useLocale());
       expect(translationResult.current.supportedLocales).toEqual(
-        localeResult.current.supportedLocales
+        localeResult.current.supportedLocales,
       );
     });
   });

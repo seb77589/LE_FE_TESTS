@@ -865,7 +865,7 @@ describe('PreferencesContext', () => {
       render(
         <PreferencesProvider>
           <TestComponent />
-        </PreferencesProvider>
+        </PreferencesProvider>,
       );
 
       const button = screen.getByText('Update');
@@ -880,7 +880,7 @@ describe('PreferencesContext', () => {
           'Failed to persist preferences to localStorage',
           expect.objectContaining({
             error: 'QuotaExceededError',
-          })
+          }),
         );
       });
     });
@@ -897,7 +897,7 @@ describe('PreferencesContext', () => {
       render(
         <PreferencesProvider>
           <TestComponentWithPreferencesLoading />
-        </PreferencesProvider>
+        </PreferencesProvider>,
       );
 
       // Should log warning but not crash
@@ -907,7 +907,7 @@ describe('PreferencesContext', () => {
           'Failed to load preferences from localStorage:',
           expect.objectContaining({
             error: expect.any(Error),
-          })
+          }),
         );
       });
     });

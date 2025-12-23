@@ -24,7 +24,11 @@ jest.mock('next-intl', () => ({
     locale: string;
     messages: any;
   }) => (
-    <div data-testid="next-intl-provider" data-locale={locale} data-messages={JSON.stringify(messages)}>
+    <div
+      data-testid="next-intl-provider"
+      data-locale={locale}
+      data-messages={JSON.stringify(messages)}
+    >
       {children}
     </div>
   ),
@@ -43,7 +47,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div data-testid="child">Test Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('child')).toBeInTheDocument();
@@ -54,7 +58,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toBeInTheDocument();
@@ -64,7 +68,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="es" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -77,7 +81,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={customMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -90,30 +94,39 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
-      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute('data-locale', 'en');
+      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
+        'data-locale',
+        'en',
+      );
     });
 
     it('supports Spanish locale', () => {
       render(
         <I18nProvider locale="es" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
-      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute('data-locale', 'es');
+      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
+        'data-locale',
+        'es',
+      );
     });
 
     it('supports Romanian locale', () => {
       render(
         <I18nProvider locale="ro" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
-      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute('data-locale', 'ro');
+      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
+        'data-locale',
+        'ro',
+      );
     });
   });
 
@@ -127,7 +140,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={flatMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toBeInTheDocument();
@@ -146,7 +159,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={nestedMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       const provider = screen.getByTestId('next-intl-provider');
@@ -157,7 +170,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={{}}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toBeInTheDocument();
@@ -169,7 +182,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div data-testid="single-child">Single</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('single-child')).toBeInTheDocument();
@@ -181,7 +194,7 @@ describe('I18nProvider', () => {
           <div data-testid="child-1">First</div>
           <div data-testid="child-2">Second</div>
           <div data-testid="child-3">Third</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('child-1')).toBeInTheDocument();
@@ -193,7 +206,7 @@ describe('I18nProvider', () => {
       render(
         <I18nProvider locale="en" messages={mockMessages}>
           Plain text content
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByText('Plain text content')).toBeInTheDocument();
@@ -205,18 +218,24 @@ describe('I18nProvider', () => {
       const { rerender } = render(
         <I18nProvider locale="en" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
-      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute('data-locale', 'en');
+      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
+        'data-locale',
+        'en',
+      );
 
       rerender(
         <I18nProvider locale="es" messages={mockMessages}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
-      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute('data-locale', 'es');
+      expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
+        'data-locale',
+        'es',
+      );
     });
 
     it('re-renders when messages change', () => {
@@ -226,23 +245,23 @@ describe('I18nProvider', () => {
       const { rerender } = render(
         <I18nProvider locale="en" messages={messages1}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
         'data-messages',
-        JSON.stringify(messages1)
+        JSON.stringify(messages1),
       );
 
       rerender(
         <I18nProvider locale="en" messages={messages2}>
           <div>Content</div>
-        </I18nProvider>
+        </I18nProvider>,
       );
 
       expect(screen.getByTestId('next-intl-provider')).toHaveAttribute(
         'data-messages',
-        JSON.stringify(messages2)
+        JSON.stringify(messages2),
       );
     });
   });

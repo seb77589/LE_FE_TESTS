@@ -120,9 +120,15 @@ describe('SecurityTab', () => {
       const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
       const submitButton = screen.getByRole('button', { name: /^change password$/i });
 
-      fireEvent.change(currentPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(newPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
-      fireEvent.change(confirmPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
+      fireEvent.change(currentPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(newPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
+      fireEvent.change(confirmPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -141,9 +147,15 @@ describe('SecurityTab', () => {
       const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
       const submitButton = screen.getByRole('button', { name: /^change password$/i });
 
-      fireEvent.change(currentPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(newPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
-      fireEvent.change(confirmPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
+      fireEvent.change(currentPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(newPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
+      fireEvent.change(confirmPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -161,8 +173,12 @@ describe('SecurityTab', () => {
       const form = newPasswordInput.closest('form');
       const submitButton = form?.querySelector('button[type="submit"]');
 
-      fireEvent.change(newPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
-      fireEvent.change(confirmPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.DIFFERENT } });
+      fireEvent.change(newPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
+      fireEvent.change(confirmPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.DIFFERENT },
+      });
       if (submitButton) {
         fireEvent.submit(form!);
         await waitFor(
@@ -183,8 +199,12 @@ describe('SecurityTab', () => {
       const form = newPasswordInput.closest('form');
       const submitButton = form?.querySelector('button[type="submit"]');
 
-      fireEvent.change(newPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.SHORT } });
-      fireEvent.change(confirmPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.SHORT } });
+      fireEvent.change(newPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SHORT },
+      });
+      fireEvent.change(confirmPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.SHORT },
+      });
       if (submitButton) {
         fireEvent.submit(form!);
         await waitFor(
@@ -206,9 +226,15 @@ describe('SecurityTab', () => {
       const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
       const submitButton = screen.getByRole('button', { name: /^change password$/i });
 
-      fireEvent.change(currentPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(newPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
-      fireEvent.change(confirmPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
+      fireEvent.change(currentPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(newPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
+      fireEvent.change(confirmPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -224,9 +250,15 @@ describe('SecurityTab', () => {
       const confirmPasswordInput = screen.getByLabelText(/confirm new password/i);
       const submitButton = screen.getByRole('button', { name: /^change password$/i });
 
-      fireEvent.change(currentPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT } });
-      fireEvent.change(newPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
-      fireEvent.change(confirmPasswordInput, { target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW } });
+      fireEvent.change(currentPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.CURRENT },
+      });
+      fireEvent.change(newPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
+      fireEvent.change(confirmPasswordInput, {
+        target: { value: FRONTEND_TEST_DATA.PASSWORD.NEW },
+      });
       fireEvent.click(submitButton);
 
       await waitFor(() => {

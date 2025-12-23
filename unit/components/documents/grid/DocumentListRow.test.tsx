@@ -203,7 +203,9 @@ describe('DocumentListRow', () => {
     it('calls onSelectionToggle when checkbox is changed', async () => {
       const user = userEvent.setup();
       const onSelectionToggle = jest.fn();
-      render(<DocumentListRow {...defaultProps} onSelectionToggle={onSelectionToggle} />);
+      render(
+        <DocumentListRow {...defaultProps} onSelectionToggle={onSelectionToggle} />,
+      );
 
       await user.click(screen.getByRole('checkbox'));
 
@@ -254,7 +256,9 @@ describe('DocumentListRow', () => {
       render(<DocumentListRow {...defaultProps} onSelect={onSelect} />);
 
       // Find the button wrapper around thumbnail
-      const thumbnailButton = screen.getByLabelText(`Select document ${mockDocument.filename}`);
+      const thumbnailButton = screen.getByLabelText(
+        `Select document ${mockDocument.filename}`,
+      );
       await user.click(thumbnailButton);
 
       expect(onSelect).toHaveBeenCalledWith(mockDocument.id);
@@ -412,7 +416,8 @@ describe('DocumentListRow', () => {
       const wordDoc = {
         ...mockDocument,
         filename: 'document.docx',
-        mime_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        mime_type:
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       };
       render(<DocumentListRow {...defaultProps} document={wordDoc} />);
 
@@ -500,7 +505,9 @@ describe('DocumentListRow', () => {
     it('handles different document IDs', () => {
       const doc123 = { ...mockDocument, id: 123 };
       const onPreview = jest.fn();
-      render(<DocumentListRow {...defaultProps} document={doc123} onPreview={onPreview} />);
+      render(
+        <DocumentListRow {...defaultProps} document={doc123} onPreview={onPreview} />,
+      );
 
       fireEvent.click(screen.getByTestId('preview-button'));
 
@@ -534,7 +541,7 @@ describe('DocumentListRow', () => {
 
     it('tracks hoveredDocument prop', () => {
       const { rerender } = render(
-        <DocumentListRow {...defaultProps} hoveredDocument={null} />
+        <DocumentListRow {...defaultProps} hoveredDocument={null} />,
       );
 
       // Re-render with different hovered document

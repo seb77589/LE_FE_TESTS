@@ -62,7 +62,9 @@ describe('rateLimiter', () => {
 
       it('should return false when under max attempts', () => {
         recordAttempt('test_action', { maxAttempts: 5, timeWindowMs: 60000 });
-        expect(isRateLimited('test_action', { maxAttempts: 5, timeWindowMs: 60000 })).toBe(false);
+        expect(
+          isRateLimited('test_action', { maxAttempts: 5, timeWindowMs: 60000 }),
+        ).toBe(false);
       });
 
       it('should return true when at max attempts', () => {
@@ -185,7 +187,10 @@ describe('rateLimiter', () => {
 
     describe('new API', () => {
       it('should record attempt with action and identifier', () => {
-        recordAttempt('login', 'user@example.com', { maxAttempts: 5, timeWindowMs: 60000 });
+        recordAttempt('login', 'user@example.com', {
+          maxAttempts: 5,
+          timeWindowMs: 60000,
+        });
 
         const status = getRateLimitStatus('login', 'user@example.com', {
           maxAttempts: 5,

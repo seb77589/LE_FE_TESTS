@@ -60,7 +60,7 @@ export interface MockDocument {
 export function createMockApiResponse<T>(
   data: T,
   status = 200,
-  statusText = 'OK'
+  statusText = 'OK',
 ): ApiResponse<T> {
   return {
     data,
@@ -75,7 +75,7 @@ export function createMockApiResponse<T>(
 export function createApiError(
   message: string,
   status = 500,
-  isAxiosError = true
+  isAxiosError = true,
 ): ApiError {
   return {
     response: {
@@ -91,7 +91,7 @@ export function createApiError(
  * Creates a mock validation error response
  */
 export function createValidationError(
-  errors: Array<{ field: string; message: string }>
+  errors: Array<{ field: string; message: string }>,
 ): ApiError {
   return {
     response: {
@@ -107,9 +107,7 @@ export function createValidationError(
 /**
  * Creates a mock 401 Unauthorized error
  */
-export function createUnauthorizedError(
-  message = 'Not authenticated'
-): ApiError {
+export function createUnauthorizedError(message = 'Not authenticated'): ApiError {
   return createApiError(message, 401);
 }
 
@@ -158,9 +156,7 @@ export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
 /**
  * Creates a mock admin user
  */
-export function createMockAdminUser(
-  overrides: Partial<MockUser> = {}
-): MockUser {
+export function createMockAdminUser(overrides: Partial<MockUser> = {}): MockUser {
   return createMockUser({
     role: 'admin',
     email: 'admin@example.com',
@@ -173,7 +169,7 @@ export function createMockAdminUser(
  * Creates a mock document object
  */
 export function createMockDocument(
-  overrides: Partial<MockDocument> = {}
+  overrides: Partial<MockDocument> = {},
 ): MockDocument {
   return {
     id: 1,
@@ -191,14 +187,14 @@ export function createMockDocument(
  */
 export function createMockDocuments(
   count: number,
-  baseOverrides: Partial<MockDocument> = {}
+  baseOverrides: Partial<MockDocument> = {},
 ): MockDocument[] {
   return Array.from({ length: count }, (_, index) =>
     createMockDocument({
       id: index + 1,
       filename: `document-${index + 1}.pdf`,
       ...baseOverrides,
-    })
+    }),
   );
 }
 
@@ -225,12 +221,9 @@ export function createRejectingMock(error: Error | ApiError): jest.Mock {
  */
 export function createOnceResolvingMock<T>(
   data: T,
-  subsequentError: Error | ApiError
+  subsequentError: Error | ApiError,
 ): jest.Mock {
-  return jest
-    .fn()
-    .mockResolvedValueOnce(data)
-    .mockRejectedValue(subsequentError);
+  return jest.fn().mockResolvedValueOnce(data).mockRejectedValue(subsequentError);
 }
 
 /**
@@ -238,7 +231,7 @@ export function createOnceResolvingMock<T>(
  */
 export function createMockFetchResponse(
   data: unknown,
-  options: { ok?: boolean; status?: number; statusText?: string } = {}
+  options: { ok?: boolean; status?: number; statusText?: string } = {},
 ): Response {
   const { ok = true, status = 200, statusText = 'OK' } = options;
 
@@ -299,7 +292,7 @@ export function waitForNextTick(): Promise<void> {
 export async function waitForCondition(
   condition: () => boolean,
   timeout = 5000,
-  interval = 100
+  interval = 100,
 ): Promise<void> {
   const startTime = Date.now();
   while (!condition()) {
@@ -411,7 +404,7 @@ export function createMockSessionStorage(): Storage & {
  */
 export function createKeyboardEvent(
   key: string,
-  options: Partial<KeyboardEventInit> = {}
+  options: Partial<KeyboardEventInit> = {},
 ): KeyboardEvent {
   return new KeyboardEvent('keydown', {
     key,
@@ -427,7 +420,7 @@ export function createKeyboardEvent(
  */
 export function createMouseEvent(
   type: string,
-  options: Partial<MouseEventInit> = {}
+  options: Partial<MouseEventInit> = {},
 ): MouseEvent {
   return new MouseEvent(type, {
     bubbles: true,
@@ -584,9 +577,7 @@ export function createMockWebSocket(url = 'ws://localhost'): MockWebSocket {
     },
     simulateMessage: (data: unknown) => {
       if (ws.onmessage) {
-        ws.onmessage(
-          new MessageEvent('message', { data: JSON.stringify(data) })
-        );
+        ws.onmessage(new MessageEvent('message', { data: JSON.stringify(data) }));
       }
     },
     simulateError: () => {
@@ -629,7 +620,7 @@ export function createMockTimestamp(daysAgo = 0): number {
 export function createMockFile(
   name = 'test.pdf',
   type = 'application/pdf',
-  size = 1024
+  size = 1024,
 ): File {
   const content = new Array(size).fill('a').join('');
   return new File([content], name, { type });

@@ -230,19 +230,19 @@ describe('DocumentThumbnail', () => {
   describe('Size Variants', () => {
     it('applies small size class', () => {
       render(<DocumentThumbnail document={mockDocument} size="small" />);
-      
+
       expect(screen.getByRole('button')).toHaveClass('h-16', 'w-16');
     });
 
     it('applies medium size class by default', () => {
       render(<DocumentThumbnail document={mockDocument} />);
-      
+
       expect(screen.getByRole('button')).toHaveClass('h-24', 'w-24');
     });
 
     it('applies large size class', () => {
       render(<DocumentThumbnail document={mockDocument} size="large" />);
-      
+
       expect(screen.getByRole('button')).toHaveClass('h-32', 'w-32');
     });
   });
@@ -267,7 +267,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       // Should trigger refetch for supported types (useEffect calls fetchThumbnail)
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
@@ -279,7 +279,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
@@ -290,7 +290,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
@@ -301,7 +301,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       // Shows fallback for unsupported types
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
@@ -346,13 +346,9 @@ describe('DocumentThumbnail', () => {
       });
 
       render(
-        <DocumentThumbnail
-          document={mockDocument}
-          size="medium"
-          showFallback={true}
-        />,
+        <DocumentThumbnail document={mockDocument} size="medium" showFallback={true} />,
       );
-      
+
       expect(screen.getByTestId('file-icon')).toBeInTheDocument();
     });
 
@@ -372,7 +368,7 @@ describe('DocumentThumbnail', () => {
           showFallback={false}
         />,
       );
-      
+
       expect(screen.queryByTestId('file-icon')).not.toBeInTheDocument();
     });
 
@@ -392,7 +388,7 @@ describe('DocumentThumbnail', () => {
           showFallback={true}
         />,
       );
-      
+
       expect(screen.getByText('Error')).toBeInTheDocument();
     });
 
@@ -412,7 +408,7 @@ describe('DocumentThumbnail', () => {
           showFallback={false}
         />,
       );
-      
+
       expect(screen.queryByText('Error')).not.toBeInTheDocument();
     });
   });
@@ -420,7 +416,7 @@ describe('DocumentThumbnail', () => {
   describe('Thumbnail Display', () => {
     it('displays thumbnail when available and no error', () => {
       const { useAsyncData } = require('@/hooks/useAsyncData');
-      
+
       (useAsyncData as jest.Mock).mockReturnValue({
         data: 'blob:http://localhost/mock-thumbnail-url',
         loading: false,
@@ -435,7 +431,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       const img = screen.getByRole('img');
       expect(img).toHaveAttribute('src', 'blob:http://localhost/mock-thumbnail-url');
       expect(img).toHaveAttribute('alt', 'test-document.pdf thumbnail');
@@ -443,7 +439,7 @@ describe('DocumentThumbnail', () => {
 
     it('shows fallback on image error', async () => {
       const { useAsyncData } = require('@/hooks/useAsyncData');
-      
+
       (useAsyncData as jest.Mock).mockReturnValue({
         data: 'blob:http://localhost/mock-thumbnail-url',
         loading: false,
@@ -458,10 +454,10 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       const img = screen.getByRole('img');
       fireEvent.error(img);
-      
+
       // After image error, should show fallback
       await waitFor(() => {
         expect(screen.getByTestId('image-icon')).toBeInTheDocument();
@@ -489,7 +485,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       expect(screen.getByTestId('image-icon')).toBeInTheDocument();
     });
 
@@ -500,7 +496,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       const icon = screen.getByTestId('file-icon');
       expect(icon).toHaveClass('text-red-500');
     });
@@ -512,7 +508,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       const icon = screen.getByTestId('file-icon');
       expect(icon).toHaveClass('text-gray-500');
     });
@@ -527,7 +523,7 @@ describe('DocumentThumbnail', () => {
           className="custom-class"
         />,
       );
-      
+
       expect(screen.getByRole('button')).toHaveClass('custom-class');
     });
   });
@@ -552,7 +548,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       expect(screen.getByText('important-document')).toBeInTheDocument();
     });
 
@@ -563,7 +559,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       expect(screen.getByText('filename')).toBeInTheDocument();
     });
   });
@@ -571,7 +567,7 @@ describe('DocumentThumbnail', () => {
   describe('Alt text', () => {
     it('uses filename in alt text', () => {
       const { useAsyncData } = require('@/hooks/useAsyncData');
-      
+
       (useAsyncData as jest.Mock).mockReturnValue({
         data: 'blob:http://localhost/mock-url',
         loading: false,
@@ -582,17 +578,21 @@ describe('DocumentThumbnail', () => {
 
       render(
         <DocumentThumbnail
-          document={{ ...mockDocument, filename: 'my-file.jpg', mime_type: 'image/jpeg' }}
+          document={{
+            ...mockDocument,
+            filename: 'my-file.jpg',
+            mime_type: 'image/jpeg',
+          }}
           size="medium"
         />,
       );
-      
+
       expect(screen.getByAltText('my-file.jpg thumbnail')).toBeInTheDocument();
     });
 
     it('handles missing filename gracefully', () => {
       const { useAsyncData } = require('@/hooks/useAsyncData');
-      
+
       (useAsyncData as jest.Mock).mockReturnValue({
         data: 'blob:http://localhost/mock-url',
         loading: false,
@@ -607,7 +607,7 @@ describe('DocumentThumbnail', () => {
           size="medium"
         />,
       );
-      
+
       expect(screen.getByAltText('document thumbnail')).toBeInTheDocument();
     });
   });

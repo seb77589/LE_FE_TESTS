@@ -71,7 +71,13 @@ jest.mock('@/components/auth/SessionTimeoutProvider', () => ({
 }));
 
 jest.mock('@/components/ui/ErrorBoundary', () => ({
-  ErrorBoundary: ({ children, showDetails }: { children: React.ReactNode; showDetails?: boolean }) => (
+  ErrorBoundary: ({
+    children,
+    showDetails,
+  }: {
+    children: React.ReactNode;
+    showDetails?: boolean;
+  }) => (
     <div data-testid="error-boundary" data-show-details={showDetails}>
       {children}
     </div>
@@ -136,7 +142,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div data-testid="test-child">Test Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       expect(screen.getByTestId('test-child')).toBeInTheDocument();
@@ -152,7 +158,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div data-testid="content">Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       // Verify all providers are present
@@ -169,7 +175,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div data-testid="content">Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       // ErrorBoundary should wrap everything
@@ -183,7 +189,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       expect(screen.getByTestId('online-status-watcher')).toBeInTheDocument();
@@ -194,7 +200,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       expect(screen.getByTestId('toaster')).toBeInTheDocument();
@@ -209,7 +215,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       const errorBoundary = screen.getByTestId('error-boundary');
@@ -225,7 +231,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       const errorBoundary = screen.getByTestId('error-boundary');
@@ -239,7 +245,9 @@ describe('RootLayout', () => {
     it('should export correct metadata', () => {
       expect(metadata).toBeDefined();
       expect(metadata.title).toBe('LegalEase');
-      expect(metadata.description).toBe('Legal document management and automation platform');
+      expect(metadata.description).toBe(
+        'Legal document management and automation platform',
+      );
     });
 
     it('should have metadata with title and description', () => {
@@ -247,7 +255,7 @@ describe('RootLayout', () => {
         expect.objectContaining({
           title: 'LegalEase',
           description: 'Legal document management and automation platform',
-        })
+        }),
       );
     });
   });
@@ -257,7 +265,10 @@ describe('RootLayout', () => {
 
   describe('Client-side initialization', () => {
     it('should not initialize on server-side', () => {
-      const { installChunkErrorHandler, preloadCriticalChunks } = require('@/lib/simpleChunkLoader');
+      const {
+        installChunkErrorHandler,
+        preloadCriticalChunks,
+      } = require('@/lib/simpleChunkLoader');
       const { errorRecovery } = require('@/components/ui/ErrorRecovery');
 
       // Temporarily remove window to simulate SSR
@@ -268,7 +279,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       // Should not initialize in SSR
@@ -281,14 +292,17 @@ describe('RootLayout', () => {
     });
 
     it('should initialize client-side systems after timeout', async () => {
-      const { installChunkErrorHandler, preloadCriticalChunks } = require('@/lib/simpleChunkLoader');
+      const {
+        installChunkErrorHandler,
+        preloadCriticalChunks,
+      } = require('@/lib/simpleChunkLoader');
       const { errorRecovery } = require('@/components/ui/ErrorRecovery');
       const { initWebVitals } = require('@/lib/utils/rum');
 
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       // Fast-forward past the 100ms timeout
@@ -310,7 +324,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       jest.advanceTimersByTime(100);
@@ -333,7 +347,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       jest.advanceTimersByTime(100);
@@ -356,7 +370,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       jest.advanceTimersByTime(100);
@@ -376,7 +390,7 @@ describe('RootLayout', () => {
       render(
         <RootLayout>
           <div>Content</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       jest.advanceTimersByTime(100);
@@ -399,7 +413,7 @@ describe('RootLayout', () => {
           <div data-testid="child-1">Child 1</div>
           <div data-testid="child-2">Child 2</div>
           <div data-testid="child-3">Child 3</div>
-        </RootLayout>
+        </RootLayout>,
       );
 
       expect(screen.getByTestId('child-1')).toBeInTheDocument();

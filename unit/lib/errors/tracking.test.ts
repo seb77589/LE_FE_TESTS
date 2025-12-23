@@ -37,9 +37,15 @@ describe('Error Tracking Module', () => {
     Object.defineProperty(globalThis, 'localStorage', {
       value: {
         getItem: (key: string) => store[key] || null,
-        setItem: (key: string, value: string) => { store[key] = value; },
-        removeItem: (key: string) => { delete store[key]; },
-        clear: () => { for (const key of Object.keys(store)) delete store[key]; },
+        setItem: (key: string, value: string) => {
+          store[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete store[key];
+        },
+        clear: () => {
+          for (const key of Object.keys(store)) delete store[key];
+        },
       },
       writable: true,
     });
@@ -111,7 +117,9 @@ describe('Error Tracking Module', () => {
 
     it('accepts Error with context', () => {
       const error = new Error('Test error');
-      expect(() => errorTracking.captureException(error, { context: 'test' })).not.toThrow();
+      expect(() =>
+        errorTracking.captureException(error, { context: 'test' }),
+      ).not.toThrow();
     });
 
     it('handles string error', () => {
@@ -125,19 +133,27 @@ describe('Error Tracking Module', () => {
     });
 
     it('captures warning level message', () => {
-      expect(() => errorTracking.captureMessage('Warning message', 'warning')).not.toThrow();
+      expect(() =>
+        errorTracking.captureMessage('Warning message', 'warning'),
+      ).not.toThrow();
     });
 
     it('captures error level message', () => {
-      expect(() => errorTracking.captureMessage('Error message', 'error')).not.toThrow();
+      expect(() =>
+        errorTracking.captureMessage('Error message', 'error'),
+      ).not.toThrow();
     });
 
     it('captures debug level message', () => {
-      expect(() => errorTracking.captureMessage('Debug message', 'debug')).not.toThrow();
+      expect(() =>
+        errorTracking.captureMessage('Debug message', 'debug'),
+      ).not.toThrow();
     });
 
     it('accepts optional context', () => {
-      expect(() => errorTracking.captureMessage('Message', 'info', { extra: 'data' })).not.toThrow();
+      expect(() =>
+        errorTracking.captureMessage('Message', 'info', { extra: 'data' }),
+      ).not.toThrow();
     });
   });
 
@@ -147,7 +163,9 @@ describe('Error Tracking Module', () => {
     });
 
     it('tracks action with data', () => {
-      expect(() => errorTracking.trackUserAction('form_submit', { formId: 'login' })).not.toThrow();
+      expect(() =>
+        errorTracking.trackUserAction('form_submit', { formId: 'login' }),
+      ).not.toThrow();
     });
 
     it('handles empty action name', () => {
@@ -161,7 +179,9 @@ describe('Error Tracking Module', () => {
     });
 
     it('tracks page view with additional data', () => {
-      expect(() => errorTracking.trackPageView('/profile', { userId: '123' })).not.toThrow();
+      expect(() =>
+        errorTracking.trackPageView('/profile', { userId: '123' }),
+      ).not.toThrow();
     });
   });
 
@@ -171,7 +191,9 @@ describe('Error Tracking Module', () => {
     });
 
     it('tracks performance with metadata', () => {
-      expect(() => errorTracking.trackPerformance('render', 50, { component: 'Header' })).not.toThrow();
+      expect(() =>
+        errorTracking.trackPerformance('render', 50, { component: 'Header' }),
+      ).not.toThrow();
     });
 
     it('handles zero duration', () => {
@@ -189,7 +211,9 @@ describe('Error Tracking Module', () => {
     });
 
     it('sets user with extra data', () => {
-      expect(() => errorTracking.setUser('user-123', { email: 'test@example.com' })).not.toThrow();
+      expect(() =>
+        errorTracking.setUser('user-123', { email: 'test@example.com' }),
+      ).not.toThrow();
     });
 
     it('handles empty user ID', () => {
@@ -339,12 +363,16 @@ describe('Error Tracking Module', () => {
 
   describe('Edge Cases', () => {
     it('handles Error object gracefully', () => {
-      expect(() => errorTracking.captureException(new Error('Test error'))).not.toThrow();
+      expect(() =>
+        errorTracking.captureException(new Error('Test error')),
+      ).not.toThrow();
     });
 
     it('handles object error by converting to string', () => {
       // The module expects Error objects, objects get converted via extractErrorMessage
-      expect(() => errorTracking.captureException({ message: 'Error object' })).not.toThrow();
+      expect(() =>
+        errorTracking.captureException({ message: 'Error object' }),
+      ).not.toThrow();
     });
 
     it('handles array by converting to string', () => {
@@ -363,7 +391,9 @@ describe('Error Tracking Module', () => {
     });
 
     it('handles special characters in action name', () => {
-      expect(() => errorTracking.trackUserAction('button_click_<script>')).not.toThrow();
+      expect(() =>
+        errorTracking.trackUserAction('button_click_<script>'),
+      ).not.toThrow();
     });
 
     it('handles unicode in path', () => {
@@ -382,9 +412,9 @@ describe('Error Tracking Module', () => {
     it('captures add to queue', () => {
       const initialStatus = errorTracking.getQueueStatus();
       const initialTotal = initialStatus.total;
-      
+
       errorTracking.captureException(new Error('Test'));
-      
+
       const status = errorTracking.getQueueStatus();
       expect(status.total).toBeGreaterThanOrEqual(initialTotal);
     });
@@ -409,7 +439,12 @@ describe('Exported Types', () => {
   });
 
   it('LogLevel type covers all levels', () => {
-    const levels: import('@/lib/errors/tracking').LogLevel[] = ['info', 'warning', 'error', 'debug'];
+    const levels: import('@/lib/errors/tracking').LogLevel[] = [
+      'info',
+      'warning',
+      'error',
+      'debug',
+    ];
     expect(levels).toHaveLength(4);
   });
 });

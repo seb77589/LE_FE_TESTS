@@ -123,9 +123,7 @@ describe('PasswordResetForm', () => {
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText('Invalid email address'),
-        ).toBeInTheDocument();
+        expect(screen.getByText('Invalid email address')).toBeInTheDocument();
       });
 
       // API should not be called
@@ -141,9 +139,7 @@ describe('PasswordResetForm', () => {
       await user.tab(); // Trigger onChange validation
 
       await waitFor(() => {
-        expect(
-          screen.getByText('Invalid email address'),
-        ).toBeInTheDocument();
+        expect(screen.getByText('Invalid email address')).toBeInTheDocument();
       });
     });
   });

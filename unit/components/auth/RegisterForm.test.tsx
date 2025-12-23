@@ -128,7 +128,9 @@ jest.mock('@/components/auth/RegisterErrorDisplay', () => ({
 }));
 
 jest.mock('@/components/ui/Input', () => {
-  const MockInput = React.forwardRef((props: any, ref: any) => renderMockInput(props, ref));
+  const MockInput = React.forwardRef((props: any, ref: any) =>
+    renderMockInput(props, ref),
+  );
   MockInput.displayName = 'MockInput';
   return { Input: MockInput };
 });

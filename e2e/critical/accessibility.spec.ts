@@ -59,7 +59,10 @@ test.describe('Accessibility - Automated Scanning', () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
-  test('dashboard should have no accessibility violations', async ({ page, workerCredentials }) => {
+  test('dashboard should have no accessibility violations', async ({
+    page,
+    workerCredentials,
+  }) => {
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
@@ -87,7 +90,10 @@ test.describe('Accessibility - Automated Scanning', () => {
 });
 
 test.describe('Accessibility - Keyboard Navigation', () => {
-  test('should navigate login form using keyboard', async ({ page, workerCredentials }) => {
+  test('should navigate login form using keyboard', async ({
+    page,
+    workerCredentials,
+  }) => {
     await page.goto('/auth/login');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
@@ -167,7 +173,10 @@ test.describe('Accessibility - Keyboard Navigation', () => {
     console.log('✅ All form fields accessible via keyboard');
   });
 
-  test('should navigate navigation menu using keyboard', async ({ page, workerCredentials }) => {
+  test('should navigate navigation menu using keyboard', async ({
+    page,
+    workerCredentials,
+  }) => {
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
@@ -511,7 +520,10 @@ test.describe('Accessibility - Focus Management', () => {
     }
   });
 
-  test('focus should return to trigger element after modal close', async ({ page, workerCredentials }) => {
+  test('focus should return to trigger element after modal close', async ({
+    page,
+    workerCredentials,
+  }) => {
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,

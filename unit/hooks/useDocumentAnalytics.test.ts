@@ -8,7 +8,10 @@
  */
 
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { useDocumentAnalytics, AnalyticsData } from '@/hooks/documents/useDocumentAnalytics';
+import {
+  useDocumentAnalytics,
+  AnalyticsData,
+} from '@/hooks/documents/useDocumentAnalytics';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
@@ -36,7 +39,9 @@ import logger from '@/lib/logging';
 import { extractErrorMessage } from '@/lib/errors';
 
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
-const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<typeof extractErrorMessage>;
+const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
+  typeof extractErrorMessage
+>;
 
 // Mock fetch
 const mockFetch = jest.fn();
@@ -374,7 +379,9 @@ describe('useDocumentAnalytics', () => {
 
       expect(result.current.analytics?.recent_activity).toBeDefined();
       expect(result.current.analytics?.recent_activity[0]).toHaveProperty('action');
-      expect(result.current.analytics?.recent_activity[0]).toHaveProperty('document_name');
+      expect(result.current.analytics?.recent_activity[0]).toHaveProperty(
+        'document_name',
+      );
       expect(result.current.analytics?.recent_activity[0]).toHaveProperty('timestamp');
       expect(result.current.analytics?.recent_activity[0]).toHaveProperty('user');
     });
@@ -388,7 +395,9 @@ describe('useDocumentAnalytics', () => {
 
       expect(result.current.analytics?.storage_usage).toBeDefined();
       expect(result.current.analytics?.storage_usage.used).toBe(1024 * 1024 * 500);
-      expect(result.current.analytics?.storage_usage.available).toBe(1024 * 1024 * 1500);
+      expect(result.current.analytics?.storage_usage.available).toBe(
+        1024 * 1024 * 1500,
+      );
       expect(result.current.analytics?.storage_usage.percentage).toBe(25);
     });
 

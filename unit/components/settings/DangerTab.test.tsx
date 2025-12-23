@@ -66,7 +66,9 @@ describe('DangerTab', () => {
       render(<DangerTab />);
 
       expect(screen.getByText('Danger Zone')).toBeInTheDocument();
-      expect(screen.getByText(/Actions in this section are permanent/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Actions in this section are permanent/),
+      ).toBeInTheDocument();
     });
 
     it('should render delete account section', () => {
@@ -81,21 +83,27 @@ describe('DangerTab', () => {
     it('should render delete my account button initially', () => {
       render(<DangerTab />);
 
-      expect(screen.getByRole('button', { name: /Delete My Account/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Delete My Account/i }),
+      ).toBeInTheDocument();
     });
 
     it('should render help section', () => {
       render(<DangerTab />);
 
       expect(screen.getByText('Need Help Instead?')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Contact Support/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Contact Support/i }),
+      ).toBeInTheDocument();
     });
 
     it('should not show confirmation form initially', () => {
       render(<DangerTab />);
 
       expect(screen.queryByText(/Are you absolutely sure?/)).not.toBeInTheDocument();
-      expect(screen.queryByLabelText(/Type.*DELETE.*to confirm/)).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText(/Type.*DELETE.*to confirm/),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -114,10 +122,14 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
 
-      expect(screen.getByText(/Your profile and account information/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Your profile and account information/),
+      ).toBeInTheDocument();
       expect(screen.getByText(/All documents you have uploaded/)).toBeInTheDocument();
       expect(screen.getByText(/All cases you have created/)).toBeInTheDocument();
-      expect(screen.getByText(/Your activity history and preferences/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Your activity history and preferences/),
+      ).toBeInTheDocument();
     });
 
     it('should show confirmation text input', async () => {
@@ -134,7 +146,9 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
 
-      expect(screen.getByLabelText(/Enter your password to confirm/)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(/Enter your password to confirm/),
+      ).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Your password')).toBeInTheDocument();
     });
 
@@ -156,7 +170,10 @@ describe('DangerTab', () => {
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
 
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.VALID);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.VALID,
+      );
 
       fireEvent.click(screen.getByRole('button', { name: /Cancel/i }));
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
@@ -172,10 +189,15 @@ describe('DangerTab', () => {
       render(<DangerTab />);
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.VALID);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.VALID,
+      );
 
       // Click the delete button in confirmation form
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       expect(screen.getByText('Please type DELETE to confirm')).toBeInTheDocument();
@@ -188,7 +210,9 @@ describe('DangerTab', () => {
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
 
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       expect(screen.getByText('Please enter your password')).toBeInTheDocument();
@@ -204,9 +228,14 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.VALID);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.VALID,
+      );
 
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       await waitFor(() => {
@@ -224,9 +253,14 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.VALID);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.VALID,
+      );
 
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       await waitFor(() => {
@@ -249,13 +283,20 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.VALID);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.VALID,
+      );
 
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       await waitFor(() => {
-        expect(customDeleteHandler).toHaveBeenCalledWith(FRONTEND_TEST_DATA.PASSWORD.VALID);
+        expect(customDeleteHandler).toHaveBeenCalledWith(
+          FRONTEND_TEST_DATA.PASSWORD.VALID,
+        );
       });
 
       expect(mockApi.delete).not.toHaveBeenCalled();
@@ -271,9 +312,14 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.WRONG);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.WRONG,
+      );
 
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       await waitFor(() => {
@@ -293,9 +339,14 @@ describe('DangerTab', () => {
 
       fireEvent.click(screen.getByRole('button', { name: /Delete My Account/i }));
       await user.type(screen.getByPlaceholderText('DELETE'), 'DELETE');
-      await user.type(screen.getByPlaceholderText('Your password'), FRONTEND_TEST_DATA.PASSWORD.VALID);
+      await user.type(
+        screen.getByPlaceholderText('Your password'),
+        FRONTEND_TEST_DATA.PASSWORD.VALID,
+      );
 
-      const deleteButtons = screen.getAllByRole('button', { name: /Delete My Account/i });
+      const deleteButtons = screen.getAllByRole('button', {
+        name: /Delete My Account/i,
+      });
       fireEvent.click(deleteButtons[0]);
 
       await waitFor(() => {

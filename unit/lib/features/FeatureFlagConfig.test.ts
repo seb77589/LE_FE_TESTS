@@ -138,7 +138,7 @@ describe('FeatureFlagConfig', () => {
         expect(logger.warn).toHaveBeenCalledWith(
           'general',
           'Failed to parse NEXT_PUBLIC_FEATURE_FLAGS, using defaults',
-          expect.any(Object)
+          expect.any(Object),
         );
         // Returns defaults
         expect(flags.new_dashboard).toBe(false);

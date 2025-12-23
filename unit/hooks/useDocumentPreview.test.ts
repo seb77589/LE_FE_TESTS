@@ -28,7 +28,9 @@ jest.mock('@/lib/errors', () => ({
 import logger from '@/lib/logging';
 import { extractErrorMessage } from '@/lib/errors';
 
-const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<typeof extractErrorMessage>;
+const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
+  typeof extractErrorMessage
+>;
 
 // Mock fetch
 const mockFetch = jest.fn();
@@ -257,7 +259,10 @@ describe('useDocumentPreview', () => {
         expect(result.current.previewData?.preview_type).toBe('image');
       });
 
-      expect(result.current.previewData?.dimensions).toEqual({ width: 1920, height: 1080 });
+      expect(result.current.previewData?.dimensions).toEqual({
+        width: 1920,
+        height: 1080,
+      });
       expect(result.current.previewData?.format).toBe('jpeg');
     });
 
@@ -303,7 +308,9 @@ describe('useDocumentPreview', () => {
         expect(result.current.previewData?.preview_type).toBe('info');
       });
 
-      expect(result.current.previewData?.message).toBe('Preview not available for this file type');
+      expect(result.current.previewData?.message).toBe(
+        'Preview not available for this file type',
+      );
     });
   });
 
@@ -468,7 +475,9 @@ describe('useDocumentPreview', () => {
 
       expect(result.current.previewData?.metadata).toBeDefined();
       expect(result.current.previewData?.metadata?.author).toBe('John Doe');
-      expect(result.current.previewData?.metadata?.creation_date).toBe('2024-01-01T00:00:00Z');
+      expect(result.current.previewData?.metadata?.creation_date).toBe(
+        '2024-01-01T00:00:00Z',
+      );
     });
 
     it('should include file size', async () => {

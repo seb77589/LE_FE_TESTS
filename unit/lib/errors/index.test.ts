@@ -85,7 +85,7 @@ describe('lib/errors/index.ts barrel exports', () => {
     it('should export extractErrorMessage function', () => {
       expect(extractErrorMessage).toBeDefined();
       expect(typeof extractErrorMessage).toBe('function');
-      
+
       // Verify it works
       const message = extractErrorMessage(new Error('test error'));
       expect(message).toBe('test error');
@@ -364,12 +364,14 @@ describe('lib/errors/index.ts barrel exports', () => {
   describe('Integration - Export Consistency', () => {
     it('should have consistent error classification functions', () => {
       const testError = { status: 401 };
-      
+
       // Both main and legacy exports should work identically
       expect(isAuthError(testError)).toBe(isAuthErrorLegacy(testError));
       expect(isValidationError(testError)).toBe(isValidationErrorLegacy(testError));
       expect(isRateLimitError(testError)).toBe(isRateLimitErrorLegacy(testError));
-      expect(isAccountLockedError(testError)).toBe(isAccountLockedErrorLegacy(testError));
+      expect(isAccountLockedError(testError)).toBe(
+        isAccountLockedErrorLegacy(testError),
+      );
     });
 
     it('should have working errorRecoveryHandling alias', async () => {

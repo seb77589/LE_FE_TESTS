@@ -99,7 +99,11 @@ test.describe('Authentication Security Tests', () => {
   });
 
   test.describe('Session Security', () => {
-    test('should use secure cookies for authentication', async ({ page, context, workerCredentials }) => {
+    test('should use secure cookies for authentication', async ({
+      page,
+      context,
+      workerCredentials,
+    }) => {
       // Login with valid credentials
       await page.goto('/auth/login');
       await page.fill('input[name="email"]', workerCredentials.email);
@@ -127,7 +131,10 @@ test.describe('Authentication Security Tests', () => {
       console.log('✅ Authentication storage validated');
     });
 
-    test('should clear all authentication data on logout', async ({ page, workerCredentials }) => {
+    test('should clear all authentication data on logout', async ({
+      page,
+      workerCredentials,
+    }) => {
       // Login first
       await page.goto('/auth/login');
       await page.fill('input[name="email"]', workerCredentials.email);
@@ -161,7 +168,10 @@ test.describe('Authentication Security Tests', () => {
       console.log('✅ Logout data clearing validated');
     });
 
-    test('should not expose sensitive data in URL parameters', async ({ page, workerCredentials }) => {
+    test('should not expose sensitive data in URL parameters', async ({
+      page,
+      workerCredentials,
+    }) => {
       await page.goto('/auth/login');
       await page.fill('input[name="email"]', workerCredentials.email);
       await page.fill('input[name="password"]', workerCredentials.password);
@@ -435,7 +445,10 @@ test.describe('Authentication Security Tests', () => {
   });
 
   test.describe('Error Message Security', () => {
-    test('should not leak user enumeration information', async ({ page, workerCredentials }) => {
+    test('should not leak user enumeration information', async ({
+      page,
+      workerCredentials,
+    }) => {
       await page.goto('/auth/login');
       await expect(page.locator('form')).toBeVisible();
 

@@ -122,8 +122,7 @@ describe('changePassword API Function', () => {
       // Verify CSRF token was attempted to be retrieved
       // Note: In unit tests, CSRF token may not be added if mock isn't working correctly
       // This is acceptable as CSRF protection is tested in integration/E2E tests
-      const fetchCall = mockFetch.mock
-        .calls[0];
+      const fetchCall = mockFetch.mock.calls[0];
       if (fetchCall?.[1]?.headers) {
         const headers = fetchCall[1].headers as Record<string, string>;
         // If CSRF token is present, verify it's correct
@@ -147,8 +146,7 @@ describe('changePassword API Function', () => {
       expect(globalThis.fetch).toHaveBeenCalled();
 
       // Check if CSRF token was added (may not be in unit test environment)
-      const fetchCall = mockFetch.mock
-        .calls[0];
+      const fetchCall = mockFetch.mock.calls[0];
       if (fetchCall?.[1]?.headers) {
         const headers = fetchCall[1].headers as Record<string, string>;
         // CSRF token should be added if mock is working
@@ -260,9 +258,7 @@ describe('changePassword API Function', () => {
     });
 
     it('should handle network errors', async () => {
-      mockFetch.mockRejectedValueOnce(
-        new Error('Network error'),
-      );
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
       await expect(
         changePassword({

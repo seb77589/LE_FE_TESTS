@@ -78,7 +78,10 @@ test.describe('API Connectivity', () => {
     expect(criticalErrors).toHaveLength(0);
   });
 
-  test('should handle login API call without network errors', async ({ page, workerCredentials }) => {
+  test('should handle login API call without network errors', async ({
+    page,
+    workerCredentials,
+  }) => {
     // Monitor network requests
     const apiRequests: any[] = [];
     page.on('request', (request) => {

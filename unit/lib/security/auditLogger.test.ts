@@ -719,14 +719,12 @@ describe('Audit Logger', () => {
     });
 
     it('should flush batch when size limit reached', async () => {
-      const entries = new Array(10)
-        .fill(null)
-        .map((_, i) => ({
-          action: 'user.create' as AuditAction,
-          severity: 'medium' as AuditSeverity,
-          user_id: i,
-          success: true,
-        }));
+      const entries = new Array(10).fill(null).map((_, i) => ({
+        action: 'user.create' as AuditAction,
+        severity: 'medium' as AuditSeverity,
+        user_id: i,
+        success: true,
+      }));
 
       // Add 9 entries (below batch size)
       for (let i = 0; i < 9; i++) {
@@ -782,14 +780,12 @@ describe('Audit Logger', () => {
       mockApi.post.mockRejectedValueOnce(apiError);
 
       // Add entries to batch
-      const entries = new Array(5)
-        .fill(null)
-        .map((_, i) => ({
-          action: 'user.create' as AuditAction,
-          severity: 'medium' as AuditSeverity,
-          user_id: i,
-          success: true,
-        }));
+      const entries = new Array(5).fill(null).map((_, i) => ({
+        action: 'user.create' as AuditAction,
+        severity: 'medium' as AuditSeverity,
+        user_id: i,
+        success: true,
+      }));
 
       for (const entry of entries) {
         auditBatcher.add(entry);

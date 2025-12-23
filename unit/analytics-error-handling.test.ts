@@ -79,9 +79,13 @@ class TestAnalytics {
     );
   }
 
-  private readonly handleSendBeaconError = jest.fn((eventData?: any, context?: string): void => {
-    console.debug(`[Analytics] sendBeacon failed in ${context}, falling back to fetch`);
-  });
+  private readonly handleSendBeaconError = jest.fn(
+    (eventData?: any, context?: string): void => {
+      console.debug(
+        `[Analytics] sendBeacon failed in ${context}, falling back to fetch`,
+      );
+    },
+  );
 
   private handleStorageError(eventData?: any, context?: string): void {
     console.debug(
