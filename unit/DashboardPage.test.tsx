@@ -117,13 +117,13 @@ describe('Dashboard Page', () => {
           (button) => button.textContent,
         )
       : [];
-    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(1);
+    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(
+      1,
+    );
 
     // Admin privilege notice should be visible
     expect(screen.getByText('Administrator Access')).toBeInTheDocument();
-    expect(
-      screen.getByText(/you have administrative privileges/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/you have administrative privileges/i)).toBeInTheDocument();
   });
 
   test('displays superadmin users dashboard with all admin actions', () => {
@@ -142,7 +142,9 @@ describe('Dashboard Page', () => {
           (button) => button.textContent,
         )
       : [];
-    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(1);
+    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(
+      1,
+    );
     expect(buttonTexts.filter((text) => text?.includes('Admin Panel'))).toHaveLength(1);
 
     // Admin privilege notice section should have "System Admin" button
@@ -153,6 +155,8 @@ describe('Dashboard Page', () => {
           (button) => button.textContent,
         )
       : [];
-    expect(adminButtons.filter((text) => text?.includes('System Admin'))).toHaveLength(1);
+    expect(adminButtons.filter((text) => text?.includes('System Admin'))).toHaveLength(
+      1,
+    );
   });
 });
