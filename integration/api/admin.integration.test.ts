@@ -22,6 +22,7 @@
 import type { AxiosError } from 'axios';
 import api, { handleApiError } from '@/lib/api/client';
 import { buildUrl } from '@/lib/api/config';
+import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({
@@ -57,7 +58,7 @@ describe('Admin API Integration Tests', () => {
 
   const mockUser = {
     id: 1,
-    email: 'admin@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
     full_name: 'Admin User',
     role: 'admin',
     is_active: true,
@@ -67,7 +68,7 @@ describe('Admin API Integration Tests', () => {
 
   const mockUsersList = [
     mockUser,
-    { ...mockUser, id: 2, email: 'user@example.com', role: 'user' },
+    { ...mockUser, id: 2, email: FRONTEND_TEST_CREDENTIALS.USER.email, role: 'user' },
   ];
 
   const mockActivity = {
@@ -224,14 +225,14 @@ describe('Admin API Integration Tests', () => {
       const importData = {
         users: [
           {
-            email: 'user1@example.com',
+            email: FRONTEND_TEST_CREDENTIALS.USER1.email,
             full_name: 'User 1',
-            password: 'SecurePass123!',
+            password: FRONTEND_TEST_CREDENTIALS.USER1.password,
           },
           {
-            email: 'user2@example.com',
+            email: FRONTEND_TEST_CREDENTIALS.USER2.email,
             full_name: 'User 2',
-            password: 'SecurePass123!',
+            password: FRONTEND_TEST_CREDENTIALS.USER2.password,
           },
         ],
       };

@@ -17,6 +17,7 @@
 
 import type { AxiosError } from 'axios';
 import api, { handleApiError } from '@/lib/api/client';
+import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({
@@ -37,7 +38,7 @@ describe('User Operations API Integration Tests', () => {
   const mockUserId = '123';
   const mockUser = {
     id: mockUserId,
-    email: 'test@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.USER.email,
     full_name: 'Test User',
     role: 'user',
     is_active: true,
@@ -59,15 +60,15 @@ describe('User Operations API Integration Tests', () => {
 
       const endpoint = '/api/v1/users';
       const response = await api.post(endpoint, {
-        email: 'test@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         full_name: 'Test User',
-        password: 'SecurePass123!',
+        password: FRONTEND_TEST_CREDENTIALS.USER.password,
       });
 
       expect(api.post).toHaveBeenCalledWith(
         endpoint,
         expect.objectContaining({
-          email: 'test@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.USER.email,
           full_name: 'Test User',
         }),
       );
