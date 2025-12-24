@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
+
 // Create persistent mocks before importing the module
 const mockLoggerInfo = jest.fn();
 const mockLoggerWarn = jest.fn();
@@ -212,7 +214,7 @@ describe('Error Tracking Module', () => {
 
     it('sets user with extra data', () => {
       expect(() =>
-        errorTracking.setUser('user-123', { email: 'test@example.com' }),
+        errorTracking.setUser('user-123', { email: FRONTEND_TEST_CREDENTIALS.USER.email }),
       ).not.toThrow();
     });
 

@@ -3,10 +3,11 @@ import '@testing-library/jest-dom';
 import 'whatwg-fetch';
 
 // Load environment variables from main config/.env file
+// Path: /home/duck/legalease/config/.env (from frontend/tests/setup/ -> ../../.. -> config/.env)
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.join(__dirname, '..', 'config', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '..', '..', 'config', '.env') });
 
 // Configure jsdom location for real backend testing
 // This ensures API client uses the correct backend URL (http://localhost:8000)

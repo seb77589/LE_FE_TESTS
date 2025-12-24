@@ -9,6 +9,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserDetailsDrawer } from '@/components/users/UserDetailsDrawer';
 import type { User } from '@/types/user';
+import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
@@ -62,7 +63,7 @@ const mockApi = api as jest.Mocked<typeof api>;
 // Test data
 const mockUser: User = {
   id: 1,
-  email: 'test@example.com',
+  email: FRONTEND_TEST_CREDENTIALS.USER.email,
   username: 'testuser',
   full_name: 'Test User',
   role: 'ASSISTANT',
@@ -77,14 +78,14 @@ const mockUnverifiedUser: User = {
   ...mockUser,
   id: 2,
   is_verified: false,
-  email: 'unverified@example.com',
+  email: FRONTEND_TEST_CREDENTIALS.UNVERIFIED.email,
 };
 
 const mockInactiveUser: User = {
   ...mockUser,
   id: 3,
   is_active: false,
-  email: 'inactive@example.com',
+  email: FRONTEND_TEST_CREDENTIALS.INACTIVE.email,
 };
 
 const mockUserWithoutName: User = {
@@ -96,7 +97,7 @@ const mockUserWithoutName: User = {
 
 const mockUserMinimalData: User = {
   id: 5,
-  email: 'minimal@example.com',
+  email: FRONTEND_TEST_DATA.EMAIL.VALID,
   role: 'ASSISTANT',
   is_active: true,
   is_verified: false,
@@ -111,7 +112,7 @@ describe('UserDetailsDrawer', () => {
     mockUseAuth.mockReturnValue({
       user: {
         id: 100,
-        email: 'admin@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
         role: 'MANAGER',
         is_active: true,
         is_verified: true,
@@ -207,7 +208,7 @@ describe('UserDetailsDrawer', () => {
           onUpdate={mockOnUpdate}
         />,
       );
-      expect(screen.getByText('test@example.com')).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER.email)).toBeInTheDocument();
     });
 
     it('should display user ID', () => {
@@ -342,7 +343,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -393,7 +394,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -419,7 +420,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -447,7 +448,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -477,7 +478,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -514,7 +515,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -549,7 +550,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -584,7 +585,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -621,7 +622,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -663,7 +664,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -693,7 +694,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -731,7 +732,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -757,7 +758,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -789,7 +790,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -821,7 +822,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -855,7 +856,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -896,7 +897,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -923,7 +924,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -951,7 +952,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -987,7 +988,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1023,7 +1024,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1059,7 +1060,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1208,7 +1209,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'superadmin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1257,7 +1258,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           is_active: true,
           is_verified: true,
         },
@@ -1288,7 +1289,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1328,7 +1329,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1359,7 +1360,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1391,7 +1392,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1421,7 +1422,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1459,7 +1460,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1503,7 +1504,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,
@@ -1541,7 +1542,7 @@ describe('UserDetailsDrawer', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 100,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'SUPERADMIN',
           is_active: true,
           is_verified: true,

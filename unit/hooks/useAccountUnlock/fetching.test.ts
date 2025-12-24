@@ -8,6 +8,7 @@
  */
 
 import { renderHook, waitFor } from '@testing-library/react';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { useAccountUnlock, LockedAccount } from '@/hooks/admin/useAccountUnlock';
 
 // Mock dependencies
@@ -37,7 +38,7 @@ const mockApi = api as jest.Mocked<typeof api>;
 const mockLockedAccounts: LockedAccount[] = [
   {
     user_id: 1,
-    email: 'locked1@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email,
     full_name: 'Locked User One',
     role: 'user',
     failed_attempts: 5,
@@ -47,7 +48,7 @@ const mockLockedAccounts: LockedAccount[] = [
   },
   {
     user_id: 2,
-    email: 'locked2@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.LOCKED_USER_2.email,
     full_name: 'Locked User Two',
     role: 'user',
     failed_attempts: 5,
@@ -102,8 +103,8 @@ describe('useAccountUnlock - Data fetching', () => {
       expect(result.current.lockedAccounts).toHaveLength(2);
     });
 
-    expect(result.current.lockedAccounts[0].email).toBe('locked1@example.com');
-    expect(result.current.lockedAccounts[1].email).toBe('locked2@example.com');
+    expect(result.current.lockedAccounts[0].email).toBe(FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email);
+    expect(result.current.lockedAccounts[1].email).toBe(FRONTEND_TEST_CREDENTIALS.LOCKED_USER_2.email);
     unmount();
   });
 

@@ -6,6 +6,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ActivityList } from '@/components/admin/activity/ActivityList';
 import { ActivityEvent } from '@/components/admin/activity/types';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/components/ui/Badge', () => ({
@@ -28,7 +29,7 @@ describe('ActivityList', () => {
       id: '1',
       action: 'user_login',
       timestamp: '2025-01-01T12:00:00Z',
-      user_email: 'user@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.USER.email,
       user_role: 'USER',
       status: 'success',
       severity: 'low',
@@ -39,7 +40,7 @@ describe('ActivityList', () => {
       id: '2',
       action: 'document_uploaded',
       timestamp: '2025-01-01T11:00:00Z',
-      user_email: 'admin@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
       user_role: 'ADMIN',
       status: 'success',
       severity: 'medium',
@@ -62,8 +63,8 @@ describe('ActivityList', () => {
 
     it('should display user email', () => {
       render(<ActivityList activities={mockActivities} />);
-      expect(screen.getByText('user@example.com')).toBeInTheDocument();
-      expect(screen.getByText('admin@example.com')).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER.email)).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.ADMIN.email)).toBeInTheDocument();
     });
 
     it('should display user role', () => {

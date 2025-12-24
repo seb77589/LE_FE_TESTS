@@ -8,6 +8,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { useAccountUnlock, LockedAccount } from '@/hooks/admin/useAccountUnlock';
 
 // Mock dependencies
@@ -36,7 +37,7 @@ const mockApi = api as jest.Mocked<typeof api>;
 const mockLockedAccounts: LockedAccount[] = [
   {
     user_id: 1,
-    email: 'locked1@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email,
     full_name: 'Locked User One',
     role: 'user',
     failed_attempts: 5,

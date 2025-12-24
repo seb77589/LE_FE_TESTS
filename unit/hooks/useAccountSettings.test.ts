@@ -9,6 +9,7 @@
 
 import { renderHook, act } from '@testing-library/react';
 import { useAccountSettings } from '@/hooks/profile/useAccountSettings';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({
@@ -35,7 +36,7 @@ const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
 describe('useAccountSettings', () => {
   const mockSettings = {
     full_name: 'John Doe',
-    email: 'john@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.JOHN.email,
     phone: '+1234567890',
     timezone: 'America/New_York',
     language: 'en',
@@ -218,10 +219,10 @@ describe('useAccountSettings', () => {
       );
 
       act(() => {
-        result.current.handleChange('email', 'jane@example.com');
+        result.current.handleChange('email', FRONTEND_TEST_CREDENTIALS.JANE.email);
       });
 
-      expect(result.current.formData.email).toBe('jane@example.com');
+      expect(result.current.formData.email).toBe(FRONTEND_TEST_CREDENTIALS.JANE.email);
     });
 
     it('should update phone field', () => {

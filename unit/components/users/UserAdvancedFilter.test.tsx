@@ -7,6 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import UserAdvancedFilter, {
   UserAdvancedFilterValues,
 } from '@/components/users/UserAdvancedFilter';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 describe('UserAdvancedFilter', () => {
   const mockOnChange = jest.fn();
@@ -66,8 +67,8 @@ describe('UserAdvancedFilter', () => {
     render(<UserAdvancedFilter values={{}} onChange={mockOnChange} />);
 
     const searchInput = screen.getByTestId('user-search');
-    fireEvent.change(searchInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(searchInput, { target: { value: FRONTEND_TEST_CREDENTIALS.USER.email } });
 
-    expect(mockOnChange).toHaveBeenCalledWith({ search: 'test@example.com' });
+    expect(mockOnChange).toHaveBeenCalledWith({ search: FRONTEND_TEST_CREDENTIALS.USER.email });
   });
 });

@@ -10,6 +10,10 @@
  */
 
 import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
+import {
   sanitizeHTML,
   escapeHTML,
   sanitizeURL,
@@ -94,7 +98,7 @@ describe('Validation Utilities Tests', () => {
       const { validateEmail } = mockUseEmailValidation();
 
       // Valid emails
-      expect(validateEmail('test@example.com').isValid).toBe(true);
+      expect(validateEmail(FRONTEND_TEST_DATA.EMAIL.VALID).isValid).toBe(true);
       expect(validateEmail('user.name@domain.co.uk').isValid).toBe(true);
       expect(validateEmail('user+tag@example.com').isValid).toBe(true);
 
@@ -182,7 +186,7 @@ describe('Validation Utilities Tests', () => {
 
       expect(validateEmail('user@tempmail.com').isValid).toBe(false);
       expect(validateEmail('user@guerrillamail.com').isValid).toBe(false);
-      expect(validateEmail('user@example.com').isValid).toBe(true);
+      expect(validateEmail(FRONTEND_TEST_DATA.EMAIL.VALID).isValid).toBe(true);
 
       expect(isDisposableDomain('tempmail.com')).toBe(true);
       expect(isDisposableDomain('example.com')).toBe(false);
@@ -401,7 +405,7 @@ describe('Validation Utilities Tests', () => {
       const { validatePassword } = mockUsePasswordPolicy();
 
       const userInfo = {
-        email: 'john.doe@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.JOHN.email,
         full_name: 'John Doe',
       };
 
@@ -436,7 +440,7 @@ describe('Validation Utilities Tests', () => {
       expect(sanitizeURL('https://example.com')).toBe('https://example.com');
       expect(sanitizeURL('http://example.com')).toBe('http://example.com');
       expect(sanitizeURL('/relative/path')).toBe('/relative/path');
-      expect(sanitizeURL('mailto:test@example.com')).toBe('mailto:test@example.com');
+      expect(sanitizeURL(`mailto:${FRONTEND_TEST_DATA.EMAIL.VALID}`)).toBe(`mailto:${FRONTEND_TEST_DATA.EMAIL.VALID}`);
 
       // Dangerous URLs should be blocked
       expect(sanitizeURL('javascript:alert("XSS")')).toBe('');

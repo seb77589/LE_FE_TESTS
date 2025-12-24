@@ -12,6 +12,7 @@
  * @since 0.2.0
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import {
   isRateLimited,
   recordAttempt,
@@ -33,7 +34,7 @@ beforeEach(() => {
   resetRateLimit('login');
   resetRateLimit('action');
   resetRateLimit('test:user123');
-  resetRateLimit('login:user@example.com');
+  resetRateLimit(`login:${FRONTEND_TEST_CREDENTIALS.USER.email}`);
   resetRateLimit('action:undefined');
   resetRateLimit('action:');
   resetRateLimit('key:with:colons');
@@ -187,12 +188,12 @@ describe('rateLimiter', () => {
 
     describe('new API', () => {
       it('should record attempt with action and identifier', () => {
-        recordAttempt('login', 'user@example.com', {
+        recordAttempt('login', FRONTEND_TEST_CREDENTIALS.USER.email, {
           maxAttempts: 5,
           timeWindowMs: 60000,
         });
 
-        const status = getRateLimitStatus('login', 'user@example.com', {
+        const status = getRateLimitStatus('login', FRONTEND_TEST_CREDENTIALS.USER.email, {
           maxAttempts: 5,
           timeWindowMs: 60000,
         });

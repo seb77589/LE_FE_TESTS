@@ -4,6 +4,7 @@
 import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import RealTimeActivityFeed from '@/components/admin/RealTimeActivityFeed';
 
 // ==============================================================================
@@ -290,7 +291,7 @@ jest.mock('@/hooks/useWebSocket', () => ({
 
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
   useAuth: jest.fn(() => ({
-    user: { id: 1, email: 'admin@example.com' },
+    user: { id: 1, email: FRONTEND_TEST_CREDENTIALS.ADMIN.email },
   })),
 }));
 
@@ -305,7 +306,7 @@ describe('RealTimeActivityFeed', () => {
     {
       id: '1',
       action: 'user_login',
-      user_email: 'user1@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.USER1.email,
       status: 'success',
       timestamp: '2025-01-01T12:00:00Z',
       severity: 'low',
@@ -313,7 +314,7 @@ describe('RealTimeActivityFeed', () => {
     {
       id: '2',
       action: 'document_uploaded',
-      user_email: 'user2@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.USER2.email,
       status: 'success',
       timestamp: '2025-01-01T12:01:00Z',
       severity: 'medium',
@@ -321,7 +322,7 @@ describe('RealTimeActivityFeed', () => {
     {
       id: '3',
       action: 'security_event',
-      user_email: 'user3@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.USER2.email,
       status: 'warning',
       timestamp: '2025-01-01T12:02:00Z',
       severity: 'high',
@@ -406,7 +407,7 @@ describe('RealTimeActivityFeed', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+        expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
       });
     });
   });
@@ -981,7 +982,7 @@ describe('RealTimeActivityFeed', () => {
           capturedOnActivityReceived!({
             id: '4',
             action: 'new_activity',
-            user_email: 'new@example.com',
+            user_email: FRONTEND_TEST_CREDENTIALS.NEW.email,
             status: 'success',
             timestamp: '2025-01-01T12:03:00Z',
           });
@@ -1014,7 +1015,7 @@ describe('RealTimeActivityFeed', () => {
           capturedOnActivityReceived!({
             id: '1', // Already exists
             action: 'duplicate_activity',
-            user_email: 'duplicate@example.com',
+            user_email: FRONTEND_TEST_CREDENTIALS.EXISTING.email,
             status: 'success',
             timestamp: '2025-01-01T12:03:00Z',
           });

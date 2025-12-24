@@ -6,11 +6,12 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UserFormFields } from '@/components/users/form/UserFormFields';
 import { User } from '@/types/user';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 describe('UserFormFields', () => {
   const mockFormData: User = {
     id: 1,
-    email: 'test@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.USER.email,
     full_name: 'Test User',
     username: 'testuser',
     role: 'USER',
@@ -59,7 +60,7 @@ describe('UserFormFields', () => {
 
       expect(screen.getByDisplayValue('Test User')).toBeInTheDocument();
       expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-      expect(screen.getByDisplayValue('test@example.com')).toBeInTheDocument();
+      expect(screen.getByDisplayValue(FRONTEND_TEST_CREDENTIALS.USER.email)).toBeInTheDocument();
     });
   });
 
@@ -95,7 +96,7 @@ describe('UserFormFields', () => {
       );
 
       const emailInput = screen.getByLabelText(/email address/i);
-      fireEvent.change(emailInput, { target: { value: 'new@example.com' } });
+      fireEvent.change(emailInput, { target: { value: FRONTEND_TEST_CREDENTIALS.NEW.email } });
 
       expect(mockOnChange).toHaveBeenCalledTimes(1);
     });

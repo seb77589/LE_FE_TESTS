@@ -4,6 +4,7 @@
  * Coverage: Rendering, labels, errors, helper text, accessibility
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -155,8 +156,8 @@ describe('Input', () => {
     it('allows typing in input', async () => {
       render(<Input />);
       const input = screen.getByRole('textbox');
-      await userEvent.type(input, 'test@example.com');
-      expect(input).toHaveValue('test@example.com');
+      await userEvent.type(input, FRONTEND_TEST_CREDENTIALS.USER.email);
+      expect(input).toHaveValue(FRONTEND_TEST_CREDENTIALS.USER.email);
     });
 
     it('calls onChange when value changes', async () => {

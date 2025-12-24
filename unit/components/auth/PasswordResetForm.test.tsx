@@ -339,7 +339,7 @@ describe('PasswordResetForm', () => {
 
       // Second submission (success)
       await user.clear(emailInput);
-      await user.type(emailInput, 'valid@example.com');
+      await user.type(emailInput, FRONTEND_TEST_DATA.EMAIL.VALID);
       await user.click(submitButton);
 
       await waitFor(() => {

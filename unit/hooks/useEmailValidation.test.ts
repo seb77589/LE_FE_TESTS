@@ -15,6 +15,8 @@
  * - createEmailSchema function (2 tests)
  */
 
+import { FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
+
 // Mock dependencies BEFORE imports
 const mockFetch = jest.fn();
 globalThis.fetch = mockFetch;
@@ -148,7 +150,7 @@ describe('useEmailValidation Hook', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      const validation = result.current.validateEmail('user@example.com');
+      const validation = result.current.validateEmail(FRONTEND_TEST_DATA.EMAIL.VALID);
       expect(validation.isValid).toBe(true);
       expect(validation.errors).toEqual([]);
     });
@@ -209,7 +211,7 @@ describe('useEmailValidation Hook', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      const validation = result.current.validateEmail('  user@example.com  ');
+      const validation = result.current.validateEmail(`  ${FRONTEND_TEST_DATA.EMAIL.VALID}  `);
       expect(validation.isValid).toBe(true);
       expect(validation.errors).toEqual([]);
     });
@@ -232,7 +234,7 @@ describe('useEmailValidation Hook', () => {
       expect(schema).toBeDefined();
 
       // Test valid email
-      const validResult = schema.safeParse('user@example.com');
+      const validResult = schema.safeParse(FRONTEND_TEST_DATA.EMAIL.VALID);
       expect(validResult.success).toBe(true);
     });
 
@@ -263,7 +265,7 @@ describe('useEmailValidation Hook', () => {
       });
 
       const schema = result.current.getEmailSchema();
-      const validResult = schema.safeParse('user@example.com');
+      const validResult = schema.safeParse(FRONTEND_TEST_DATA.EMAIL.VALID);
       expect(validResult.success).toBe(true);
     });
   });
@@ -370,7 +372,7 @@ describe('useEmailValidation Hook', () => {
       const { result } = renderHook(() => useEmailValidation());
 
       // Validation should work even with loading config
-      const validation = result.current.validateEmail('user@example.com');
+      const validation = result.current.validateEmail(FRONTEND_TEST_DATA.EMAIL.VALID);
       expect(validation.isValid).toBe(true);
     });
 
@@ -396,7 +398,7 @@ describe('useEmailValidation Hook', () => {
       const schema = createEmailSchema();
       expect(schema).toBeDefined();
 
-      const result = schema.safeParse('user@example.com');
+      const result = schema.safeParse(FRONTEND_TEST_DATA.EMAIL.VALID);
       expect(result.success).toBe(true);
     });
 
@@ -407,7 +409,7 @@ describe('useEmailValidation Hook', () => {
       const schema = createEmailSchema();
       expect(schema).toBeDefined();
 
-      const result = schema.safeParse('user@example.com');
+      const result = schema.safeParse(FRONTEND_TEST_DATA.EMAIL.VALID);
       expect(result.success).toBe(true);
     });
   });

@@ -10,6 +10,7 @@
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useUserManagement } from '@/hooks/admin/useUserManagement';
 import type { User } from '@/types/user';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('swr', () => ({
@@ -57,7 +58,7 @@ describe('useUserManagement', () => {
   const mockUsers: User[] = [
     {
       id: 1,
-      email: 'user1@example.com',
+      email: FRONTEND_TEST_CREDENTIALS.USER1.email,
       full_name: 'User One',
       role: 'user',
       is_active: true,
@@ -65,7 +66,7 @@ describe('useUserManagement', () => {
     },
     {
       id: 2,
-      email: 'user2@example.com',
+      email: FRONTEND_TEST_CREDENTIALS.USER2.email,
       full_name: 'User Two',
       role: 'admin',
       is_active: true,
@@ -73,7 +74,7 @@ describe('useUserManagement', () => {
     },
     {
       id: 3,
-      email: 'user3@example.com',
+      email: FRONTEND_TEST_CREDENTIALS.INACTIVE.email,
       full_name: 'User Three',
       role: 'user',
       is_active: false,
@@ -344,7 +345,7 @@ describe('useUserManagement', () => {
 
       const { result } = renderHook(() =>
         useUserManagement({
-          currentUser: { id: 99, email: 'admin@example.com', role: 'admin' },
+          currentUser: { id: 99, email: FRONTEND_TEST_CREDENTIALS.ADMIN.email, role: 'admin' },
         }),
       );
 
@@ -597,7 +598,7 @@ describe('useUserManagement', () => {
 
       const { result } = renderHook(() => useUserManagement());
 
-      const mockFile = createMockFile('[{"email": "test@example.com"}]', 'users.json');
+      const mockFile = createMockFile(`[{"email": "${FRONTEND_TEST_CREDENTIALS.USER.email}"}]`, 'users.json');
 
       const mockEvent = {
         target: { files: [mockFile] },
@@ -608,7 +609,7 @@ describe('useUserManagement', () => {
       });
 
       expect(mockApi.post).toHaveBeenCalledWith('/api/v1/admin/users/import', {
-        users: [{ email: 'test@example.com' }],
+        users: [{ email: FRONTEND_TEST_CREDENTIALS.USER.email }],
       });
       expect(result.current.importResult).toContain('Successfully imported: 5 users');
     });

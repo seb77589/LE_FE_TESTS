@@ -197,7 +197,7 @@ describe('useSessionTimeout', () => {
   it('should poll session status every 30 seconds', async () => {
     jest.useRealTimers();
     (useAuth as jest.Mock).mockReturnValue({
-      user: { id: 1, email: 'test@example.com' },
+      user: { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER.email },
       isAuthenticated: true,
     });
 
@@ -356,7 +356,7 @@ describe('useSessionTimeout Edge Cases', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useAuth as jest.Mock).mockReturnValue({
-      user: { id: 1, email: 'test@example.com' },
+      user: { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER.email },
       isAuthenticated: true,
     });
   });
@@ -454,7 +454,7 @@ describe('useSessionTimeout Edge Cases', () => {
     const { rerender, unmount } = renderHook(
       ({ isAuthenticated }) => {
         (useAuth as jest.Mock).mockReturnValue({
-          user: isAuthenticated ? { id: 1, email: 'test@example.com' } : null,
+          user: isAuthenticated ? { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER.email } : null,
           isAuthenticated,
         });
         return useSessionTimeout();

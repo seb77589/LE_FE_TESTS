@@ -6,11 +6,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { AccountStatusChip } from '@/components/admin/unlock/AccountStatusChip';
 import { LockedAccount } from '@/components/admin/unlock/types';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 describe('AccountStatusChip', () => {
   const mockLockedAccount: LockedAccount = {
     user_id: 1,
-    email: 'test@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.USER.email,
     full_name: 'Test User',
     role: 'user',
     failed_attempts: 5,

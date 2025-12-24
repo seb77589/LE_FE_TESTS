@@ -13,6 +13,7 @@
  * @since 0.2.0
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { renderHook } from '@testing-library/react';
 
 // ==============================================================================
@@ -536,7 +537,7 @@ describe('SWR Config Module', () => {
           { id: 2, name: 'Bob' },
           { id: 3, name: 'Charlie' },
         ];
-        const updatedUser = { id: 2, name: 'Bob Updated', email: 'bob@example.com' };
+        const updatedUser = { id: 2, name: 'Bob Updated', email: FRONTEND_TEST_CREDENTIALS.USER2.email };
 
         const result = optimisticUpdates.updateUserInList(users, updatedUser);
 
@@ -544,7 +545,7 @@ describe('SWR Config Module', () => {
         expect(result[1]).toEqual({
           id: 2,
           name: 'Bob Updated',
-          email: 'bob@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.USER2.email,
         });
       });
 

@@ -6,49 +6,50 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import AccountUnlockManager from '@/components/admin/AccountUnlockManager';
 
-// Mock useAuth hook
-const mockUser = { id: 1, email: 'admin@example.com', role: 'superadmin' };
-jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
-  useAuth: jest.fn(() => ({
-    user: mockUser,
-    isAuthenticated: true,
-  })),
-}));
+// Mock useAuth hook - must use require() inside the mock factory for hoisting
+jest.mock('@/lib/context/ConsolidatedAuthContext', () => {
+  const { FRONTEND_TEST_CREDENTIALS: creds } = require('@tests/jest-test-credentials');
+  return {
+    useAuth: jest.fn(() => ({
+      user: { id: 1, email: creds.ADMIN.email, role: 'superadmin' },
+      isAuthenticated: true,
+    })),
+  };
+});
 
-// Mock useAccountUnlock hook
-const mockLockedAccounts = [
-  {
-    id: 1,
-    email: 'user1@example.com',
-    full_name: 'User One',
-    role: 'user',
-    failed_login_attempts: 5,
-    locked_until: '2025-01-01T12:00:00Z',
-    lockout_reason: 'Too many failed attempts',
-  },
-];
-
-const mockUseAccountUnlock = {
-  lockedAccounts: mockLockedAccounts,
-  loading: false,
-  error: null,
-  success: null,
-  unlocking: false,
-  unlockDialogOpen: false,
-  selectedAccount: null,
-  unlockReason: '',
-  setUnlockDialogOpen: jest.fn(),
-  setUnlockReason: jest.fn(),
-  setError: jest.fn(),
-  setSuccess: jest.fn(),
-  handleUnlockAccount: jest.fn(),
-  confirmUnlock: jest.fn(),
-  fetchLockedAccounts: jest.fn(),
-};
-
-jest.mock('@/hooks/admin/useAccountUnlock', () => ({
-  useAccountUnlock: jest.fn(() => mockUseAccountUnlock),
-}));
+// Mock useAccountUnlock hook - must use require() inside the mock factory for hoisting
+jest.mock('@/hooks/admin/useAccountUnlock', () => {
+  const { FRONTEND_TEST_CREDENTIALS: creds } = require('@tests/jest-test-credentials');
+  return {
+    useAccountUnlock: jest.fn(() => ({
+      lockedAccounts: [
+        {
+          id: 1,
+          email: creds.USER1.email,
+          full_name: 'User One',
+          role: 'user',
+          failed_login_attempts: 5,
+          locked_until: '2025-01-01T12:00:00Z',
+          lockout_reason: 'Too many failed attempts',
+        },
+      ],
+      loading: false,
+      error: null,
+      success: null,
+      unlocking: false,
+      unlockDialogOpen: false,
+      selectedAccount: null,
+      unlockReason: '',
+      setUnlockDialogOpen: jest.fn(),
+      setUnlockReason: jest.fn(),
+      setError: jest.fn(),
+      setSuccess: jest.fn(),
+      handleUnlockAccount: jest.fn(),
+      confirmUnlock: jest.fn(),
+      fetchLockedAccounts: jest.fn(),
+    })),
+  };
+});
 
 // Mock child components
 jest.mock('@/components/admin/unlock/LockedAccountsTable', () => ({

@@ -15,6 +15,7 @@ import '@testing-library/jest-dom';
 import AdminPage from '@/app/(admin)/admin/page';
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import useSWR from 'swr';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext');
@@ -207,7 +208,7 @@ const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 describe('AdminPage', () => {
   const mockUser = {
     id: 1,
-    email: 'admin@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
     role: 'manager',
     is_active: true,
     is_verified: true,

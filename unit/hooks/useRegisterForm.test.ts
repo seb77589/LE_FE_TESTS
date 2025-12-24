@@ -7,6 +7,7 @@
  * @module __tests__/unit/hooks/useRegisterForm
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useRegisterForm } from '@/hooks/auth/useRegisterForm';
 
@@ -336,11 +337,11 @@ describe('useRegisterForm', () => {
       const { result } = renderHook(() => useRegisterForm());
 
       act(() => {
-        result.current.setValue('email', 'test@example.com');
+        result.current.setValue('email', FRONTEND_TEST_CREDENTIALS.USER.email);
       });
 
       const email = result.current.watch('email');
-      expect(email).toBe('test@example.com');
+      expect(email).toBe(FRONTEND_TEST_CREDENTIALS.USER.email);
     });
   });
 

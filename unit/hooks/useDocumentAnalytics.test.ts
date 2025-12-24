@@ -12,6 +12,7 @@ import {
   useDocumentAnalytics,
   AnalyticsData,
 } from '@/hooks/documents/useDocumentAnalytics';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
@@ -71,13 +72,13 @@ describe('useDocumentAnalytics', () => {
         action: 'upload',
         document_name: 'contract.pdf',
         timestamp: '2024-01-03T10:00:00Z',
-        user: 'user@example.com',
+        user: FRONTEND_TEST_CREDENTIALS.USER.email,
       },
       {
         action: 'download',
         document_name: 'report.docx',
         timestamp: '2024-01-03T09:30:00Z',
-        user: 'admin@example.com',
+        user: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
       },
     ],
     storage_usage: {

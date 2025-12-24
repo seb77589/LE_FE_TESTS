@@ -12,6 +12,7 @@ import {
   type Permission,
 } from '@/lib/auth/permissions';
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
+import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 
 // Mock ConsolidatedAuthContext
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
@@ -103,7 +104,7 @@ describe('Permission Utilities', () => {
     it('should return true if user can manage themselves', () => {
       const currentUser = {
         id: 1,
-        email: 'user@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         role: 'assistant',
         is_active: true,
       };
@@ -121,14 +122,14 @@ describe('Permission Utilities', () => {
     it('should return true if superadmin can manage any user', () => {
       const currentUser = {
         id: 1,
-        email: 'superadmin@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
         role: 'superadmin',
         is_active: true,
       };
 
       const targetUser = {
         id: 2,
-        email: 'target@example.com',
+        email: FRONTEND_TEST_DATA.EMAIL.EXISTING,
         role: 'assistant',
         is_active: true,
       };
@@ -146,14 +147,14 @@ describe('Permission Utilities', () => {
     it('should return true if admin can manage regular users', () => {
       const currentUser = {
         id: 1,
-        email: 'admin@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
         role: 'manager',
         is_active: true,
       };
 
       const targetUser = {
         id: 2,
-        email: 'user@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         role: 'assistant',
         is_active: true,
       };
@@ -171,14 +172,14 @@ describe('Permission Utilities', () => {
     it('should return false if admin tries to manage another admin', () => {
       const currentUser = {
         id: 1,
-        email: 'admin1@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
         role: 'manager',
         is_active: true,
       };
 
       const targetUser = {
         id: 2,
-        email: 'admin2@example.com',
+        email: FRONTEND_TEST_DATA.EMAIL.ADMIN,
         role: 'manager',
         is_active: true,
       };
@@ -196,7 +197,7 @@ describe('Permission Utilities', () => {
     it('should return false if user is not active', () => {
       const currentUser = {
         id: 1,
-        email: 'user@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         role: 'assistant',
         is_active: false,
       };
@@ -220,7 +221,7 @@ describe('Permission Utilities', () => {
       const { result } = renderHook(() =>
         useCanManageUser({
           id: 2,
-          email: 'target@example.com',
+          email: FRONTEND_TEST_DATA.EMAIL.EXISTING,
           role: 'assistant',
           is_active: true,
         }),

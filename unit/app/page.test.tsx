@@ -20,6 +20,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import HomePage from '@/app/page';
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import { useRouter } from 'next/navigation';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext');
@@ -130,7 +131,7 @@ describe('HomePage', () => {
     it('should redirect authenticated user to /dashboard', async () => {
       const mockUser = {
         id: 1,
-        email: 'user@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         role: 'user',
       };
 
@@ -150,7 +151,7 @@ describe('HomePage', () => {
     it('should not render content when redirecting authenticated user', () => {
       const mockUser = {
         id: 1,
-        email: 'user@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         role: 'user',
       };
 
@@ -170,7 +171,7 @@ describe('HomePage', () => {
     it('should redirect admin user to /dashboard', async () => {
       const mockUser = {
         id: 1,
-        email: 'admin@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
         role: 'admin',
       };
 
@@ -190,7 +191,7 @@ describe('HomePage', () => {
     it('should redirect superadmin user to /dashboard', async () => {
       const mockUser = {
         id: 1,
-        email: 'superadmin@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
         role: 'superadmin',
       };
 
@@ -282,7 +283,7 @@ describe('HomePage', () => {
     it('should handle auth state transition from loading to authenticated', async () => {
       const mockUser = {
         id: 1,
-        email: 'user@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.USER.email,
         role: 'user',
       };
 
@@ -487,8 +488,8 @@ describe('HomePage', () => {
     });
 
     it('should react to useAuth returning different user objects', async () => {
-      const user1 = { id: 1, email: 'user1@example.com', role: 'user' };
-      const user2 = { id: 2, email: 'user2@example.com', role: 'admin' };
+      const user1 = { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER1.email, role: 'user' };
+      const user2 = { id: 2, email: FRONTEND_TEST_CREDENTIALS.USER2.email, role: 'admin' };
 
       mockUseAuth.mockReturnValue({
         user: user1,

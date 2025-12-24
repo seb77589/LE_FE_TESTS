@@ -6,6 +6,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UnlockAccountDialog } from '@/components/admin/unlock/UnlockAccountDialog';
 import { LockedAccount } from '@/components/admin/unlock/types';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock Modal component
 jest.mock('@/components/ui/Modal', () => {
@@ -59,7 +60,7 @@ jest.mock('@/components/ui/Button', () => {
 describe('UnlockAccountDialog', () => {
   const mockAccount: LockedAccount = {
     user_id: 1,
-    email: 'test@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.USER.email,
     full_name: 'Test User',
     role: 'user',
     failed_attempts: 5,
@@ -137,7 +138,7 @@ describe('UnlockAccountDialog', () => {
         />,
       );
       expect(screen.getByText(/test user/i)).toBeInTheDocument();
-      expect(screen.getByText(/test@example.com/i)).toBeInTheDocument();
+      expect(screen.getByText(new RegExp(FRONTEND_TEST_CREDENTIALS.USER.email, 'i'))).toBeInTheDocument();
     });
 
     it('should handle null account gracefully', () => {

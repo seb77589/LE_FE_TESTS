@@ -8,6 +8,7 @@
  */
 
 import { LockedAccount } from '@/hooks/admin/useAccountUnlock';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies - must be called before importing hook
 export function setupMocks() {
@@ -33,7 +34,7 @@ export function setupMocks() {
 export const mockLockedAccounts: LockedAccount[] = [
   {
     user_id: 1,
-    email: 'locked1@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email,
     full_name: 'Locked User One',
     role: 'user',
     failed_attempts: 5,
@@ -43,7 +44,7 @@ export const mockLockedAccounts: LockedAccount[] = [
   },
   {
     user_id: 2,
-    email: 'locked2@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.LOCKED_USER_2.email,
     full_name: 'Locked User Two',
     role: 'user',
     failed_attempts: 5,
@@ -56,9 +57,9 @@ export const mockLockedAccounts: LockedAccount[] = [
 export const mockUnlockResponse = {
   message: 'Account unlocked successfully',
   user_id: 1,
-  email: 'locked1@example.com',
+  email: FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email,
   unlocked: true,
-  unlocked_by: 'admin@example.com',
+  unlocked_by: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
   unlock_reason: 'Manual unlock by admin',
 };
 

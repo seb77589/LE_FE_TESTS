@@ -14,7 +14,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DangerTab } from '@/components/settings/DangerTab';
-import { FRONTEND_TEST_DATA } from '@/__tests__/test-credentials';
+import { FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 
 // Mock next/navigation
 const mockPush = jest.fn();

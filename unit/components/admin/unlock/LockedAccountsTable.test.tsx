@@ -6,6 +6,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { LockedAccountsTable } from '@/components/admin/unlock/LockedAccountsTable';
 import { LockedAccount } from '@/components/admin/unlock/types';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock Button component
 jest.mock('@/components/ui/Button', () => {
@@ -63,7 +64,7 @@ describe('LockedAccountsTable', () => {
   const mockAccounts: LockedAccount[] = [
     {
       user_id: 1,
-      email: 'user1@example.com',
+      email: FRONTEND_TEST_CREDENTIALS.USER1.email,
       full_name: 'User One',
       role: 'user',
       failed_attempts: 5,
@@ -73,7 +74,7 @@ describe('LockedAccountsTable', () => {
     },
     {
       user_id: 2,
-      email: 'user2@example.com',
+      email: FRONTEND_TEST_CREDENTIALS.USER2.email,
       full_name: 'User Two',
       role: 'admin',
       failed_attempts: 3,
@@ -112,7 +113,7 @@ describe('LockedAccountsTable', () => {
       );
       // Check for account data to verify table rendered
       expect(screen.getByText('User One')).toBeInTheDocument();
-      expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
       expect(screen.getByText('user')).toBeInTheDocument();
       expect(screen.getByText('admin')).toBeInTheDocument();
     });
@@ -126,9 +127,9 @@ describe('LockedAccountsTable', () => {
         />,
       );
       expect(screen.getByText('User One')).toBeInTheDocument();
-      expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
       expect(screen.getByText('User Two')).toBeInTheDocument();
-      expect(screen.getByText('user2@example.com')).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER2.email)).toBeInTheDocument();
     });
   });
 
@@ -142,7 +143,7 @@ describe('LockedAccountsTable', () => {
         />,
       );
       expect(screen.getByText('User One')).toBeInTheDocument();
-      expect(screen.getByText('user1@example.com')).toBeInTheDocument();
+      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
     });
 
     it('should display account role', () => {

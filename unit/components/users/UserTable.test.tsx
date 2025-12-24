@@ -7,25 +7,26 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserTable from '@/components/users/UserTable';
 import { User } from '@/types/user';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 const mockUsers: User[] = [
   {
     id: 1,
-    email: 'user1@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.USER1.email,
     full_name: 'User One',
     role: 'ASSISTANT',
     is_active: true,
   },
   {
     id: 2,
-    email: 'user2@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.USER2.email,
     full_name: 'User Two',
     role: 'MANAGER',
     is_active: false,
   },
   {
     id: 3,
-    email: 'user3@example.com',
+    email: FRONTEND_TEST_CREDENTIALS.SUPERADMIN.email,
     full_name: 'User Three',
     role: 'SUPERADMIN',
     is_active: true,

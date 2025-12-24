@@ -14,6 +14,8 @@
  * - Percentage-based rollouts
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
+
 // Mock logger
 jest.mock('@/lib/logging', () => ({
   __esModule: true,
@@ -431,7 +433,7 @@ describe('FeatureFlagConfig', () => {
       };
 
       // Should not throw with special characters - call and verify no exception
-      getFeatureFlag(flags, 'test_flag', 'user@example.com');
+      getFeatureFlag(flags, 'test_flag', FRONTEND_TEST_CREDENTIALS.USER.email);
       getFeatureFlag(flags, 'test_flag', 'user-with-émojis-🎉');
       // If we reach here, no exception was thrown
       expect(true).toBe(true);

@@ -5,7 +5,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SecurityTab } from '@/components/settings/SecurityTab';
-import { FRONTEND_TEST_DATA } from '@/__tests__/test-credentials';
+import { FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('swr', () => ({

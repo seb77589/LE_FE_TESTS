@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { OverviewTab } from '@/components/admin/OverviewTab';
 
 // Mock dependencies
@@ -85,7 +86,7 @@ describe('OverviewTab', () => {
     mockUseAuth.mockReturnValue({
       user: {
         id: 1,
-        email: 'admin@example.com',
+        email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
         role: 'superadmin',
       },
     } as any);
@@ -156,7 +157,7 @@ describe('OverviewTab', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'superadmin',
         },
       } as any);
@@ -169,7 +170,7 @@ describe('OverviewTab', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'admin',
         },
       } as any);
@@ -182,7 +183,7 @@ describe('OverviewTab', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'superadmin',
         },
       } as any);
@@ -239,7 +240,7 @@ describe('OverviewTab', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
-          email: 'admin@example.com',
+          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
           role: 'superadmin',
         },
       } as any);

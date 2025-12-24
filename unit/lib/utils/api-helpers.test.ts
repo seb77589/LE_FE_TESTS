@@ -8,6 +8,7 @@
  * - Response transformation
  */
 
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { handleApiError } from '@/lib/api/client';
 import { extractErrorMessage } from '@/lib/errors';
 import { formatRole, formatStatus } from '@/lib/utils/formatters';
@@ -227,7 +228,7 @@ describe('API Helper Utilities Tests', () => {
       const apiResponse = {
         id: 1,
         full_name: 'John Doe',
-        email_address: 'john@example.com',
+        email_address: FRONTEND_TEST_CREDENTIALS.JOHN.email,
         created_at: '2025-01-01T00:00:00Z',
       };
 
@@ -240,7 +241,7 @@ describe('API Helper Utilities Tests', () => {
 
       expect(transformed.id).toBe(1);
       expect(transformed.name).toBe('John Doe');
-      expect(transformed.email).toBe('john@example.com');
+      expect(transformed.email).toBe(FRONTEND_TEST_CREDENTIALS.JOHN.email);
       expect(transformed.createdAt).toBeInstanceOf(Date);
     });
 
@@ -248,7 +249,7 @@ describe('API Helper Utilities Tests', () => {
       const apiResponse = {
         id: 1,
         full_name: null,
-        email_address: 'test@example.com',
+        email_address: FRONTEND_TEST_CREDENTIALS.USER.email,
       };
 
       const transformed = {

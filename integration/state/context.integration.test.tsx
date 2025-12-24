@@ -16,7 +16,7 @@ import { PreferencesProvider, usePreferences } from '@/lib/context/PreferencesCo
 import { WebSocketProvider, useWebSocket } from '@/lib/context/WebSocketContext';
 import { sessionManager } from '@/lib/session';
 import { profileApi } from '@/lib/api/profile';
-import { FRONTEND_TEST_CREDENTIALS } from '../../test-credentials';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({

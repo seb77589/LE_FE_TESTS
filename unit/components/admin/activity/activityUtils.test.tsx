@@ -18,6 +18,7 @@ import {
   exportActivities,
 } from '@/components/admin/activity/activityUtils';
 import { ActivityEvent } from '@/components/admin/activity/types';
+import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 
 // Mock formatRelativeTime
 jest.mock('@/lib/utils', () => ({
@@ -112,7 +113,7 @@ describe('filterActivities', () => {
     {
       id: 1,
       action: 'user_login',
-      user_email: 'admin@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
       user_id: 1,
       user_role: 'superadmin',
       status: 'success',
@@ -124,7 +125,7 @@ describe('filterActivities', () => {
     {
       id: 2,
       action: 'document_upload',
-      user_email: 'user@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.USER.email,
       user_id: 2,
       user_role: 'assistant',
       status: 'success',
@@ -136,7 +137,7 @@ describe('filterActivities', () => {
     {
       id: 3,
       action: 'failed_login',
-      user_email: 'hacker@example.com',
+      user_email: FRONTEND_TEST_DATA.EMAIL.INVALID,
       user_id: 3,
       user_role: 'unknown',
       status: 'failed',
@@ -162,7 +163,7 @@ describe('filterActivities', () => {
   it('should filter by search term in user_email', () => {
     const result = filterActivities(mockActivities, { search: 'admin' });
     expect(result).toHaveLength(1);
-    expect(result[0].user_email).toBe('admin@example.com');
+    expect(result[0].user_email).toBe(FRONTEND_TEST_CREDENTIALS.ADMIN.email);
   });
 
   it('should filter by search term in user_role', () => {
@@ -198,11 +199,11 @@ describe('filterActivities', () => {
 
   it('should combine multiple filters', () => {
     const result = filterActivities(mockActivities, {
-      search: 'example.com',
+      search: 'admin',
       severity: 'low',
     });
     expect(result).toHaveLength(1);
-    expect(result[0].user_email).toBe('admin@example.com');
+    expect(result[0].user_email).toBe(FRONTEND_TEST_CREDENTIALS.ADMIN.email);
   });
 
   it('should return empty array when no matches', () => {
@@ -213,7 +214,7 @@ describe('filterActivities', () => {
   it('should be case-insensitive for search', () => {
     const result = filterActivities(mockActivities, { search: 'ADMIN' });
     expect(result).toHaveLength(1);
-    expect(result[0].user_email).toBe('admin@example.com');
+    expect(result[0].user_email).toBe(FRONTEND_TEST_CREDENTIALS.ADMIN.email);
   });
 });
 
@@ -222,7 +223,7 @@ describe('exportActivities', () => {
     {
       id: 1,
       action: 'user_login',
-      user_email: 'admin@example.com',
+      user_email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
       user_id: 1,
       status: 'success',
       timestamp: '2024-01-01T12:00:00Z',

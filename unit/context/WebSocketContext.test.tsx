@@ -41,6 +41,7 @@ import {
 } from '@/lib/context/WebSocketContext';
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import logger from '@/lib/logging';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Helper components to reduce nesting depth - extracted to module level
 const TestComponentWithWebSocket = () => {
@@ -393,7 +394,7 @@ describe('WebSocketContext', () => {
 
       // Mock authenticated user
       (useAuth as jest.Mock).mockReturnValue({
-        user: { id: 1, email: 'test@example.com', role: 'user' },
+        user: { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER.email, role: 'user' },
         getValidAccessToken: jest.fn().mockResolvedValue('test-token'),
         isAuthenticated: true,
       });

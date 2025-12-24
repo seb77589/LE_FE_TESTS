@@ -20,7 +20,7 @@
 import type { AxiosError } from 'axios';
 import api, { handleApiError } from '@/lib/api/client';
 import { buildUrl } from '@/lib/api/config';
-import { FRONTEND_TEST_DATA } from '@/__tests__/test-credentials';
+import { FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({
