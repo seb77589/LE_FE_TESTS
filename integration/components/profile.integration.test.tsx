@@ -16,7 +16,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthProvider } from '@/lib/context/ConsolidatedAuthContext';
 import { profileApi } from '@/lib/api/profile';
-import api from '@/lib/api/client';
+import api from '@/lib/api';
 import useSWR from 'swr';
 
 // Mock dependencies

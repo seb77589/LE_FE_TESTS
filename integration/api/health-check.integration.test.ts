@@ -16,7 +16,7 @@
  */
 
 import type { AxiosError } from 'axios';
-import api, { handleApiError } from '@/lib/api/client';
+import api, { handleApiError } from '@/lib/api';
 import { cleanupTestSession } from '../../helpers/api-test-utils';
 
 // Keep framework mocks (logging, errors) but remove API mocks

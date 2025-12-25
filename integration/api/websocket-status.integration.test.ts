@@ -14,7 +14,7 @@
  */
 
 import type { AxiosError } from 'axios';
-import api, { handleApiError } from '@/lib/api/client';
+import api, { handleApiError } from '@/lib/api';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({

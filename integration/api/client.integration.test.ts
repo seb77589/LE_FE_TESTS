@@ -15,7 +15,7 @@
 
 import type { AxiosError } from 'axios';
 import { isAxiosError } from 'axios';
-import api, { authApi, testApiConnectivity, handleApiError } from '@/lib/api/client';
+import api, { authApi, testApiConnectivity, handleApiError } from '@/lib/api';
 import { apiConfig } from '@/lib/api/config';
 import { refreshAuthToken } from '@/lib/api/auth';
 import { FRONTEND_TEST_CREDENTIALS } from '../../test-credentials';

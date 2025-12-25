@@ -16,7 +16,7 @@
  */
 
 import type { AxiosError } from 'axios';
-import api, { handleApiError } from '@/lib/api/client';
+import api, { handleApiError } from '@/lib/api';
 import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 // Mock dependencies

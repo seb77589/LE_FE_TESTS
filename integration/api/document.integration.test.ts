@@ -19,7 +19,7 @@
  */
 
 import type { AxiosError } from 'axios';
-import api, { handleApiError } from '@/lib/api/client';
+import api, { handleApiError } from '@/lib/api';
 import { apiConfig } from '@/lib/api/config';
 
 // Mock dependencies

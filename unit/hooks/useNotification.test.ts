@@ -11,7 +11,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useNotification } from '@/hooks/useNotification';
 import useSWR from 'swr';
-import api from '@/lib/api/client';
+import api from '@/lib/api';
 import { buildUrl } from '@/lib/api/config';
 
 // Mock dependencies

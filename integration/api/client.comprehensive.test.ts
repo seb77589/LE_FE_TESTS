@@ -8,7 +8,7 @@
  * - SWR fetcher function
  */
 
-import api, { authApi, tokenUtils, handleApiError, fetcher } from '@/lib/api/client';
+import api, { authApi, tokenUtils, handleApiError, fetcher } from '@/lib/api';
 import { apiConfig } from '@/lib/api/config';
 import Cookies from 'js-cookie';
 

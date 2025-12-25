@@ -15,7 +15,7 @@ import React from 'react';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DocumentUpload from '@/components/ui/DocumentUpload';
-import api from '@/lib/api/client';
+import api from '@/lib/api';
 import { apiConfig } from '@/lib/api/config';
 import { AuthProvider } from '@/lib/context/ConsolidatedAuthContext';
 

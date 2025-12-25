@@ -9,7 +9,7 @@
  */
 
 import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
-import { handleApiError } from '@/lib/api/client';
+import { handleApiError } from '@/lib/api';
 import { extractErrorMessage } from '@/lib/errors';
 import { formatRole, formatStatus } from '@/lib/utils/formatters';
 import { AxiosError } from 'axios';

@@ -11,7 +11,7 @@
 
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useDocumentUpload } from '@/hooks/documents/useDocumentUpload';
-import api from '@/lib/api/client';
+import api from '@/lib/api';
 import { apiConfig } from '@/lib/api/config';
 
 // Mock dependencies
