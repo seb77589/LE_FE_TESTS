@@ -113,8 +113,8 @@ jest.mock('@/lib/security/monitor', () => ({
   initializeSecurityMonitoring: jest.fn(),
 }));
 
-jest.mock('@/lib/utils/rum', () => ({
-  initWebVitals: jest.fn(),
+jest.mock('@/lib/observability/opentelemetry', () => ({
+  initOpenTelemetry: jest.fn(),
 }));
 
 jest.mock('@/lib/logging', () => ({
@@ -297,7 +297,7 @@ describe('RootLayout', () => {
         preloadCriticalChunks,
       } = require('@/lib/simpleChunkLoader');
       const { errorRecovery } = require('@/components/ui/ErrorRecovery');
-      const { initWebVitals } = require('@/lib/utils/rum');
+      const { initOpenTelemetry } = require('@/lib/observability/opentelemetry');
 
       render(
         <RootLayout>
@@ -312,12 +312,12 @@ describe('RootLayout', () => {
         expect(installChunkErrorHandler).toHaveBeenCalled();
         expect(preloadCriticalChunks).toHaveBeenCalled();
         expect(errorRecovery.reset).toHaveBeenCalled();
-        expect(initWebVitals).toHaveBeenCalled();
+        expect(initOpenTelemetry).toHaveBeenCalled();
       });
     });
 
-    it('should initialize web vitals with correct config in development', async () => {
-      const { initWebVitals } = require('@/lib/utils/rum');
+    it('should initialize OpenTelemetry with debug in development', async () => {
+      const { initOpenTelemetry } = require('@/lib/observability/opentelemetry');
       const originalNodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'development';
 
@@ -330,17 +330,16 @@ describe('RootLayout', () => {
       jest.advanceTimersByTime(100);
 
       await waitFor(() => {
-        expect(initWebVitals).toHaveBeenCalledWith({
+        expect(initOpenTelemetry).toHaveBeenCalledWith({
           debug: true,
-          sampleRate: 1,
         });
       });
 
       process.env.NODE_ENV = originalNodeEnv;
     });
 
-    it('should initialize web vitals with sampling in production', async () => {
-      const { initWebVitals } = require('@/lib/utils/rum');
+    it('should initialize OpenTelemetry with debug false in production', async () => {
+      const { initOpenTelemetry } = require('@/lib/observability/opentelemetry');
       const originalNodeEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
 
@@ -353,9 +352,8 @@ describe('RootLayout', () => {
       jest.advanceTimersByTime(100);
 
       await waitFor(() => {
-        expect(initWebVitals).toHaveBeenCalledWith({
+        expect(initOpenTelemetry).toHaveBeenCalledWith({
           debug: false,
-          sampleRate: 0.1,
         });
       });
 
