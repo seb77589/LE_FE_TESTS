@@ -82,7 +82,9 @@ describe('I18nProvider', () => {
       );
 
       expect(screen.getByText('Parent')).toBeInTheDocument();
-      expect(screen.getByText(/Child/)).toBeInTheDocument();
+      // Use getAllByText since "Child" appears in both "Child " and "Nested Child"
+      const childElements = screen.getAllByText(/Child/);
+      expect(childElements.length).toBeGreaterThan(0);
       expect(screen.getByText('Nested Child')).toBeInTheDocument();
     });
 

@@ -197,9 +197,14 @@ describe('LazyAdminComponents', () => {
       expect(AdminComponentRegistry).toHaveProperty('RealTimeActivityFeed');
     });
 
-    it('registry components are functions', () => {
-      expect(typeof AdminComponentRegistry.UserManagement).toBe('function');
-      expect(typeof AdminComponentRegistry.RealTimeActivityFeed).toBe('function');
+    it('registry components are valid React lazy components', () => {
+      // React.lazy() returns LazyExoticComponent objects, not functions
+      // Check they exist and are renderable (object type with $$typeof)
+      expect(AdminComponentRegistry.UserManagement).toBeDefined();
+      expect(AdminComponentRegistry.RealTimeActivityFeed).toBeDefined();
+      // LazyExoticComponent has $$typeof property
+      expect((AdminComponentRegistry.UserManagement as any).$$typeof).toBeDefined();
+      expect((AdminComponentRegistry.RealTimeActivityFeed as any).$$typeof).toBeDefined();
     });
   });
 

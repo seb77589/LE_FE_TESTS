@@ -25,10 +25,15 @@ jest.mock('@/lib/logging', () => ({
   },
 }));
 
-jest.mock('@/lib/api/client', () => ({
+// Mock @/lib/api (axios instance)
+jest.mock('@/lib/api', () => ({
   __esModule: true,
   default: {
     post: jest.fn(),
+    get: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    patch: jest.fn(),
   },
 }));
 

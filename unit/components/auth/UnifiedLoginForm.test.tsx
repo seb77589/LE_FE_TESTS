@@ -933,31 +933,10 @@ describe('UnifiedLoginForm', () => {
       });
     });
 
-    // Skipped: Component's useEffect lacks try-catch around localStorage.getItem
-    // Phase 2 Auth Refactor: HttpOnly cookies will replace localStorage token storage
-    it.skip('should handle localStorage errors gracefully (component needs error boundary)', async () => {
-      // This test is skipped because the component's useEffect in useLoginForm
-      // calls localStorage.getItem without try-catch, causing an uncaught error.
-      // The component would need an error boundary or try-catch to handle this gracefully.
-      // Override localStorage mock to throw
-      Object.defineProperty(globalThis, 'localStorage', {
-        value: {
-          getItem: jest.fn(() => {
-            throw new Error('localStorage error');
-          }),
-          setItem: jest.fn(),
-          removeItem: jest.fn(),
-          clear: jest.fn(),
-        },
-        writable: true,
-        configurable: true,
-      });
-
-      render(<UnifiedLoginForm />);
-
-      // Should not crash
-      expect(screen.getByText('Welcome Back')).toBeInTheDocument();
-    });
+    // REMOVED: localStorage error handling test
+    // HttpOnly cookies replaced localStorage for token storage in v0.2.0
+    // Test was skipped and is now obsolete - localStorage is no longer used for tokens
+    // See: docs/testing/SKIPPED_TESTS_CLEANUP.md for migration details
 
     it('should use custom redirectTo prop', async () => {
       const user = userEvent.setup();

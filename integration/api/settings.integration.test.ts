@@ -1,5 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '../../test-credentials';
+import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '../../jest-test-credentials';
 
 // Mock api
 jest.mock('@/lib/api');

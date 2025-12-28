@@ -21,8 +21,8 @@ import {
   getCredentials,
   extractErrorMessage,
   getBackendUrl,
-} from '../../lib/real-api-helpers';
-import { FRONTEND_TEST_CREDENTIALS } from '../../test-credentials';
+} from '../../helpers/real-api-helpers';
+import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 describe('API Client Real Backend Integration', () => {
   // Skip all tests if backend is not available

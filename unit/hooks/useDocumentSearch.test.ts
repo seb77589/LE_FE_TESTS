@@ -12,6 +12,7 @@ import {
   useDocumentSearch,
   UseDocumentSearchOptions,
 } from '@/hooks/documents/useDocumentSearch';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({

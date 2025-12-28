@@ -16,7 +16,7 @@ import {
   clearAuthCache,
   isBackendAvailable,
   deleteTestResource,
-} from '../../lib/real-api-helpers';
+} from '../../helpers/real-api-helpers';
 import { AxiosError } from 'axios';
 
 describe('Document Upload Real Backend Integration', () => {

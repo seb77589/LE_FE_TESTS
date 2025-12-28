@@ -152,17 +152,17 @@ describe('useDocumentAnalytics', () => {
       });
 
       expect(mockFetch).toHaveBeenCalled();
-      expect(mockGetValidAccessToken).toHaveBeenCalled();
+      // No longer uses getValidAccessToken - uses HttpOnly cookies with credentials: 'include'
     });
 
-    it('should include authorization header', async () => {
+    it('should use credentials include for HttpOnly cookie auth', async () => {
       renderHook(() => useDocumentAnalytics());
 
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalledWith(
           expect.stringContaining('/api/v1/documents/analytics'),
           expect.objectContaining({
-            headers: { Authorization: 'Bearer test-token' },
+            credentials: 'include',
           }),
         );
       });
@@ -253,10 +253,14 @@ describe('useDocumentAnalytics', () => {
   });
 
   describe('Error handling', () => {
-    it('should set error when authentication fails', async () => {
-      // Reset token mock to return null
-      mockGetValidAccessToken.mockReset();
-      mockGetValidAccessToken.mockResolvedValue(null);
+    it('should set error when server returns 401 unauthorized', async () => {
+      // Mock fetch to return 401
+      mockFetch.mockReset();
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: () => Promise.resolve({ detail: 'Not authenticated' }),
+      });
 
       const { result } = renderHook(() => useDocumentAnalytics());
 

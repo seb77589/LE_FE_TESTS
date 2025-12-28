@@ -1,5 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { FRONTEND_TEST_CREDENTIALS } from '../../test-credentials';
+import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 // Mock localStorage
 const mockLocalStorage = {

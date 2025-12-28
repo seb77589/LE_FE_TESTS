@@ -2,9 +2,50 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import DocumentsPage from '@/app/(protected)/dashboard/documents/page';
 import useSWR from 'swr';
+import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 jest.mock('swr');
 const mockMutate = jest.fn();
+
+// Mock auth context
+jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
+  useAuth: jest.fn(() => ({
+    user: {
+      id: 1,
+      email: FRONTEND_TEST_CREDENTIALS.USER.email,
+      role: 'assistant',
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    isAdmin: jest.fn(() => false),
+    isSuperAdmin: jest.fn(() => false),
+    hasRole: jest.fn(() => false),
+    token: 'mock-token',
+    logout: jest.fn(),
+  })),
+}));
+
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    pathname: '/dashboard/documents',
+  })),
+}));
+
+// Mock next/link
+jest.mock('next/link', () => {
+  return function MockLink({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) {
+    return <a href={href}>{children}</a>;
+  };
+});
 
 describe('DocumentsPage', () => {
   beforeEach(() => {

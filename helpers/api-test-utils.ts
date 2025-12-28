@@ -10,7 +10,7 @@
  * - Consistent API interaction patterns across tests
  */
 
-import { getTestCredentials, getRoleCredentials } from '../../../jest.setup';
+import { getTestCredentials, getRoleCredentials } from '../setup/jest.setup';
 import api from '@/lib/api';
 
 /**

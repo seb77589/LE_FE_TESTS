@@ -69,7 +69,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
 
       // Re-import to get fresh config
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config).toHaveProperty('baseURL');
@@ -82,7 +82,7 @@ describe('API Config Module', () => {
     it('should set default timeout to 30000ms', async () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.timeout).toBe(30000);
@@ -91,7 +91,7 @@ describe('API Config Module', () => {
     it('should set default retries to 3', async () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.retries).toBe(3);
@@ -100,7 +100,7 @@ describe('API Config Module', () => {
     it('should set default retryDelay to 1000ms', async () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.retryDelay).toBe(1000);
@@ -115,7 +115,7 @@ describe('API Config Module', () => {
 
     beforeEach(async () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
-      const configModule = await import('../config');
+      const configModule = await import('@/lib/api/config');
       config = configModule.createApiConfig();
     });
 
@@ -240,21 +240,21 @@ describe('API Config Module', () => {
   // ==========================================================================
   describe('environmentConfig', () => {
     it('should have development config with longer timeout', async () => {
-      const { environmentConfig } = await import('../config');
+      const { environmentConfig } = await import('@/lib/api/config');
 
       expect(environmentConfig.development.timeout).toBe(60000);
       expect(environmentConfig.development.retries).toBe(1);
     });
 
     it('should have production config with shorter timeout', async () => {
-      const { environmentConfig } = await import('../config');
+      const { environmentConfig } = await import('@/lib/api/config');
 
       expect(environmentConfig.production.timeout).toBe(15000);
       expect(environmentConfig.production.retries).toBe(3);
     });
 
     it('should have test config with minimal timeout', async () => {
-      const { environmentConfig } = await import('../config');
+      const { environmentConfig } = await import('@/lib/api/config');
 
       expect(environmentConfig.test.timeout).toBe(5000);
       expect(environmentConfig.test.retries).toBe(0);
@@ -269,7 +269,7 @@ describe('API Config Module', () => {
       setNodeEnv('development');
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('../config');
+      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.development);
@@ -280,7 +280,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'https://api.production.com';
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('../config');
+      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.production);
@@ -290,7 +290,7 @@ describe('API Config Module', () => {
       setNodeEnv('test');
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('../config');
+      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.test);
@@ -300,7 +300,7 @@ describe('API Config Module', () => {
       setNodeEnv('staging');
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('../config');
+      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.development);
@@ -310,7 +310,7 @@ describe('API Config Module', () => {
       setNodeEnv(''); // Simulate undefined by setting empty
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('../config');
+      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.development);
@@ -327,7 +327,7 @@ describe('API Config Module', () => {
     it('should build URL with leading slash in endpoint', async () => {
       jest.resetModules();
 
-      const { buildUrl } = await import('../config');
+      const { buildUrl } = await import('@/lib/api/config');
       const url = buildUrl('/api/v1/users/123');
 
       // In jsdom, uses location.origin which is http://localhost
@@ -337,7 +337,7 @@ describe('API Config Module', () => {
     it('should build URL without leading slash in endpoint', async () => {
       jest.resetModules();
 
-      const { buildUrl } = await import('../config');
+      const { buildUrl } = await import('@/lib/api/config');
       const url = buildUrl('api/v1/users/123');
 
       // Should add leading slash
@@ -347,7 +347,7 @@ describe('API Config Module', () => {
     it('should handle endpoint with query parameters', async () => {
       jest.resetModules();
 
-      const { buildUrl } = await import('../config');
+      const { buildUrl } = await import('@/lib/api/config');
       const url = buildUrl('/api/v1/users?page=1&limit=10');
 
       expect(url).toContain('/api/v1/users?page=1&limit=10');
@@ -356,7 +356,7 @@ describe('API Config Module', () => {
     it('should normalize endpoints with or without leading slash', async () => {
       jest.resetModules();
 
-      const { buildUrl } = await import('../config');
+      const { buildUrl } = await import('@/lib/api/config');
       const urlWithSlash = buildUrl('/api/v1/users');
       const urlWithoutSlash = buildUrl('api/v1/users');
 
@@ -368,7 +368,7 @@ describe('API Config Module', () => {
     it('should return URL with baseURL from apiConfig', async () => {
       jest.resetModules();
 
-      const { buildUrl, apiConfig } = await import('../config');
+      const { buildUrl, apiConfig } = await import('@/lib/api/config');
       const url = buildUrl('/api/v1/test');
 
       // URL should start with the baseURL (with any trailing slash removed)
@@ -385,7 +385,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
       jest.resetModules();
 
-      const { validateApiConfig } = await import('../config');
+      const { validateApiConfig } = await import('@/lib/api/config');
       const result = validateApiConfig();
 
       expect(result.valid).toBe(true);
@@ -396,7 +396,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'https://secure-api.com';
       jest.resetModules();
 
-      const { validateApiConfig } = await import('../config');
+      const { validateApiConfig } = await import('@/lib/api/config');
       const result = validateApiConfig();
 
       expect(result.valid).toBe(true);
@@ -407,7 +407,7 @@ describe('API Config Module', () => {
       // Force empty baseURL by mocking
       jest.resetModules();
 
-      const { validateApiConfig, apiConfig } = await import('../config');
+      const { validateApiConfig, apiConfig } = await import('@/lib/api/config');
       // Temporarily override for test
       const originalBaseURL = apiConfig.baseURL;
       (apiConfig as any).baseURL = '';
@@ -424,7 +424,7 @@ describe('API Config Module', () => {
     it('should return error for non-http URL', async () => {
       jest.resetModules();
 
-      const { validateApiConfig, apiConfig } = await import('../config');
+      const { validateApiConfig, apiConfig } = await import('@/lib/api/config');
       const originalBaseURL = apiConfig.baseURL;
       (apiConfig as any).baseURL = 'ftp://invalid-protocol.com';
 
@@ -442,7 +442,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
       jest.resetModules();
 
-      const { validateApiConfig, apiConfig } = await import('../config');
+      const { validateApiConfig, apiConfig } = await import('@/lib/api/config');
       const originalTimeout = apiConfig.timeout;
       (apiConfig as any).timeout = 500;
 
@@ -457,7 +457,7 @@ describe('API Config Module', () => {
     it('should collect multiple validation errors', async () => {
       jest.resetModules();
 
-      const { validateApiConfig, apiConfig } = await import('../config');
+      const { validateApiConfig, apiConfig } = await import('@/lib/api/config');
       const originalBaseURL = apiConfig.baseURL;
       const originalTimeout = apiConfig.timeout;
 
@@ -481,7 +481,7 @@ describe('API Config Module', () => {
     it('should be a function', async () => {
       jest.resetModules();
 
-      const { debugApiConfig } = await import('../config');
+      const { debugApiConfig } = await import('@/lib/api/config');
 
       expect(typeof debugApiConfig).toBe('function');
     });
@@ -490,7 +490,7 @@ describe('API Config Module', () => {
       jest.resetModules();
       setNodeEnv('development');
 
-      const { debugApiConfig } = await import('../config');
+      const { debugApiConfig } = await import('@/lib/api/config');
 
       // Mock console.group and console.groupEnd to avoid output
       const originalGroup = console.group;
@@ -509,7 +509,7 @@ describe('API Config Module', () => {
       setNodeEnv('production');
       process.env.NEXT_PUBLIC_API_URL = 'https://api.example.com'; // Required in production
 
-      const { debugApiConfig } = await import('../config');
+      const { debugApiConfig } = await import('@/lib/api/config');
 
       const groupSpy = jest.spyOn(console, 'group').mockImplementation();
 
@@ -533,7 +533,7 @@ describe('API Config Module', () => {
     it('should use location.origin in browser context', async () => {
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       // In jsdom, location.origin is http://localhost
       expect(apiConfig.baseURL).toBe('http://localhost');
@@ -542,10 +542,10 @@ describe('API Config Module', () => {
     it('should have apiConfig as singleton', async () => {
       jest.resetModules();
 
-      const config1 = await import('../config');
+      const config1 = await import('@/lib/api/config');
       // Note: Need to reset modules to get a fresh import
       // Without reset, same instance is returned
-      const config2 = await import('../config');
+      const config2 = await import('@/lib/api/config');
 
       expect(config1.apiConfig).toBe(config2.apiConfig);
     });
@@ -562,7 +562,7 @@ describe('API Config Module', () => {
     it('should create config with baseURL property', async () => {
       jest.resetModules();
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.baseURL).toBeDefined();
@@ -573,7 +573,7 @@ describe('API Config Module', () => {
     it('should create config with correct timeout', async () => {
       jest.resetModules();
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.timeout).toBe(30000);
@@ -582,7 +582,7 @@ describe('API Config Module', () => {
     it('should create config with retry settings', async () => {
       jest.resetModules();
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.retries).toBe(3);
@@ -592,7 +592,7 @@ describe('API Config Module', () => {
     it('should create config with all endpoint groups', async () => {
       jest.resetModules();
 
-      const { createApiConfig } = await import('../config');
+      const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
       expect(config.endpoints.health).toBeDefined();
@@ -612,7 +612,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       // Type checking - all properties should exist
       expect(typeof apiConfig.baseURL).toBe('string');
@@ -634,7 +634,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       expect(typeof apiConfig.endpoints.users.get).toBe('function');
       expect(typeof apiConfig.endpoints.users.update).toBe('function');
@@ -645,7 +645,7 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'http://test-api.com';
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       expect(typeof apiConfig.endpoints.documents.get).toBe('function');
       expect(typeof apiConfig.endpoints.documents.update).toBe('function');
@@ -660,8 +660,8 @@ describe('API Config Module', () => {
     it('should export apiConfig as default', async () => {
       jest.resetModules();
 
-      const defaultExport = (await import('../config')).default;
-      const { apiConfig } = await import('../config');
+      const defaultExport = (await import('@/lib/api/config')).default;
+      const { apiConfig } = await import('@/lib/api/config');
 
       expect(defaultExport).toBe(apiConfig);
     });
@@ -677,7 +677,7 @@ describe('API Config Module', () => {
     it('should have valid baseURL format', async () => {
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       // baseURL should be a valid URL
       expect(apiConfig.baseURL).toMatch(/^https?:\/\/.+/);
@@ -686,7 +686,7 @@ describe('API Config Module', () => {
     it('should have non-empty endpoint paths', async () => {
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       // Check key endpoints exist and are non-empty strings
       expect(apiConfig.endpoints.health.length).toBeGreaterThan(0);
@@ -697,7 +697,7 @@ describe('API Config Module', () => {
     it('should have valid timeout values', async () => {
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       expect(apiConfig.timeout).toBeGreaterThan(0);
       expect(apiConfig.retryDelay).toBeGreaterThan(0);
@@ -707,7 +707,7 @@ describe('API Config Module', () => {
     it('should have endpoint functions that return strings', async () => {
       jest.resetModules();
 
-      const { apiConfig } = await import('../config');
+      const { apiConfig } = await import('@/lib/api/config');
 
       // Test dynamic endpoint builders
       expect(typeof apiConfig.endpoints.users.get(1)).toBe('string');

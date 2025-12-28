@@ -18,7 +18,7 @@ import { AuthProvider, useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import { sessionManager, tokenManager } from '@/lib/session';
 import { authApi } from '@/lib/api';
 import type { User } from '@/types/auth';
-import { FRONTEND_TEST_CREDENTIALS } from '../../test-credentials';
+import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({

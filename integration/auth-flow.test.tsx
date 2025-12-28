@@ -107,7 +107,7 @@ import { AuthProvider, useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import { tokenManager, sessionManager } from '@/lib/session';
 import { authApi } from '@/lib/api';
 import * as authModule from '@/lib/api/auth';
-import { FRONTEND_TEST_CREDENTIALS } from '../test-credentials';
+import { FRONTEND_TEST_CREDENTIALS } from '../jest-test-credentials';
 
 // Test component to access auth context
 function TestAuthComponent() {

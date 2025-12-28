@@ -14,7 +14,7 @@ describe('UserFormFields', () => {
     email: FRONTEND_TEST_CREDENTIALS.USER.email,
     full_name: 'Test User',
     username: 'testuser',
-    role: 'USER',
+    role: 'ASSISTANT', // Changed from 'USER' - new role naming
     is_active: true,
     is_verified: true,
   };
@@ -208,6 +208,7 @@ describe('UserFormFields', () => {
 
   describe('Role Options', () => {
     it('should have all role options available', () => {
+      // Role options are ASSISTANT, MANAGER, and SUPERADMIN (if isSuperAdmin=true)
       render(
         <UserFormFields
           formData={mockFormData}
@@ -216,17 +217,18 @@ describe('UserFormFields', () => {
           onChange={mockOnChange}
           onConfirmPasswordChange={mockOnConfirmPasswordChange}
           onActiveChange={mockOnActiveChange}
+          isSuperAdmin={true} // Needed to see all 3 options
         />,
       );
 
       const roleSelect = screen.getByLabelText(/role/i);
-      expect(roleSelect).toHaveValue('USER');
+      expect(roleSelect).toHaveValue('ASSISTANT');
 
       const options = Array.from(roleSelect.querySelectorAll('option'));
       expect(options).toHaveLength(3);
-      expect(options[0]).toHaveTextContent('User');
-      expect(options[1]).toHaveTextContent('Admin');
-      expect(options[2]).toHaveTextContent('SuperAdmin');
+      expect(options[0]).toHaveTextContent('User (Assistant)');
+      expect(options[1]).toHaveTextContent('Admin (Manager)');
+      expect(options[2]).toHaveTextContent('Super Admin');
     });
   });
 

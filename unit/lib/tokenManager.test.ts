@@ -144,62 +144,13 @@ describe('TokenManager', () => {
     });
   });
 
-  describe('Deprecated Methods', () => {
-    describe('getValidAccessToken()', () => {
-      it('should return null and log warning', async () => {
-        const manager = TokenManager.getInstance();
-        const result = await manager.getValidAccessToken();
-
-        expect(result).toBeNull();
-        expect(mockLogger.warn).toHaveBeenCalledWith(
-          'general',
-          'getValidAccessToken() is deprecated - tokens are HttpOnly cookies',
-        );
-      });
-    });
-
-    describe('setTokens()', () => {
-      it('should log warning and emit token_refreshed event', async () => {
-        const callback = jest.fn();
-        const manager = TokenManager.getInstance();
-        manager.on('token_refreshed', callback);
-
-        await manager.setTokens('token', 'refresh');
-
-        expect(mockLogger.warn).toHaveBeenCalledWith(
-          'general',
-          'setTokens() is deprecated - tokens are set by backend',
-        );
-        expect(callback).toHaveBeenCalledWith({ hasToken: true });
-      });
-    });
-
-    describe('refreshAccessToken()', () => {
-      it('should return null and log warning', async () => {
-        const manager = TokenManager.getInstance();
-        const result = await manager.refreshAccessToken();
-
-        expect(result).toBeNull();
-        expect(mockLogger.warn).toHaveBeenCalledWith(
-          'general',
-          'refreshAccessToken() is deprecated - backend handles refresh',
-        );
-      });
-    });
-
-    describe('getTokenMetadata()', () => {
-      it('should return null and log warning', async () => {
-        const manager = TokenManager.getInstance();
-        const result = await manager.getTokenMetadata();
-
-        expect(result).toBeNull();
-        expect(mockLogger.warn).toHaveBeenCalledWith(
-          'general',
-          'getTokenMetadata() is deprecated - tokens are HttpOnly cookies',
-        );
-      });
-    });
-  });
+  // REMOVED: Deprecated Methods tests
+  // These methods were completely removed from TokenManager in the HttpOnly cookie migration (v0.2.0)
+  // - getValidAccessToken() - removed, tokens are HttpOnly cookies
+  // - setTokens() - removed, backend sets cookies directly
+  // - refreshAccessToken() - removed, backend handles refresh via /api/auth/refresh
+  // - getTokenMetadata() - removed, no client-side token access
+  // Tests removed since methods no longer exist in the implementation
 
   describe('Event System', () => {
     describe('on() and emit()', () => {

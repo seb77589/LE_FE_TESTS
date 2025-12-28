@@ -147,15 +147,16 @@ describe('Dashboard Page', () => {
     );
     expect(buttonTexts.filter((text) => text?.includes('Admin Panel'))).toHaveLength(1);
 
-    // Admin privilege notice section should have "System Admin" button
+    // Admin privilege notice section should have "System Admin" link
     const adminSection = screen.getByText('Administrator Access').closest('div');
     expect(adminSection).toBeInTheDocument();
-    const adminButtons = adminSection
-      ? Array.from(adminSection.querySelectorAll('button')).map(
-          (button) => button.textContent,
+    // "System Admin" is a Link (mocked as <a>), not a button
+    const adminLinks = adminSection
+      ? Array.from(adminSection.querySelectorAll('a')).map(
+          (link) => link.textContent,
         )
       : [];
-    expect(adminButtons.filter((text) => text?.includes('System Admin'))).toHaveLength(
+    expect(adminLinks.filter((text) => text?.includes('System Admin'))).toHaveLength(
       1,
     );
   });

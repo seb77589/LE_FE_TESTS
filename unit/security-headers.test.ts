@@ -5,7 +5,7 @@
 import { NextConfig } from 'next';
 
 // Mock the next.config.js file
-const nextConfig = require('../../../next.config.js') as NextConfig;
+const nextConfig = require('../../next.config.js') as NextConfig;
 
 describe('Security Headers Configuration', () => {
   test('should have security headers configuration', () => {

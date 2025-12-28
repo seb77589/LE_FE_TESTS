@@ -223,7 +223,9 @@ describe('useDocumentPreview', () => {
       expect(result.current.previewData?.preview_type).toBe('image');
     });
 
-    it('should reset imageError when modal opens', async () => {
+    it('should preserve imageError state when modal opens (user must explicitly reset)', async () => {
+      // Implementation note: imageError is NOT auto-reset when modal opens
+      // This allows the caller to handle error state explicitly via setImageError()
       const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 1, isOpen }),
         { initialProps: { isOpen: false } },
@@ -235,12 +237,19 @@ describe('useDocumentPreview', () => {
       });
       expect(result.current.imageError).toBe(true);
 
-      // Open modal
+      // Open modal - imageError should be preserved (not auto-reset)
       rerender({ isOpen: true });
 
+      // imageError stays true until explicitly reset by caller
       await waitFor(() => {
-        expect(result.current.imageError).toBe(false);
+        expect(result.current.imageError).toBe(true);
       });
+
+      // Caller can reset it explicitly
+      act(() => {
+        result.current.setImageError(false);
+      });
+      expect(result.current.imageError).toBe(false);
     });
   });
 

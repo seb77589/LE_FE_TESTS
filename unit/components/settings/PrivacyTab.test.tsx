@@ -123,61 +123,60 @@ describe('PrivacyTab', () => {
       });
     });
 
-    it('should call API when onRequestDataExport is not provided', async () => {
-      // Mock blob response for file download
-      const mockBlob = new Blob(['test data'], { type: 'application/json' });
-      (api.get as jest.Mock) = jest.fn().mockResolvedValue({
-        data: mockBlob,
-        headers: {
-          'content-disposition': 'attachment; filename="my_data_export_20250101.json"',
-        },
+    it('should call executeAction API when onRequestDataExport is not provided', async () => {
+      // Component now uses two-step process:
+      // 1. First calls executeAction('export_my_data') via fetch
+      // 2. Only calls api.get for download if status is 'completed'
+
+      // Mock fetch for executeAction (returns 'queued' status - common case)
+      const mockFetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ status: 'queued' }),
+      });
+      globalThis.fetch = mockFetch;
+
+      render(<PrivacyTab />);
+      const exportButton = screen.getByText(/request data export/i);
+      fireEvent.click(exportButton);
+
+      await waitFor(() => {
+        // Verify fetch was called with correct endpoint
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining('/api/v1/compliance/execute'),
+          expect.objectContaining({
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          }),
+        );
       });
 
-      // Mock URL methods
-      const originalCreateObjectURL = globalThis.URL.createObjectURL;
-      const originalRevokeObjectURL = globalThis.URL.revokeObjectURL;
-      globalThis.URL.createObjectURL = jest.fn(() => 'blob:test-url');
-      globalThis.URL.revokeObjectURL = jest.fn();
+      // Restore
+      globalThis.fetch = fetch;
+    });
 
-      // Mock document.createElement to return a real anchor element
-      const originalCreateElement = document.createElement.bind(document);
-      const mockClick = jest.fn();
-      const mockRemove = jest.fn();
-      jest.spyOn(document, 'createElement').mockImplementation((tagName) => {
-        if (tagName === 'a') {
-          const link = originalCreateElement('a');
-          link.click = mockClick;
-          link.remove = mockRemove;
-          return link;
-        }
-        return originalCreateElement(tagName);
+    it('should show success message on successful export', async () => {
+      // When custom onRequestDataExport is provided, the component doesn't show toast
+      // (custom handler is responsible for feedback)
+      // When using built-in handler, component shows toast based on API response
+      // Mock the fetch for executeAction
+      const mockFetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ status: 'queued' }),
       });
+      globalThis.fetch = mockFetch;
 
       render(<PrivacyTab />);
       const exportButton = screen.getByText(/request data export/i);
       fireEvent.click(exportButton);
       await waitFor(() => {
-        expect(api.get).toHaveBeenCalledWith('/api/v1/compliance/gdpr/my-data', {
-          responseType: 'blob',
-          params: { export_format: 'json' },
-        });
-      });
-
-      // Restore original methods
-      globalThis.URL.createObjectURL = originalCreateObjectURL;
-      globalThis.URL.revokeObjectURL = originalRevokeObjectURL;
-    });
-
-    it('should show success message on successful export', async () => {
-      const mockOnRequestDataExport = jest.fn().mockResolvedValue(undefined);
-      render(<PrivacyTab onRequestDataExport={mockOnRequestDataExport} />);
-      const exportButton = screen.getByText(/request data export/i);
-      fireEvent.click(exportButton);
-      await waitFor(() => {
         expect(toast.success).toHaveBeenCalledWith(
-          'Data export downloaded successfully',
+          'Data export queued successfully',
         );
       });
+
+      // Restore
+      globalThis.fetch = fetch;
     });
 
     it('should show error message on failed export', async () => {

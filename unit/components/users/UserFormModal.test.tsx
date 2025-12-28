@@ -20,6 +20,7 @@ jest.mock('@/lib/logging', () => ({
     info: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
+    debug: jest.fn(),
   },
 }));
 
@@ -29,6 +30,24 @@ jest.mock('@/lib/api', () => ({
     post: jest.fn(),
     put: jest.fn(),
   },
+}));
+
+// Mock auth context
+jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
+  useAuth: jest.fn(() => ({
+    user: {
+      id: 1,
+      email: 'admin@example.com',
+      role: 'SUPERADMIN',
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    isAdmin: jest.fn(() => true),
+    isSuperAdmin: jest.fn(() => true),
+    hasRole: jest.fn(() => true),
+    token: 'mock-token',
+    logout: jest.fn(),
+  })),
 }));
 
 jest.mock('@/components/ui/Modal', () => ({
@@ -43,6 +62,20 @@ jest.mock('@/components/ui/Modal', () => ({
         <div>{children}</div>
       </div>
     ) : null,
+}));
+
+// Mock company/manager hooks - return empty arrays to avoid company validation
+jest.mock('@/hooks/companies', () => ({
+  useCompanyOptions: jest.fn(() => ({
+    companies: [{ id: 1, name: 'Test Company' }],
+    isLoading: false,
+    error: null,
+  })),
+  useManagerOptions: jest.fn(() => ({
+    managers: [{ id: 1, full_name: 'Test Manager' }],
+    isLoading: false,
+    error: null,
+  })),
 }));
 
 import React from 'react';
@@ -65,8 +98,9 @@ describe('UserFormModal Component', () => {
     full_name: 'John Doe',
     username: 'johndoe',
     email: FRONTEND_TEST_CREDENTIALS.JOHN.email,
-    role: 'ASSISTANT', // Will default to first option 'USER' in select
+    role: 'ASSISTANT',
     is_active: true,
+    company_id: 1, // Required for ASSISTANT role when logged in as SuperAdmin
   };
 
   beforeEach(() => {
@@ -163,9 +197,10 @@ describe('UserFormModal Component', () => {
       );
 
       const roleSelect = screen.getByLabelText('Role');
-      await userEvent.selectOptions(roleSelect, 'ADMIN');
+      // Role names changed: USER -> ASSISTANT, ADMIN -> MANAGER
+      await userEvent.selectOptions(roleSelect, 'MANAGER');
 
-      expect(roleSelect).toHaveValue('ADMIN');
+      expect(roleSelect).toHaveValue('MANAGER');
     });
 
     it('updates password fields when typed', async () => {
@@ -212,7 +247,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.JANE.email,
       );
-      await userEvent.selectOptions(screen.getByLabelText('Role'), 'ADMIN');
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(
         screen.getByLabelText(/^Password/),
         FRONTEND_TEST_DATA.PASSWORD.SECURE,
@@ -229,7 +265,9 @@ describe('UserFormModal Component', () => {
           email: FRONTEND_TEST_CREDENTIALS.JANE.email,
           password: FRONTEND_TEST_DATA.PASSWORD.SECURE,
           full_name: 'Jane Doe',
-          role: 'ADMIN',
+          role: 'SUPERADMIN',
+          company_id: null,
+          manager_id: null,
         });
       });
 
@@ -253,6 +291,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.JANE.email,
       );
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(
         screen.getByLabelText(/^Password/),
         FRONTEND_TEST_DATA.PASSWORD.SECURE,
@@ -286,8 +326,8 @@ describe('UserFormModal Component', () => {
       expect(screen.getByLabelText(/Email Address/)).toHaveValue(
         FRONTEND_TEST_CREDENTIALS.JOHN.email,
       );
-      // Role 'ASSISTANT' from user data doesn't match select options, defaults to first option
-      expect(screen.getByLabelText('Role')).toHaveValue('USER');
+      // Role 'ASSISTANT' from user data is now a valid option
+      expect(screen.getByLabelText('Role')).toHaveValue('ASSISTANT');
     });
 
     it('shows Active checkbox when editing user', () => {
@@ -414,6 +454,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.JANE.email,
       );
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(screen.getByLabelText(/^Password/), 'short');
       await userEvent.type(screen.getByLabelText('Confirm Password'), 'short');
 
@@ -437,6 +479,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.JANE.email,
       );
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(
         screen.getByLabelText(/^Password/),
         FRONTEND_TEST_DATA.PASSWORD.SECURE,
@@ -499,6 +543,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.EXISTING.email,
       );
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(
         screen.getByLabelText(/^Password/),
         FRONTEND_TEST_DATA.PASSWORD.SECURE,
@@ -529,6 +575,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.JANE.email,
       );
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(
         screen.getByLabelText(/^Password/),
         FRONTEND_TEST_DATA.PASSWORD.SECURE,
@@ -564,6 +612,8 @@ describe('UserFormModal Component', () => {
         screen.getByLabelText(/Email Address/),
         FRONTEND_TEST_CREDENTIALS.JANE.email,
       );
+      // Use SUPERADMIN role to avoid company requirement
+      await userEvent.selectOptions(screen.getByLabelText('Role'), 'SUPERADMIN');
       await userEvent.type(
         screen.getByLabelText(/^Password/),
         FRONTEND_TEST_DATA.PASSWORD.SECURE,

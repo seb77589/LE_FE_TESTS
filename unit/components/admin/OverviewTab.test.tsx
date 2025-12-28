@@ -152,8 +152,8 @@ describe('OverviewTab', () => {
     });
   });
 
-  describe('System Status Display', () => {
-    it('should display system status for superadmin', () => {
+  describe('SuperAdmin Features', () => {
+    it('should display admin tools for superadmin', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
@@ -163,10 +163,11 @@ describe('OverviewTab', () => {
       } as any);
 
       render(<OverviewTab />);
-      expect(screen.getByText(/system status/i)).toBeInTheDocument();
+      // SuperAdmin sees Admin Tools section
+      expect(screen.getByText('Admin Tools')).toBeInTheDocument();
     });
 
-    it('should not display system status for non-superadmin', () => {
+    it('should not display admin tools for non-superadmin', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
@@ -176,10 +177,11 @@ describe('OverviewTab', () => {
       } as any);
 
       render(<OverviewTab />);
-      expect(screen.queryByText(/system status/i)).not.toBeInTheDocument();
+      // Admin role doesn't see Admin Tools section
+      expect(screen.queryByText('Admin Tools')).not.toBeInTheDocument();
     });
 
-    it('should display healthy status correctly', () => {
+    it('should display quick links for superadmin', () => {
       mockUseAuth.mockReturnValue({
         user: {
           id: 1,
@@ -189,8 +191,9 @@ describe('OverviewTab', () => {
       } as any);
 
       render(<OverviewTab />);
-      // System status shows "HEALTHY" in uppercase
-      expect(screen.getByText('HEALTHY')).toBeInTheDocument();
+      // Quick links for superadmin
+      expect(screen.getByText('Companies')).toBeInTheDocument();
+      expect(screen.getByText('System')).toBeInTheDocument();
     });
   });
 

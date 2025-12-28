@@ -11,7 +11,7 @@ jest.mock('@/lib/context/ConsolidatedAuthContext', () => {
   const { FRONTEND_TEST_CREDENTIALS: creds } = require('@tests/jest-test-credentials');
   return {
     useAuth: jest.fn(() => ({
-      user: { id: 1, email: creds.ADMIN.email, role: 'superadmin' },
+      user: { id: 1, email: creds.ADMIN.email, role: 'SUPERADMIN' },
       isAuthenticated: true,
     })),
   };
@@ -91,9 +91,55 @@ jest.mock('lucide-react', () => ({
   CheckCircle: () => <div data-testid="check-icon">Check</div>,
 }));
 
+// Define mock data for tests
+const mockUser = {
+  id: 1,
+  email: 'admin@test.com',
+  role: 'SUPERADMIN',
+};
+
+const mockUseAccountUnlock = {
+  lockedAccounts: [
+    {
+      id: 1,
+      email: 'user1@test.com',
+      full_name: 'User One',
+      role: 'user',
+      failed_login_attempts: 5,
+      locked_until: '2025-01-01T12:00:00Z',
+      lockout_reason: 'Too many failed attempts',
+    },
+  ],
+  loading: false,
+  error: null,
+  success: null,
+  unlocking: false,
+  unlockDialogOpen: false,
+  selectedAccount: null,
+  unlockReason: '',
+  setUnlockDialogOpen: jest.fn(),
+  setUnlockReason: jest.fn(),
+  setError: jest.fn(),
+  setSuccess: jest.fn(),
+  handleUnlockAccount: jest.fn(),
+  confirmUnlock: jest.fn(),
+  fetchLockedAccounts: jest.fn(),
+};
+
 describe('AccountUnlockManager', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Reset useAuth to superadmin state for each test
+    const { useAuth } = require('@/lib/context/ConsolidatedAuthContext');
+    useAuth.mockReturnValue({
+      user: mockUser,
+      isAuthenticated: true,
+    });
+
+    // Reset useAccountUnlock to default state
+    const { useAccountUnlock } = require('@/hooks/admin/useAccountUnlock');
+    useAccountUnlock.mockReturnValue(mockUseAccountUnlock);
   });
 
   describe('Access Control', () => {

@@ -1,40 +1,20 @@
 /**
  * Tests for time synchronization utilities
+ *
+ * REMOVED: checkTimeSynchronization tests
+ * The checkTimeSynchronization function was removed from the datetime module
+ * as part of the HttpOnly cookie migration (v0.2.0). Time synchronization is
+ * now handled server-side.
+ *
+ * This file is kept as a placeholder for future time-related utility tests.
  */
 
-import { checkTimeSynchronization } from '@/lib/utils/datetime';
-
 describe('timeSync utilities', () => {
-  describe('checkTimeSynchronization()', () => {
-    // Mock fetch for timeSync check
-    beforeEach(() => {
-      globalThis.fetch = jest.fn();
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
-    it('should return an object with synced property', async () => {
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({ server_time: new Date().toISOString() }),
-      });
-
-      const result = await checkTimeSynchronization();
-      expect(typeof result).toBe('object');
-      expect(result).toHaveProperty('synced');
-      expect(typeof result.synced).toBe('boolean');
-    });
-
-    it('should check time synchronization', async () => {
-      (globalThis.fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({ server_time: new Date().toISOString() }),
-      });
-
-      const result = await checkTimeSynchronization();
-      expect(result).toBeDefined();
-      expect(result).toHaveProperty('synced');
-      expect(typeof result.synced).toBe('boolean');
+  describe('placeholder', () => {
+    it('should pass (placeholder for removed checkTimeSynchronization tests)', () => {
+      // checkTimeSynchronization was removed in v0.2.0
+      // Time synchronization is now handled server-side
+      expect(true).toBe(true);
     });
   });
 });

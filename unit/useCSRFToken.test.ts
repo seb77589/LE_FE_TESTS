@@ -222,7 +222,7 @@ describe('Server-side rendering compatibility', () => {
     try {
       // Clear module cache and import fresh
       jest.resetModules();
-      const { addCSRFToken } = require('../../hooks/useCSRFToken');
+      const { addCSRFToken } = require('@/hooks/useCSRFToken');
       const headers = addCSRFToken({ 'Content-Type': 'application/json' });
       expect(headers).toEqual({ 'Content-Type': 'application/json' });
     } finally {

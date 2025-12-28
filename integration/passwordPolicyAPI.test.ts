@@ -18,7 +18,7 @@ import {
   clearPasswordPolicyCache,
   getStrengthColor,
 } from '@/lib/api/passwordPolicy';
-import { FRONTEND_TEST_DATA } from '../test-credentials';
+import { FRONTEND_TEST_DATA } from '../jest-test-credentials';
 
 // Mock fetch globally
 globalThis.fetch = jest.fn();

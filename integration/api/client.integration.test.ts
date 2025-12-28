@@ -18,7 +18,7 @@ import { isAxiosError } from 'axios';
 import api, { authApi, testApiConnectivity, handleApiError } from '@/lib/api';
 import { apiConfig } from '@/lib/api/config';
 import { refreshAuthToken } from '@/lib/api/auth';
-import { FRONTEND_TEST_CREDENTIALS } from '../../test-credentials';
+import { FRONTEND_TEST_CREDENTIALS } from '../../jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({
@@ -514,7 +514,7 @@ describe('API Client Integration Tests', () => {
       const originalFetch = globalThis.fetch;
       (globalThis as any).fetch = mockFetch;
 
-      const { fetcher } = require('@/lib/api/client');
+      const { fetcher } = require('@/lib/api');
       await fetcher('/api/v1/test');
 
       expect(mockFetch).toHaveBeenCalled();
@@ -533,7 +533,7 @@ describe('API Client Integration Tests', () => {
       const originalFetch = globalThis.fetch;
       (globalThis as any).fetch = mockFetch;
 
-      const { fetcher } = require('@/lib/api/client');
+      const { fetcher } = require('@/lib/api');
       await fetcher('/api/v1/test');
 
       const fetchOptions = mockFetch.mock.calls[0][1];

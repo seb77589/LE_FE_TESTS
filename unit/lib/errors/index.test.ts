@@ -33,13 +33,6 @@ import {
   withFallback,
   networkMonitor,
   errorRecoveryHandling,
-  // Legacy exports
-  extractErrorMessageLegacy,
-  extractErrorContextLegacy,
-  isAuthErrorLegacy,
-  isValidationErrorLegacy,
-  isRateLimitErrorLegacy,
-  isAccountLockedErrorLegacy,
   // Auth error parsing from types
   parseAuthError,
   getErrorActionText,
@@ -53,11 +46,6 @@ import {
   isAccountDisabledError,
   extractErrorCode,
   AuthErrorCode,
-  // Legacy recovery exports
-  errorRecoveryLegacy,
-  useErrorRecovery,
-  withErrorRecovery,
-  networkMonitorLegacy,
   // Error tracking
   ErrorTrackingService,
   errorTracking,
@@ -173,37 +161,11 @@ describe('lib/errors/index.ts barrel exports', () => {
     });
   });
 
-  describe('Legacy Backward Compatibility Exports', () => {
-    it('should export extractErrorMessageLegacy as alias', () => {
-      expect(extractErrorMessageLegacy).toBeDefined();
-      expect(extractErrorMessageLegacy).toBe(extractErrorMessage);
-    });
-
-    it('should export extractErrorContextLegacy as alias', () => {
-      expect(extractErrorContextLegacy).toBeDefined();
-      expect(extractErrorContextLegacy).toBe(extractErrorContext);
-    });
-
-    it('should export isAuthErrorLegacy as alias', () => {
-      expect(isAuthErrorLegacy).toBeDefined();
-      expect(isAuthErrorLegacy).toBe(isAuthError);
-    });
-
-    it('should export isValidationErrorLegacy as alias', () => {
-      expect(isValidationErrorLegacy).toBeDefined();
-      expect(isValidationErrorLegacy).toBe(isValidationError);
-    });
-
-    it('should export isRateLimitErrorLegacy as alias', () => {
-      expect(isRateLimitErrorLegacy).toBeDefined();
-      expect(isRateLimitErrorLegacy).toBe(isRateLimitError);
-    });
-
-    it('should export isAccountLockedErrorLegacy as alias', () => {
-      expect(isAccountLockedErrorLegacy).toBeDefined();
-      expect(isAccountLockedErrorLegacy).toBe(isAccountLockedError);
-    });
-  });
+  // REMOVED: Legacy Backward Compatibility Exports tests
+  // These legacy alias exports were never implemented in the module.
+  // The module exports the primary functions directly without legacy aliases.
+  // Legacy exports removed: extractErrorMessageLegacy, extractErrorContextLegacy,
+  // isAuthErrorLegacy, isValidationErrorLegacy, isRateLimitErrorLegacy, isAccountLockedErrorLegacy
 
   describe('Auth Error Parsing (from types.ts)', () => {
     it('should export parseAuthError function', () => {
@@ -267,25 +229,10 @@ describe('lib/errors/index.ts barrel exports', () => {
     });
   });
 
-  describe('Legacy Error Recovery Exports (from ErrorRecovery component)', () => {
-    it('should export errorRecoveryLegacy', () => {
-      expect(errorRecoveryLegacy).toBeDefined();
-    });
-
-    it('should export useErrorRecovery hook', () => {
-      expect(useErrorRecovery).toBeDefined();
-      expect(typeof useErrorRecovery).toBe('function');
-    });
-
-    it('should export withErrorRecovery HOC', () => {
-      expect(withErrorRecovery).toBeDefined();
-      expect(typeof withErrorRecovery).toBe('function');
-    });
-
-    it('should export networkMonitorLegacy', () => {
-      expect(networkMonitorLegacy).toBeDefined();
-    });
-  });
+  // REMOVED: Legacy Error Recovery Exports tests
+  // These legacy recovery exports were never implemented in the module.
+  // The module exports errorRecovery, retryWithBackoff, withFallback, and networkMonitor directly.
+  // Legacy exports removed: errorRecoveryLegacy, useErrorRecovery, withErrorRecovery, networkMonitorLegacy
 
   describe('Error Tracking Exports', () => {
     it('should export ErrorTrackingService class', () => {
@@ -362,16 +309,17 @@ describe('lib/errors/index.ts barrel exports', () => {
   });
 
   describe('Integration - Export Consistency', () => {
-    it('should have consistent error classification functions', () => {
-      const testError = { status: 401 };
+    it('should have working error classification functions', () => {
+      const authError = { status: 401 };
+      const validationError = { status: 422 };
+      const rateLimitError = { status: 429 };
+      const lockedError = { status: 423 };
 
-      // Both main and legacy exports should work identically
-      expect(isAuthError(testError)).toBe(isAuthErrorLegacy(testError));
-      expect(isValidationError(testError)).toBe(isValidationErrorLegacy(testError));
-      expect(isRateLimitError(testError)).toBe(isRateLimitErrorLegacy(testError));
-      expect(isAccountLockedError(testError)).toBe(
-        isAccountLockedErrorLegacy(testError),
-      );
+      // Test error classification functions work correctly
+      expect(isAuthError(authError)).toBe(true);
+      expect(isValidationError(validationError)).toBe(true);
+      expect(isRateLimitError(rateLimitError)).toBe(true);
+      expect(isAccountLockedError(lockedError)).toBe(true);
     });
 
     it('should have working errorRecoveryHandling alias', async () => {
