@@ -16,7 +16,10 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UnifiedLoginForm from '@/components/auth/UnifiedLoginForm';
 import { AuthProvider, useAuth } from '@/lib/context/ConsolidatedAuthContext';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '../../jest-test-credentials';
+import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '../../jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/logging', () => ({

@@ -67,8 +67,12 @@ describe('UserAdvancedFilter', () => {
     render(<UserAdvancedFilter values={{}} onChange={mockOnChange} />);
 
     const searchInput = screen.getByTestId('user-search');
-    fireEvent.change(searchInput, { target: { value: FRONTEND_TEST_CREDENTIALS.USER.email } });
+    fireEvent.change(searchInput, {
+      target: { value: FRONTEND_TEST_CREDENTIALS.USER.email },
+    });
 
-    expect(mockOnChange).toHaveBeenCalledWith({ search: FRONTEND_TEST_CREDENTIALS.USER.email });
+    expect(mockOnChange).toHaveBeenCalledWith({
+      search: FRONTEND_TEST_CREDENTIALS.USER.email,
+    });
   });
 });

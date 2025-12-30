@@ -152,12 +152,8 @@ describe('Dashboard Page', () => {
     expect(adminSection).toBeInTheDocument();
     // "System Admin" is a Link (mocked as <a>), not a button
     const adminLinks = adminSection
-      ? Array.from(adminSection.querySelectorAll('a')).map(
-          (link) => link.textContent,
-        )
+      ? Array.from(adminSection.querySelectorAll('a')).map((link) => link.textContent)
       : [];
-    expect(adminLinks.filter((text) => text?.includes('System Admin'))).toHaveLength(
-      1,
-    );
+    expect(adminLinks.filter((text) => text?.includes('System Admin'))).toHaveLength(1);
   });
 });

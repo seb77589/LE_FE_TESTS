@@ -345,7 +345,11 @@ describe('useUserManagement', () => {
 
       const { result } = renderHook(() =>
         useUserManagement({
-          currentUser: { id: 99, email: FRONTEND_TEST_CREDENTIALS.ADMIN.email, role: 'admin' },
+          currentUser: {
+            id: 99,
+            email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
+            role: 'admin',
+          },
         }),
       );
 
@@ -598,7 +602,10 @@ describe('useUserManagement', () => {
 
       const { result } = renderHook(() => useUserManagement());
 
-      const mockFile = createMockFile(`[{"email": "${FRONTEND_TEST_CREDENTIALS.USER.email}"}]`, 'users.json');
+      const mockFile = createMockFile(
+        `[{"email": "${FRONTEND_TEST_CREDENTIALS.USER.email}"}]`,
+        'users.json',
+      );
 
       const mockEvent = {
         target: { files: [mockFile] },

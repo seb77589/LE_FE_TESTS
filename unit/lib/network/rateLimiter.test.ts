@@ -193,10 +193,14 @@ describe('rateLimiter', () => {
           timeWindowMs: 60000,
         });
 
-        const status = getRateLimitStatus('login', FRONTEND_TEST_CREDENTIALS.USER.email, {
-          maxAttempts: 5,
-          timeWindowMs: 60000,
-        });
+        const status = getRateLimitStatus(
+          'login',
+          FRONTEND_TEST_CREDENTIALS.USER.email,
+          {
+            maxAttempts: 5,
+            timeWindowMs: 60000,
+          },
+        );
         expect(status.remaining).toBe(4);
       });
 

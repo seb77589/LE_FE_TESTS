@@ -488,8 +488,16 @@ describe('HomePage', () => {
     });
 
     it('should react to useAuth returning different user objects', async () => {
-      const user1 = { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER1.email, role: 'user' };
-      const user2 = { id: 2, email: FRONTEND_TEST_CREDENTIALS.USER2.email, role: 'admin' };
+      const user1 = {
+        id: 1,
+        email: FRONTEND_TEST_CREDENTIALS.USER1.email,
+        role: 'user',
+      };
+      const user2 = {
+        id: 2,
+        email: FRONTEND_TEST_CREDENTIALS.USER2.email,
+        role: 'admin',
+      };
 
       mockUseAuth.mockReturnValue({
         user: user1,

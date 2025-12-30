@@ -186,8 +186,18 @@ const mockClearStatusError = jest.fn();
 
 const defaultHookReturn = {
   users: [
-    { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER1.email, is_active: true, role: 'user' },
-    { id: 2, email: FRONTEND_TEST_CREDENTIALS.USER2.email, is_active: false, role: 'admin' },
+    {
+      id: 1,
+      email: FRONTEND_TEST_CREDENTIALS.USER1.email,
+      is_active: true,
+      role: 'user',
+    },
+    {
+      id: 2,
+      email: FRONTEND_TEST_CREDENTIALS.USER2.email,
+      is_active: false,
+      role: 'admin',
+    },
   ],
   analytics: { total_users: 100, active_users: 80 },
   isLoading: false,
@@ -466,7 +476,9 @@ describe('UserManagement', () => {
       await user.click(screen.getByTestId('edit-1'));
 
       expect(screen.getByTestId('user-form-modal')).toBeInTheDocument();
-      expect(screen.getByTestId('modal-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER1.email);
+      expect(screen.getByTestId('modal-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER1.email,
+      );
     });
 
     it('should call mutate after user is saved', async () => {
@@ -488,7 +500,9 @@ describe('UserManagement', () => {
       await user.click(screen.getByTestId('row-click-1'));
 
       expect(screen.getByTestId('user-details-drawer')).toBeInTheDocument();
-      expect(screen.getByTestId('drawer-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER1.email);
+      expect(screen.getByTestId('drawer-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER1.email,
+      );
     });
 
     it('should close drawer when close button is clicked', async () => {
@@ -610,7 +624,9 @@ describe('UserManagement', () => {
 
       await user.click(screen.getByTestId('import-btn'));
 
-      expect(mockHandleImport).toHaveBeenCalledWith([{ email: FRONTEND_TEST_CREDENTIALS.USER.email }]);
+      expect(mockHandleImport).toHaveBeenCalledWith([
+        { email: FRONTEND_TEST_CREDENTIALS.USER.email },
+      ]);
     });
 
     it('should display importing state', () => {
@@ -741,14 +757,18 @@ describe('UserManagement', () => {
 
       // Edit first user
       await user.click(screen.getByTestId('edit-1'));
-      expect(screen.getByTestId('modal-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER1.email);
+      expect(screen.getByTestId('modal-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER1.email,
+      );
 
       // Close modal
       await user.click(screen.getByText('Close Modal'));
 
       // Edit second user
       await user.click(screen.getByTestId('edit-2'));
-      expect(screen.getByTestId('modal-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER2.email);
+      expect(screen.getByTestId('modal-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER2.email,
+      );
     });
 
     it('should handle switching between users for drawer', async () => {
@@ -756,14 +776,18 @@ describe('UserManagement', () => {
 
       // Open drawer for first user
       await user.click(screen.getByTestId('row-click-1'));
-      expect(screen.getByTestId('drawer-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER1.email);
+      expect(screen.getByTestId('drawer-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER1.email,
+      );
 
       // Close drawer
       await user.click(screen.getByTestId('drawer-close'));
 
       // Open drawer for second user
       await user.click(screen.getByTestId('row-click-2'));
-      expect(screen.getByTestId('drawer-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER2.email);
+      expect(screen.getByTestId('drawer-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER2.email,
+      );
     });
 
     it('should create new user after editing existing user', async () => {
@@ -771,7 +795,9 @@ describe('UserManagement', () => {
 
       // Edit existing user
       await user.click(screen.getByTestId('edit-1'));
-      expect(screen.getByTestId('modal-user')).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER1.email);
+      expect(screen.getByTestId('modal-user')).toHaveTextContent(
+        FRONTEND_TEST_CREDENTIALS.USER1.email,
+      );
 
       // Close modal
       await user.click(screen.getByText('Close Modal'));

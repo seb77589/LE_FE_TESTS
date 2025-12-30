@@ -454,7 +454,9 @@ describe('useSessionTimeout Edge Cases', () => {
     const { rerender, unmount } = renderHook(
       ({ isAuthenticated }) => {
         (useAuth as jest.Mock).mockReturnValue({
-          user: isAuthenticated ? { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER.email } : null,
+          user: isAuthenticated
+            ? { id: 1, email: FRONTEND_TEST_CREDENTIALS.USER.email }
+            : null,
           isAuthenticated,
         });
         return useSessionTimeout();

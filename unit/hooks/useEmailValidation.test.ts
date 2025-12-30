@@ -211,7 +211,9 @@ describe('useEmailValidation Hook', () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      const validation = result.current.validateEmail(`  ${FRONTEND_TEST_DATA.EMAIL.VALID}  `);
+      const validation = result.current.validateEmail(
+        `  ${FRONTEND_TEST_DATA.EMAIL.VALID}  `,
+      );
       expect(validation.isValid).toBe(true);
       expect(validation.errors).toEqual([]);
     });

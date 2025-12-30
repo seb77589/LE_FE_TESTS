@@ -1,24 +1,23 @@
 /**
  * Jest Custom Reporter for Test Reliability Monitoring
- * 
+ *
  * Integrates TestReliabilityMonitor with Jest test runner to automatically
  * track test results, retries, and performance metrics.
- * 
+ *
  * @module JestReliabilityReporter
  * @since 0.2.0
  */
 
-import type {
-  Reporter,
-  Test,
-  TestResult,
-  AggregatedResult,
-} from '@jest/reporters';
-import TestReliabilityMonitor, { type TestFlakiness, type TestPerformance, type TestFailure } from './TestReliabilityMonitor.js';
+import type { Reporter, Test, TestResult, AggregatedResult } from '@jest/reporters';
+import TestReliabilityMonitor, {
+  type TestFlakiness,
+  type TestPerformance,
+  type TestFailure,
+} from './TestReliabilityMonitor.js';
 
 /**
  * Jest custom reporter that feeds test results into TestReliabilityMonitor
- * 
+ *
  * Usage in jest.config.js:
  * ```javascript
  * module.exports = {
@@ -49,7 +48,7 @@ class JestReliabilityReporter implements Reporter {
   onTestResult(
     test: Test,
     testResult: TestResult,
-    _aggregatedResult: AggregatedResult
+    _aggregatedResult: AggregatedResult,
   ): void {
     const testFile = test.path;
 
@@ -70,7 +69,7 @@ class JestReliabilityReporter implements Reporter {
       // Note: We don't call startTest because Jest doesn't provide that hook
       // Instead, we simulate it by using the duration
       this.monitor.startTest(testFile, testName);
-      
+
       // Simulate duration by waiting (not ideal but works with Jest's timing)
       setTimeout(() => {
         this.monitor.endTest(
@@ -78,7 +77,7 @@ class JestReliabilityReporter implements Reporter {
           testName,
           status,
           retryCount,
-          result.failureMessages[0] ? new Error(result.failureMessages[0]) : undefined
+          result.failureMessages[0] ? new Error(result.failureMessages[0]) : undefined,
         );
       }, 0);
     });
@@ -89,7 +88,7 @@ class JestReliabilityReporter implements Reporter {
    */
   async onRunComplete(): Promise<void> {
     const report = this.monitor.generateReport();
-    
+
     console.log('\n' + '='.repeat(80));
     console.log('TEST RELIABILITY REPORT');
     console.log('='.repeat(80));
@@ -102,7 +101,9 @@ class JestReliabilityReporter implements Reporter {
       report.flakyTests.slice(0, 10).forEach((test: TestFlakiness, idx: number) => {
         console.log(`\n${idx + 1}. ${test.testName}`);
         console.log(`   File: ${test.testFile}`);
-        console.log(`   Flakiness: ${(test.flakinessRate * 100).toFixed(1)}% (${test.failedRuns}/${test.totalRuns} runs)`);
+        console.log(
+          `   Flakiness: ${(test.flakinessRate * 100).toFixed(1)}% (${test.failedRuns}/${test.totalRuns} runs)`,
+        );
         console.log(`   Recommendation: ${test.recommendation}`);
       });
     }
@@ -112,7 +113,9 @@ class JestReliabilityReporter implements Reporter {
       report.slowTests.slice(0, 10).forEach((test: TestPerformance, idx: number) => {
         console.log(`\n${idx + 1}. ${test.testName}`);
         console.log(`   File: ${test.testFile}`);
-        console.log(`   Average duration: ${(test.averageDuration / 1000).toFixed(2)}s`);
+        console.log(
+          `   Average duration: ${(test.averageDuration / 1000).toFixed(2)}s`,
+        );
         console.log(`   Slowness factor: ${test.slownessFactor.toFixed(1)}x median`);
       });
     }
@@ -133,7 +136,9 @@ class JestReliabilityReporter implements Reporter {
     // Optionally export to file
     if (process.env.TEST_RELIABILITY_REPORT_PATH) {
       await this.monitor.exportReport(process.env.TEST_RELIABILITY_REPORT_PATH);
-      console.log(`📊 Full report exported to: ${process.env.TEST_RELIABILITY_REPORT_PATH}\n`);
+      console.log(
+        `📊 Full report exported to: ${process.env.TEST_RELIABILITY_REPORT_PATH}\n`,
+      );
     }
   }
 }

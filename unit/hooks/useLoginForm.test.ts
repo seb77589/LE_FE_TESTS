@@ -18,7 +18,10 @@
 
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { useLoginForm } from '@/hooks/auth/useLoginForm';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
+import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({

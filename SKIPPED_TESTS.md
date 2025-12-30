@@ -23,25 +23,26 @@ The only remaining skipped tests are E2E tests for features not yet implemented 
 
 #### Batch 1: v0.2.0 HttpOnly Cookie Migration (4 tests)
 
-| Test | File | Reason Removed |
-|------|------|----------------|
-| `should return null when not authenticated` | ConsolidatedAuthContext.test.tsx | Tested deprecated `getValidAccessToken` method |
+| Test                                            | File                             | Reason Removed                                 |
+| ----------------------------------------------- | -------------------------------- | ---------------------------------------------- |
+| `should return null when not authenticated`     | ConsolidatedAuthContext.test.tsx | Tested deprecated `getValidAccessToken` method |
 | `should redirect unauthenticated user to login` | ConsolidatedAuthContext.test.tsx | Tested deprecated `getValidAccessToken` method |
-| `should handle authentication check errors` | ConsolidatedAuthContext.test.tsx | Tested deprecated `getValidAccessToken` method |
-| `should handle localStorage errors gracefully` | UnifiedLoginForm.test.tsx | localStorage no longer used for tokens |
+| `should handle authentication check errors`     | ConsolidatedAuthContext.test.tsx | Tested deprecated `getValidAccessToken` method |
+| `should handle localStorage errors gracefully`  | UnifiedLoginForm.test.tsx        | localStorage no longer used for tokens         |
 
 **Why Removed**: These tests validated functionality that was removed in the HttpOnly cookie migration (v0.2.0). Tokens are now stored in HttpOnly cookies managed by the backend, not accessible to JavaScript.
 
 #### Batch 2: JSDOM Limitations & E2E Coverage (4 tests)
 
-| Test | File | Reason Removed |
-|------|------|----------------|
-| `should reject in SSR environment (no document)` | imageOptimization.test.ts | JSDOM always has document object - SSR validated by Next.js build |
-| `should reject in SSR environment` | imageOptimization.test.ts | JSDOM always has document object - SSR validated by Next.js build |
-| `returns fallback in SSR environment` | ssr.test.ts | JSDOM always has window object - SSR validated by Next.js build |
-| `should redirect admin users to /admin after login` | ConsolidatedAuthContext.test.tsx | Complex async timing - E2E tests cover admin redirect |
+| Test                                                | File                             | Reason Removed                                                    |
+| --------------------------------------------------- | -------------------------------- | ----------------------------------------------------------------- |
+| `should reject in SSR environment (no document)`    | imageOptimization.test.ts        | JSDOM always has document object - SSR validated by Next.js build |
+| `should reject in SSR environment`                  | imageOptimization.test.ts        | JSDOM always has document object - SSR validated by Next.js build |
+| `returns fallback in SSR environment`               | ssr.test.ts                      | JSDOM always has window object - SSR validated by Next.js build   |
+| `should redirect admin users to /admin after login` | ConsolidatedAuthContext.test.tsx | Complex async timing - E2E tests cover admin redirect             |
 
 **Why Removed**:
+
 - **SSR tests (3)**: JSDOM cannot simulate SSR environment - `window` and `document` always exist. SSR behavior is validated by `npm run build` succeeding.
 - **Admin redirect (1)**: Complex async timing with cookie waits made this test flaky. E2E tests in `tests/e2e/auth/login.spec.ts` provide reliable coverage.
 
@@ -58,19 +59,20 @@ All unit tests are now enabled and passing. The Zod schema validation enhancemen
 
 ### Skipped by Category
 
-| Category                | Count | Reason                                    | Coverage         |
-| ----------------------- | ----- | ----------------------------------------- | ---------------- |
-| **Total Unit Tests**    | **0** | All tests enabled                         | ✅ Full coverage |
+| Category             | Count | Reason            | Coverage         |
+| -------------------- | ----- | ----------------- | ---------------- |
+| **Total Unit Tests** | **0** | All tests enabled | ✅ Full coverage |
 
 ### 1.1. Recently Enabled Tests
 
 #### Malformed API Response (1 test) - ✅ IMPLEMENTED (2025-12-28)
 
-| File | Test Name | Status |
-|------|-----------|--------|
+| File                                    | Test Name                               | Status     |
+| --------------------------------------- | --------------------------------------- | ---------- |
 | `ConsolidatedAuthContext.test.tsx:1593` | `should handle malformed API responses` | ✅ Enabled |
 
 **Implementation Details**:
+
 - Created `/frontend/src/lib/schemas/` directory with Zod schemas
 - Added `auth.ts` with schemas for User, AuthResponse, TokenResponse
 - Added `validation.ts` with safe validation helpers (safeValidate, validateAuthResponse, etc.)

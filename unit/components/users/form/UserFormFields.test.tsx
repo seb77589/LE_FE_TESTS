@@ -60,7 +60,9 @@ describe('UserFormFields', () => {
 
       expect(screen.getByDisplayValue('Test User')).toBeInTheDocument();
       expect(screen.getByDisplayValue('testuser')).toBeInTheDocument();
-      expect(screen.getByDisplayValue(FRONTEND_TEST_CREDENTIALS.USER.email)).toBeInTheDocument();
+      expect(
+        screen.getByDisplayValue(FRONTEND_TEST_CREDENTIALS.USER.email),
+      ).toBeInTheDocument();
     });
   });
 
@@ -96,7 +98,9 @@ describe('UserFormFields', () => {
       );
 
       const emailInput = screen.getByLabelText(/email address/i);
-      fireEvent.change(emailInput, { target: { value: FRONTEND_TEST_CREDENTIALS.NEW.email } });
+      fireEvent.change(emailInput, {
+        target: { value: FRONTEND_TEST_CREDENTIALS.NEW.email },
+      });
 
       expect(mockOnChange).toHaveBeenCalledTimes(1);
     });

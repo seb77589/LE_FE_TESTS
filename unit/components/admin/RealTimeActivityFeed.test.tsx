@@ -407,7 +407,9 @@ describe('RealTimeActivityFeed', () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
+        expect(
+          screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email),
+        ).toBeInTheDocument();
       });
     });
   });

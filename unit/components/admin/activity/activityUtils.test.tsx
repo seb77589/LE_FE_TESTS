@@ -18,7 +18,10 @@ import {
   exportActivities,
 } from '@/components/admin/activity/activityUtils';
 import { ActivityEvent } from '@/components/admin/activity/types';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
+import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
 
 // Mock formatRelativeTime
 jest.mock('@/lib/utils', () => ({

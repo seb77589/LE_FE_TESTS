@@ -1,9 +1,9 @@
 /**
  * Test Reliability Monitor - Production-grade test monitoring for Docker-backed tests
- * 
+ *
  * Tracks test flakiness, retry patterns, and performance metrics for integration
  * and E2E tests running against real Docker containers.
- * 
+ *
  * @module TestReliabilityMonitor
  * @since 0.2.0
  */
@@ -68,20 +68,20 @@ export interface TestFailure {
 
 /**
  * Test Reliability Monitor - Tracks test health metrics for Docker-backed tests
- * 
+ *
  * Features:
  * - Flakiness detection (tests that pass sometimes, fail sometimes)
  * - Retry tracking (how many retries before success/failure)
  * - Performance monitoring (duration tracking and slowness detection)
  * - Failure pattern analysis (consecutive failures, error clustering)
  * - Comprehensive reporting (health score, recommendations)
- * 
+ *
  * @example
  * ```typescript
  * // In test setup
  * const monitor = TestReliabilityMonitor.getInstance();
  * monitor.startTest('user-login.spec.ts', 'should login successfully');
- * 
+ *
  * // In test teardown
  * monitor.endTest(
  *   'user-login.spec.ts',
@@ -89,7 +89,7 @@ export interface TestFailure {
  *   testStatus,
  *   retryCount
  * );
- * 
+ *
  * // Generate report
  * const report = monitor.generateReport();
  * console.log(JSON.stringify(report, null, 2));
@@ -123,7 +123,7 @@ export class TestReliabilityMonitor {
 
   /**
    * Start tracking a test
-   * 
+   *
    * @param testFile - File path of the test
    * @param testName - Name of the test
    */
@@ -134,7 +134,7 @@ export class TestReliabilityMonitor {
 
   /**
    * End test tracking and record result
-   * 
+   *
    * @param testFile - File path of the test
    * @param testName - Name of the test
    * @param status - Test result status
@@ -146,7 +146,7 @@ export class TestReliabilityMonitor {
     testName: string,
     status: 'pass' | 'fail' | 'skip',
     retryCount: number = 0,
-    error?: Error
+    error?: Error,
   ): void {
     const key = this.getTestKey(testFile, testName);
     const testStart = this.currentTest.get(key);
@@ -216,7 +216,7 @@ export class TestReliabilityMonitor {
     // Update duration metrics
     metrics.minDuration = Math.min(metrics.minDuration, result.duration);
     metrics.maxDuration = Math.max(metrics.maxDuration, result.duration);
-    
+
     // Calculate rolling average duration
     const previousAverage = metrics.averageDuration;
     metrics.averageDuration =
@@ -228,7 +228,7 @@ export class TestReliabilityMonitor {
 
   /**
    * Generate comprehensive reliability report
-   * 
+   *
    * @returns Reliability report with flaky tests, slow tests, and health score
    */
   public generateReport(): ReliabilityReport {
@@ -237,7 +237,9 @@ export class TestReliabilityMonitor {
     const failingTests: TestFailure[] = [];
 
     // Calculate median duration for slowness comparison
-    const allDurations = Array.from(this.testMetrics.values()).map(m => m.averageDuration);
+    const allDurations = Array.from(this.testMetrics.values()).map(
+      (m) => m.averageDuration,
+    );
     const medianDuration = this.calculateMedian(allDurations);
 
     // Analyze each test
@@ -316,7 +318,7 @@ export class TestReliabilityMonitor {
    */
   private calculateOverallHealth(
     flakyTests: TestFlakiness[],
-    failingTests: TestFailure[]
+    failingTests: TestFailure[],
   ): 'excellent' | 'good' | 'fair' | 'poor' {
     const flakyCount = flakyTests.length;
     const failingCount = failingTests.length;
@@ -342,7 +344,9 @@ export class TestReliabilityMonitor {
   private getLastErrorMessage(testFile: string, testName: string): string {
     const key = this.getTestKey(testFile, testName);
     const relevantResults = this.testResults
-      .filter(r => this.getTestKey(r.testFile, r.testName) === key && r.status === 'fail')
+      .filter(
+        (r) => this.getTestKey(r.testFile, r.testName) === key && r.status === 'fail',
+      )
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     return relevantResults[0]?.errorMessage || 'Unknown error';
@@ -353,13 +357,11 @@ export class TestReliabilityMonitor {
    */
   private calculateMedian(values: number[]): number {
     if (values.length === 0) return 0;
-    
+
     const sorted = [...values].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
-    
-    return sorted.length % 2 === 0
-      ? (sorted[mid - 1] + sorted[mid]) / 2
-      : sorted[mid];
+
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
   }
 
   /**
@@ -379,7 +381,7 @@ export class TestReliabilityMonitor {
 
   /**
    * Export metrics to JSON file
-   * 
+   *
    * @param filePath - Path to save JSON report
    */
   public async exportReport(filePath: string): Promise<void> {
@@ -399,7 +401,7 @@ export class TestReliabilityMonitor {
 
   /**
    * Get metrics for a specific test
-   * 
+   *
    * @param testFile - File path of the test
    * @param testName - Name of the test
    * @returns Test metrics or undefined if not found

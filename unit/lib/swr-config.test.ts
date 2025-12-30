@@ -538,7 +538,11 @@ describe('SWR Config Module', () => {
           { id: 2, name: 'Bob' },
           { id: 3, name: 'Charlie' },
         ];
-        const updatedUser = { id: 2, name: 'Bob Updated', email: FRONTEND_TEST_CREDENTIALS.USER2.email };
+        const updatedUser = {
+          id: 2,
+          name: 'Bob Updated',
+          email: FRONTEND_TEST_CREDENTIALS.USER2.email,
+        };
 
         const result = optimisticUpdates.updateUserInList(users, updatedUser);
 

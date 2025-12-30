@@ -9,7 +9,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { UserDetailsDrawer } from '@/components/users/UserDetailsDrawer';
 import type { User } from '@/types/user';
-import { FRONTEND_TEST_CREDENTIALS, FRONTEND_TEST_DATA } from '@tests/jest-test-credentials';
+import {
+  FRONTEND_TEST_CREDENTIALS,
+  FRONTEND_TEST_DATA,
+} from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
@@ -208,7 +211,9 @@ describe('UserDetailsDrawer', () => {
           onUpdate={mockOnUpdate}
         />,
       );
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER.email)).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.USER.email),
+      ).toBeInTheDocument();
     });
 
     it('should display user ID', () => {

@@ -204,7 +204,9 @@ describe('LazyAdminComponents', () => {
       expect(AdminComponentRegistry.RealTimeActivityFeed).toBeDefined();
       // LazyExoticComponent has $$typeof property
       expect((AdminComponentRegistry.UserManagement as any).$$typeof).toBeDefined();
-      expect((AdminComponentRegistry.RealTimeActivityFeed as any).$$typeof).toBeDefined();
+      expect(
+        (AdminComponentRegistry.RealTimeActivityFeed as any).$$typeof,
+      ).toBeDefined();
     });
   });
 

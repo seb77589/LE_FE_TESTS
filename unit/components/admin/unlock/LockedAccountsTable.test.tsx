@@ -113,7 +113,9 @@ describe('LockedAccountsTable', () => {
       );
       // Check for account data to verify table rendered
       expect(screen.getByText('User One')).toBeInTheDocument();
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email),
+      ).toBeInTheDocument();
       expect(screen.getByText('user')).toBeInTheDocument();
       expect(screen.getByText('admin')).toBeInTheDocument();
     });
@@ -127,9 +129,13 @@ describe('LockedAccountsTable', () => {
         />,
       );
       expect(screen.getByText('User One')).toBeInTheDocument();
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email),
+      ).toBeInTheDocument();
       expect(screen.getByText('User Two')).toBeInTheDocument();
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER2.email)).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.USER2.email),
+      ).toBeInTheDocument();
     });
   });
 
@@ -143,7 +149,9 @@ describe('LockedAccountsTable', () => {
         />,
       );
       expect(screen.getByText('User One')).toBeInTheDocument();
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email)).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.USER1.email),
+      ).toBeInTheDocument();
     });
 
     it('should display account role', () => {

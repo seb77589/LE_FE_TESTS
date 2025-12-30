@@ -440,7 +440,9 @@ describe('Validation Utilities Tests', () => {
       expect(sanitizeURL('https://example.com')).toBe('https://example.com');
       expect(sanitizeURL('http://example.com')).toBe('http://example.com');
       expect(sanitizeURL('/relative/path')).toBe('/relative/path');
-      expect(sanitizeURL(`mailto:${FRONTEND_TEST_DATA.EMAIL.VALID}`)).toBe(`mailto:${FRONTEND_TEST_DATA.EMAIL.VALID}`);
+      expect(sanitizeURL(`mailto:${FRONTEND_TEST_DATA.EMAIL.VALID}`)).toBe(
+        `mailto:${FRONTEND_TEST_DATA.EMAIL.VALID}`,
+      );
 
       // Dangerous URLs should be blocked
       expect(sanitizeURL('javascript:alert("XSS")')).toBe('');

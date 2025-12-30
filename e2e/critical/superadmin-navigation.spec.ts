@@ -1,15 +1,15 @@
 /**
  * SuperAdmin Navigation E2E Tests
- * 
+ *
  * Validates SuperAdmin-specific navigation flows and feature accessibility:
  * - Admin Panel button navigation from dashboard
  * - Navigation bar presence on all pages
  * - Statistics display across different pages (user-scoped vs system-wide)
  * - Role-based access controls
- * 
+ *
  * Purpose: Prevent false-positive bug reports by validating core navigation patterns
  * and ensuring proper architectural separation of concerns (user-scoped vs system-wide data).
- * 
+ *
  * Related Documentation:
  * - docs/architecture/SUPERADMIN_DATA_SCOPING.md
  * - docs/_TODO/SUPERADMIN_FEATURE_MAP_OPTIONS.md (issue validation)
@@ -21,10 +21,7 @@ import { TestHelpers } from '../../utils/test-helpers';
 test.describe('SuperAdmin Navigation - Admin Panel Access', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
     // Skip if worker doesn't have SuperAdmin credentials
-    test.skip(
-      !workerCredentials.isSuperAdmin,
-      'Test requires SuperAdmin credentials',
-    );
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
 
     // Login as SuperAdmin
     await TestHelpers.loginAndWaitForRedirect(
@@ -114,10 +111,7 @@ test.describe('SuperAdmin Navigation - Admin Panel Access', () => {
 
 test.describe('SuperAdmin Navigation - Navigation Bar Presence', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(
-      !workerCredentials.isSuperAdmin,
-      'Test requires SuperAdmin credentials',
-    );
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
 
     await TestHelpers.loginAndWaitForRedirect(
       page,
@@ -176,7 +170,9 @@ test.describe('SuperAdmin Navigation - Navigation Bar Presence', () => {
     await expect(nav.locator('a:has-text("Cases")')).toBeVisible();
     await expect(nav.locator('a:has-text("Notifications")')).toBeVisible();
 
-    console.log('✅ Navigation bar present on Notifications page via layout inheritance');
+    console.log(
+      '✅ Navigation bar present on Notifications page via layout inheritance',
+    );
   });
 
   test('should display navigation bar on Admin pages', async ({ page }) => {
@@ -222,10 +218,7 @@ test.describe('SuperAdmin Navigation - Navigation Bar Presence', () => {
 
 test.describe('SuperAdmin Navigation - Data Scoping Validation', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(
-      !workerCredentials.isSuperAdmin,
-      'Test requires SuperAdmin credentials',
-    );
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
 
     await TestHelpers.loginAndWaitForRedirect(
       page,
@@ -256,7 +249,9 @@ test.describe('SuperAdmin Navigation - Data Scoping Validation', () => {
     // At least some stats should be visible
     expect(myDocsVisible || sessionsVisible || casesVisible).toBe(true);
 
-    console.log('✅ Dashboard shows user-scoped statistics (My Documents, Active Sessions, Open Cases)');
+    console.log(
+      '✅ Dashboard shows user-scoped statistics (My Documents, Active Sessions, Open Cases)',
+    );
     console.log('   Data source: /api/v1/stats/overview (user-specific)');
   });
 
@@ -279,14 +274,18 @@ test.describe('SuperAdmin Navigation - Data Scoping Validation', () => {
     const adminUsersVisible = await adminUsersCard.isVisible().catch(() => false);
 
     if (totalUsersVisible || activeUsersVisible || adminUsersVisible) {
-      console.log('✅ Admin Overview shows system-wide statistics (Total Users, Active Users, Admin Users)');
+      console.log(
+        '✅ Admin Overview shows system-wide statistics (Total Users, Active Users, Admin Users)',
+      );
       console.log('   Data source: /api/v1/admin/stats (system-wide)');
     } else {
       console.log('⚠️  Admin Overview UI may not be fully implemented yet');
     }
   });
 
-  test('should display infrastructure health on Admin System page', async ({ page }) => {
+  test('should display infrastructure health on Admin System page', async ({
+    page,
+  }) => {
     await page.goto('/admin/system');
     await page.waitForLoadState('domcontentloaded');
 
@@ -295,12 +294,16 @@ test.describe('SuperAdmin Navigation - Data Scoping Validation', () => {
 
     // Admin System page should show infrastructure health
     // This is DIFFERENT from both user stats and system-wide stats
-    const systemStatus = page.locator('text=/System|Database|Redis|API|Health/i').first();
+    const systemStatus = page
+      .locator('text=/System|Database|Redis|API|Health/i')
+      .first();
 
     const statusVisible = await systemStatus.isVisible().catch(() => false);
 
     if (statusVisible) {
-      console.log('✅ Admin System shows infrastructure health (Database, Redis, API status)');
+      console.log(
+        '✅ Admin System shows infrastructure health (Database, Redis, API status)',
+      );
       console.log('   Data source: /api/v1/admin/system/health (infrastructure)');
     } else {
       console.log('⚠️  Admin System page UI may not be fully implemented yet');
@@ -351,10 +354,7 @@ test.describe('SuperAdmin Navigation - Data Scoping Validation', () => {
 
 test.describe('SuperAdmin Navigation - Role-Based Access Control', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(
-      !workerCredentials.isSuperAdmin,
-      'Test requires SuperAdmin credentials',
-    );
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
 
     await TestHelpers.loginAndWaitForRedirect(
       page,
@@ -409,10 +409,7 @@ test.describe('SuperAdmin Navigation - Role-Based Access Control', () => {
 
 test.describe('SuperAdmin Navigation - Error Cases', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(
-      !workerCredentials.isSuperAdmin,
-      'Test requires SuperAdmin credentials',
-    );
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
 
     await TestHelpers.loginAndWaitForRedirect(
       page,
@@ -435,9 +432,7 @@ test.describe('SuperAdmin Navigation - Error Cases', () => {
     console.log('✅ Gracefully handles non-existent admin routes');
   });
 
-  test('should maintain navigation state during page transitions', async ({
-    page,
-  }) => {
+  test('should maintain navigation state during page transitions', async ({ page }) => {
     // Navigate through multiple pages
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');

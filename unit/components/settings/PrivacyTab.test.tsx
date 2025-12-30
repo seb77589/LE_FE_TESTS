@@ -170,9 +170,7 @@ describe('PrivacyTab', () => {
       const exportButton = screen.getByText(/request data export/i);
       fireEvent.click(exportButton);
       await waitFor(() => {
-        expect(toast.success).toHaveBeenCalledWith(
-          'Data export queued successfully',
-        );
+        expect(toast.success).toHaveBeenCalledWith('Data export queued successfully');
       });
 
       // Restore

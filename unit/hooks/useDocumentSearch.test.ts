@@ -220,7 +220,10 @@ describe('useDocumentSearch', () => {
       const { result } = renderHook(() => useDocumentSearch(defaultOptions));
 
       act(() => {
-        result.current.handleFilterChange('owner', FRONTEND_TEST_CREDENTIALS.USER.email);
+        result.current.handleFilterChange(
+          'owner',
+          FRONTEND_TEST_CREDENTIALS.USER.email,
+        );
       });
 
       expect(result.current.filters.owner).toBe(FRONTEND_TEST_CREDENTIALS.USER.email);

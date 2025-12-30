@@ -37,275 +37,270 @@
  * ```
  */
 export class TestReliabilityMonitor {
-    constructor() {
-        this.testMetrics = new Map();
-        this.testResults = [];
-        this.currentTest = new Map();
-        // Configuration
-        this.FLAKINESS_THRESHOLD = 0.2; // 20% failure rate = flaky
-        this.SLOW_TEST_THRESHOLD = 30000; // 30 seconds
-        this.MAX_RESULTS_STORED = 1000; // Limit memory usage
-        this.CONSECUTIVE_FAILURE_THRESHOLD = 3;
-        // Singleton pattern
+  constructor() {
+    this.testMetrics = new Map();
+    this.testResults = [];
+    this.currentTest = new Map();
+    // Configuration
+    this.FLAKINESS_THRESHOLD = 0.2; // 20% failure rate = flaky
+    this.SLOW_TEST_THRESHOLD = 30000; // 30 seconds
+    this.MAX_RESULTS_STORED = 1000; // Limit memory usage
+    this.CONSECUTIVE_FAILURE_THRESHOLD = 3;
+    // Singleton pattern
+  }
+  /**
+   * Get singleton instance of TestReliabilityMonitor
+   */
+  static getInstance() {
+    if (!TestReliabilityMonitor.instance) {
+      TestReliabilityMonitor.instance = new TestReliabilityMonitor();
     }
-    /**
-     * Get singleton instance of TestReliabilityMonitor
-     */
-    static getInstance() {
-        if (!TestReliabilityMonitor.instance) {
-            TestReliabilityMonitor.instance = new TestReliabilityMonitor();
-        }
-        return TestReliabilityMonitor.instance;
+    return TestReliabilityMonitor.instance;
+  }
+  /**
+   * Start tracking a test
+   *
+   * @param testFile - File path of the test
+   * @param testName - Name of the test
+   */
+  startTest(testFile, testName) {
+    const key = this.getTestKey(testFile, testName);
+    this.currentTest.set(key, { startTime: Date.now() });
+  }
+  /**
+   * End test tracking and record result
+   *
+   * @param testFile - File path of the test
+   * @param testName - Name of the test
+   * @param status - Test result status
+   * @param retryCount - Number of retries before final result (default: 0)
+   * @param error - Error object if test failed
+   */
+  endTest(testFile, testName, status, retryCount = 0, error) {
+    const key = this.getTestKey(testFile, testName);
+    const testStart = this.currentTest.get(key);
+    if (!testStart) {
+      console.warn(`[TestReliabilityMonitor] No start time found for test: ${key}`);
+      return;
     }
-    /**
-     * Start tracking a test
-     *
-     * @param testFile - File path of the test
-     * @param testName - Name of the test
-     */
-    startTest(testFile, testName) {
-        const key = this.getTestKey(testFile, testName);
-        this.currentTest.set(key, { startTime: Date.now() });
+    const duration = Date.now() - testStart.startTime;
+    this.currentTest.delete(key);
+    // Record test result
+    const result = {
+      testName,
+      testFile,
+      status,
+      duration,
+      timestamp: new Date(),
+      retryCount,
+      errorMessage: error?.message,
+      errorStack: error?.stack,
+    };
+    this.testResults.push(result);
+    // Limit stored results to prevent memory issues
+    if (this.testResults.length > this.MAX_RESULTS_STORED) {
+      this.testResults.shift(); // Remove oldest result
     }
-    /**
-     * End test tracking and record result
-     *
-     * @param testFile - File path of the test
-     * @param testName - Name of the test
-     * @param status - Test result status
-     * @param retryCount - Number of retries before final result (default: 0)
-     * @param error - Error object if test failed
-     */
-    endTest(testFile, testName, status, retryCount = 0, error) {
-        const key = this.getTestKey(testFile, testName);
-        const testStart = this.currentTest.get(key);
-        if (!testStart) {
-            console.warn(`[TestReliabilityMonitor] No start time found for test: ${key}`);
-            return;
-        }
-        const duration = Date.now() - testStart.startTime;
-        this.currentTest.delete(key);
-        // Record test result
-        const result = {
-            testName,
-            testFile,
-            status,
-            duration,
-            timestamp: new Date(),
-            retryCount,
-            errorMessage: error?.message,
-            errorStack: error?.stack,
-        };
-        this.testResults.push(result);
-        // Limit stored results to prevent memory issues
-        if (this.testResults.length > this.MAX_RESULTS_STORED) {
-            this.testResults.shift(); // Remove oldest result
-        }
-        // Update metrics
-        this.updateMetrics(key, result);
+    // Update metrics
+    this.updateMetrics(key, result);
+  }
+  /**
+   * Update test metrics based on new result
+   */
+  updateMetrics(testKey, result) {
+    let metrics = this.testMetrics.get(testKey);
+    if (!metrics) {
+      metrics = {
+        totalRuns: 0,
+        passedRuns: 0,
+        failedRuns: 0,
+        averageDuration: 0,
+        minDuration: Infinity,
+        maxDuration: 0,
+        flakinessRate: 0,
+        consecutiveFailures: 0,
+      };
+      this.testMetrics.set(testKey, metrics);
     }
-    /**
-     * Update test metrics based on new result
-     */
-    updateMetrics(testKey, result) {
-        let metrics = this.testMetrics.get(testKey);
-        if (!metrics) {
-            metrics = {
-                totalRuns: 0,
-                passedRuns: 0,
-                failedRuns: 0,
-                averageDuration: 0,
-                minDuration: Infinity,
-                maxDuration: 0,
-                flakinessRate: 0,
-                consecutiveFailures: 0,
-            };
-            this.testMetrics.set(testKey, metrics);
-        }
-        // Update run counts
-        metrics.totalRuns++;
-        if (result.status === 'pass') {
-            metrics.passedRuns++;
-            metrics.consecutiveFailures = 0; // Reset on success
-        }
-        else if (result.status === 'fail') {
-            metrics.failedRuns++;
-            metrics.consecutiveFailures++;
-            metrics.lastFailureTimestamp = result.timestamp;
-        }
-        // Update duration metrics
-        metrics.minDuration = Math.min(metrics.minDuration, result.duration);
-        metrics.maxDuration = Math.max(metrics.maxDuration, result.duration);
-        // Calculate rolling average duration
-        const previousAverage = metrics.averageDuration;
-        metrics.averageDuration =
-            (previousAverage * (metrics.totalRuns - 1) + result.duration) / metrics.totalRuns;
-        // Calculate flakiness rate (percentage of runs that failed)
-        metrics.flakinessRate = metrics.failedRuns / metrics.totalRuns;
+    // Update run counts
+    metrics.totalRuns++;
+    if (result.status === 'pass') {
+      metrics.passedRuns++;
+      metrics.consecutiveFailures = 0; // Reset on success
+    } else if (result.status === 'fail') {
+      metrics.failedRuns++;
+      metrics.consecutiveFailures++;
+      metrics.lastFailureTimestamp = result.timestamp;
     }
-    /**
-     * Generate comprehensive reliability report
-     *
-     * @returns Reliability report with flaky tests, slow tests, and health score
-     */
-    generateReport() {
-        const flakyTests = [];
-        const slowTests = [];
-        const failingTests = [];
-        // Calculate median duration for slowness comparison
-        const allDurations = Array.from(this.testMetrics.values()).map(m => m.averageDuration);
-        const medianDuration = this.calculateMedian(allDurations);
-        // Analyze each test
-        for (const [testKey, metrics] of this.testMetrics.entries()) {
-            const [testFile, testName] = this.parseTestKey(testKey);
-            // Check for flakiness
-            if (metrics.flakinessRate >= this.FLAKINESS_THRESHOLD && metrics.totalRuns >= 5) {
-                flakyTests.push({
-                    testName,
-                    testFile,
-                    flakinessRate: metrics.flakinessRate,
-                    totalRuns: metrics.totalRuns,
-                    passedRuns: metrics.passedRuns,
-                    failedRuns: metrics.failedRuns,
-                    recommendation: this.getFlakinessRecommendation(metrics.flakinessRate),
-                });
-            }
-            // Check for slowness
-            if (metrics.averageDuration > this.SLOW_TEST_THRESHOLD) {
-                slowTests.push({
-                    testName,
-                    testFile,
-                    averageDuration: metrics.averageDuration,
-                    maxDuration: metrics.maxDuration,
-                    slownessFactor: metrics.averageDuration / medianDuration,
-                });
-            }
-            // Check for consecutive failures
-            if (metrics.consecutiveFailures >= this.CONSECUTIVE_FAILURE_THRESHOLD) {
-                failingTests.push({
-                    testName,
-                    testFile,
-                    consecutiveFailures: metrics.consecutiveFailures,
-                    lastFailureTimestamp: metrics.lastFailureTimestamp,
-                    lastErrorMessage: this.getLastErrorMessage(testFile, testName),
-                });
-            }
-        }
-        // Sort by severity
-        flakyTests.sort((a, b) => b.flakinessRate - a.flakinessRate);
-        slowTests.sort((a, b) => b.slownessFactor - a.slownessFactor);
-        failingTests.sort((a, b) => b.consecutiveFailures - a.consecutiveFailures);
-        // Calculate overall health
-        const overallHealth = this.calculateOverallHealth(flakyTests, failingTests);
-        return {
-            generatedAt: new Date(),
-            totalTests: this.testMetrics.size,
-            flakyTests,
-            slowTests,
-            failingTests,
-            overallHealth,
-        };
+    // Update duration metrics
+    metrics.minDuration = Math.min(metrics.minDuration, result.duration);
+    metrics.maxDuration = Math.max(metrics.maxDuration, result.duration);
+    // Calculate rolling average duration
+    const previousAverage = metrics.averageDuration;
+    metrics.averageDuration =
+      (previousAverage * (metrics.totalRuns - 1) + result.duration) / metrics.totalRuns;
+    // Calculate flakiness rate (percentage of runs that failed)
+    metrics.flakinessRate = metrics.failedRuns / metrics.totalRuns;
+  }
+  /**
+   * Generate comprehensive reliability report
+   *
+   * @returns Reliability report with flaky tests, slow tests, and health score
+   */
+  generateReport() {
+    const flakyTests = [];
+    const slowTests = [];
+    const failingTests = [];
+    // Calculate median duration for slowness comparison
+    const allDurations = Array.from(this.testMetrics.values()).map(
+      (m) => m.averageDuration,
+    );
+    const medianDuration = this.calculateMedian(allDurations);
+    // Analyze each test
+    for (const [testKey, metrics] of this.testMetrics.entries()) {
+      const [testFile, testName] = this.parseTestKey(testKey);
+      // Check for flakiness
+      if (metrics.flakinessRate >= this.FLAKINESS_THRESHOLD && metrics.totalRuns >= 5) {
+        flakyTests.push({
+          testName,
+          testFile,
+          flakinessRate: metrics.flakinessRate,
+          totalRuns: metrics.totalRuns,
+          passedRuns: metrics.passedRuns,
+          failedRuns: metrics.failedRuns,
+          recommendation: this.getFlakinessRecommendation(metrics.flakinessRate),
+        });
+      }
+      // Check for slowness
+      if (metrics.averageDuration > this.SLOW_TEST_THRESHOLD) {
+        slowTests.push({
+          testName,
+          testFile,
+          averageDuration: metrics.averageDuration,
+          maxDuration: metrics.maxDuration,
+          slownessFactor: metrics.averageDuration / medianDuration,
+        });
+      }
+      // Check for consecutive failures
+      if (metrics.consecutiveFailures >= this.CONSECUTIVE_FAILURE_THRESHOLD) {
+        failingTests.push({
+          testName,
+          testFile,
+          consecutiveFailures: metrics.consecutiveFailures,
+          lastFailureTimestamp: metrics.lastFailureTimestamp,
+          lastErrorMessage: this.getLastErrorMessage(testFile, testName),
+        });
+      }
     }
-    /**
-     * Get flakiness recommendation based on rate
-     */
-    getFlakinessRecommendation(flakinessRate) {
-        if (flakinessRate >= 0.5) {
-            return 'CRITICAL: Test is highly unstable. Consider disabling or rewriting.';
-        }
-        else if (flakinessRate >= 0.3) {
-            return 'HIGH: Add wait conditions, increase timeouts, or check for race conditions.';
-        }
-        else {
-            return 'MEDIUM: Monitor closely. May need minor adjustments to selectors or waits.';
-        }
+    // Sort by severity
+    flakyTests.sort((a, b) => b.flakinessRate - a.flakinessRate);
+    slowTests.sort((a, b) => b.slownessFactor - a.slownessFactor);
+    failingTests.sort((a, b) => b.consecutiveFailures - a.consecutiveFailures);
+    // Calculate overall health
+    const overallHealth = this.calculateOverallHealth(flakyTests, failingTests);
+    return {
+      generatedAt: new Date(),
+      totalTests: this.testMetrics.size,
+      flakyTests,
+      slowTests,
+      failingTests,
+      overallHealth,
+    };
+  }
+  /**
+   * Get flakiness recommendation based on rate
+   */
+  getFlakinessRecommendation(flakinessRate) {
+    if (flakinessRate >= 0.5) {
+      return 'CRITICAL: Test is highly unstable. Consider disabling or rewriting.';
+    } else if (flakinessRate >= 0.3) {
+      return 'HIGH: Add wait conditions, increase timeouts, or check for race conditions.';
+    } else {
+      return 'MEDIUM: Monitor closely. May need minor adjustments to selectors or waits.';
     }
-    /**
-     * Calculate overall test suite health
-     */
-    calculateOverallHealth(flakyTests, failingTests) {
-        const flakyCount = flakyTests.length;
-        const failingCount = failingTests.length;
-        const totalTests = this.testMetrics.size;
-        const flakyPercentage = flakyCount / totalTests;
-        const failingPercentage = failingCount / totalTests;
-        if (flakyPercentage === 0 && failingPercentage === 0) {
-            return 'excellent';
-        }
-        else if (flakyPercentage < 0.05 && failingPercentage < 0.05) {
-            return 'good';
-        }
-        else if (flakyPercentage < 0.15 && failingPercentage < 0.15) {
-            return 'fair';
-        }
-        else {
-            return 'poor';
-        }
+  }
+  /**
+   * Calculate overall test suite health
+   */
+  calculateOverallHealth(flakyTests, failingTests) {
+    const flakyCount = flakyTests.length;
+    const failingCount = failingTests.length;
+    const totalTests = this.testMetrics.size;
+    const flakyPercentage = flakyCount / totalTests;
+    const failingPercentage = failingCount / totalTests;
+    if (flakyPercentage === 0 && failingPercentage === 0) {
+      return 'excellent';
+    } else if (flakyPercentage < 0.05 && failingPercentage < 0.05) {
+      return 'good';
+    } else if (flakyPercentage < 0.15 && failingPercentage < 0.15) {
+      return 'fair';
+    } else {
+      return 'poor';
     }
-    /**
-     * Get last error message for a test
-     */
-    getLastErrorMessage(testFile, testName) {
-        const key = this.getTestKey(testFile, testName);
-        const relevantResults = this.testResults
-            .filter(r => this.getTestKey(r.testFile, r.testName) === key && r.status === 'fail')
-            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-        return relevantResults[0]?.errorMessage || 'Unknown error';
-    }
-    /**
-     * Calculate median value from array
-     */
-    calculateMedian(values) {
-        if (values.length === 0)
-            return 0;
-        const sorted = [...values].sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        return sorted.length % 2 === 0
-            ? (sorted[mid - 1] + sorted[mid]) / 2
-            : sorted[mid];
-    }
-    /**
-     * Generate test key from file and name
-     */
-    getTestKey(testFile, testName) {
-        return `${testFile}::${testName}`;
-    }
-    /**
-     * Parse test key back to file and name
-     */
-    parseTestKey(testKey) {
-        const [testFile, testName] = testKey.split('::');
-        return [testFile, testName];
-    }
-    /**
-     * Export metrics to JSON file
-     *
-     * @param filePath - Path to save JSON report
-     */
-    async exportReport(filePath) {
-        const report = this.generateReport();
-        const fs = await import('node:fs/promises');
-        await fs.writeFile(filePath, JSON.stringify(report, null, 2), 'utf-8');
-    }
-    /**
-     * Clear all stored metrics (useful for testing)
-     */
-    clearMetrics() {
-        this.testMetrics.clear();
-        this.testResults = [];
-        this.currentTest.clear();
-    }
-    /**
-     * Get metrics for a specific test
-     *
-     * @param testFile - File path of the test
-     * @param testName - Name of the test
-     * @returns Test metrics or undefined if not found
-     */
-    getTestMetrics(testFile, testName) {
-        const key = this.getTestKey(testFile, testName);
-        return this.testMetrics.get(key);
-    }
+  }
+  /**
+   * Get last error message for a test
+   */
+  getLastErrorMessage(testFile, testName) {
+    const key = this.getTestKey(testFile, testName);
+    const relevantResults = this.testResults
+      .filter(
+        (r) => this.getTestKey(r.testFile, r.testName) === key && r.status === 'fail',
+      )
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    return relevantResults[0]?.errorMessage || 'Unknown error';
+  }
+  /**
+   * Calculate median value from array
+   */
+  calculateMedian(values) {
+    if (values.length === 0) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+  }
+  /**
+   * Generate test key from file and name
+   */
+  getTestKey(testFile, testName) {
+    return `${testFile}::${testName}`;
+  }
+  /**
+   * Parse test key back to file and name
+   */
+  parseTestKey(testKey) {
+    const [testFile, testName] = testKey.split('::');
+    return [testFile, testName];
+  }
+  /**
+   * Export metrics to JSON file
+   *
+   * @param filePath - Path to save JSON report
+   */
+  async exportReport(filePath) {
+    const report = this.generateReport();
+    const fs = await import('node:fs/promises');
+    await fs.writeFile(filePath, JSON.stringify(report, null, 2), 'utf-8');
+  }
+  /**
+   * Clear all stored metrics (useful for testing)
+   */
+  clearMetrics() {
+    this.testMetrics.clear();
+    this.testResults = [];
+    this.currentTest.clear();
+  }
+  /**
+   * Get metrics for a specific test
+   *
+   * @param testFile - File path of the test
+   * @param testName - Name of the test
+   * @returns Test metrics or undefined if not found
+   */
+  getTestMetrics(testFile, testName) {
+    const key = this.getTestKey(testFile, testName);
+    return this.testMetrics.get(key);
+  }
 }
 // Export singleton instance
 export default TestReliabilityMonitor.getInstance();

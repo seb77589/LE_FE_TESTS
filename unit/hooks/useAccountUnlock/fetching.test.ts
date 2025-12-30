@@ -103,8 +103,12 @@ describe('useAccountUnlock - Data fetching', () => {
       expect(result.current.lockedAccounts).toHaveLength(2);
     });
 
-    expect(result.current.lockedAccounts[0].email).toBe(FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email);
-    expect(result.current.lockedAccounts[1].email).toBe(FRONTEND_TEST_CREDENTIALS.LOCKED_USER_2.email);
+    expect(result.current.lockedAccounts[0].email).toBe(
+      FRONTEND_TEST_CREDENTIALS.LOCKED_USER_1.email,
+    );
+    expect(result.current.lockedAccounts[1].email).toBe(
+      FRONTEND_TEST_CREDENTIALS.LOCKED_USER_2.email,
+    );
     unmount();
   });
 

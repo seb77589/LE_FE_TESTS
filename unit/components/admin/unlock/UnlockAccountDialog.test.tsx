@@ -138,7 +138,9 @@ describe('UnlockAccountDialog', () => {
         />,
       );
       expect(screen.getByText(/test user/i)).toBeInTheDocument();
-      expect(screen.getByText(new RegExp(FRONTEND_TEST_CREDENTIALS.USER.email, 'i'))).toBeInTheDocument();
+      expect(
+        screen.getByText(new RegExp(FRONTEND_TEST_CREDENTIALS.USER.email, 'i')),
+      ).toBeInTheDocument();
     });
 
     it('should handle null account gracefully', () => {

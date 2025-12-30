@@ -63,8 +63,12 @@ describe('ActivityList', () => {
 
     it('should display user email', () => {
       render(<ActivityList activities={mockActivities} />);
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.USER.email)).toBeInTheDocument();
-      expect(screen.getByText(FRONTEND_TEST_CREDENTIALS.ADMIN.email)).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.USER.email),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(FRONTEND_TEST_CREDENTIALS.ADMIN.email),
+      ).toBeInTheDocument();
     });
 
     it('should display user role', () => {

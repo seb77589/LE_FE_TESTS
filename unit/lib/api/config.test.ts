@@ -269,7 +269,9 @@ describe('API Config Module', () => {
       setNodeEnv('development');
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
+      const { getEnvironmentConfig, environmentConfig } = await import(
+        '@/lib/api/config'
+      );
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.development);
@@ -280,7 +282,9 @@ describe('API Config Module', () => {
       process.env.NEXT_PUBLIC_API_URL = 'https://api.production.com';
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
+      const { getEnvironmentConfig, environmentConfig } = await import(
+        '@/lib/api/config'
+      );
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.production);
@@ -290,7 +294,9 @@ describe('API Config Module', () => {
       setNodeEnv('test');
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
+      const { getEnvironmentConfig, environmentConfig } = await import(
+        '@/lib/api/config'
+      );
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.test);
@@ -300,7 +306,9 @@ describe('API Config Module', () => {
       setNodeEnv('staging');
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
+      const { getEnvironmentConfig, environmentConfig } = await import(
+        '@/lib/api/config'
+      );
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.development);
@@ -310,7 +318,9 @@ describe('API Config Module', () => {
       setNodeEnv(''); // Simulate undefined by setting empty
       jest.resetModules();
 
-      const { getEnvironmentConfig, environmentConfig } = await import('@/lib/api/config');
+      const { getEnvironmentConfig, environmentConfig } = await import(
+        '@/lib/api/config'
+      );
       const envConfig = getEnvironmentConfig();
 
       expect(envConfig).toEqual(environmentConfig.development);
