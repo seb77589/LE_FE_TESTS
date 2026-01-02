@@ -112,17 +112,41 @@ async function loginUser(fetchFn, baseUrl, email, password) {
 
 /**
  * Create test user and obtain JWT token
+ *
+ * CREDENTIAL SECURITY POLICY:
+ * All test credentials MUST be loaded from environment variables in config/.env.
+ * Hardcoded fallback credentials are NOT allowed - tests will fail-fast if
+ * credentials are missing. This enforces the zero-hardcoded-credentials policy.
+ *
+ * See:
+ * - CLAUDE.md#test-credential-management-critical
+ * - docs/testing/FRONTEND_TESTING_GUIDE.md
  */
 async function setupTestUser(baseUrl) {
   try {
+    // Load environment variables from config/.env BEFORE validation
+    require('dotenv').config({
+      path: path.resolve(__dirname, '..', '..', '..', 'config', '.env'),
+    });
+
     const fetchFn = await getFetchFunction();
     if (!fetchFn) {
       console.warn('[jest.global-setup] Fetch not available, skipping test user setup');
       return;
     }
 
-    const testEmail = process.env.TEST_USER_EMAIL || 'jest-test@example.com';
-    const testPassword = process.env.TEST_USER_PASSWORD || 'supersecretpassword';
+    const testEmail = process.env.TEST_USER_EMAIL;
+    const testPassword = process.env.TEST_USER_PASSWORD;
+
+    // Validate credentials exist - fail fast if missing
+    if (!testEmail || !testPassword) {
+      console.error('ERROR: Missing required test credentials in config/.env:');
+      console.error('  - TEST_USER_EMAIL');
+      console.error('  - TEST_USER_PASSWORD');
+      console.error('\nSee config/.env.example for configuration details.');
+      console.error('Run: ./scripts/validate-credentials.sh to verify credentials');
+      process.exit(1);
+    }
 
     // Attempt registration (may fail if user already exists)
     await fetchFn(`${baseUrl}/api/v1/auth/register`, {
@@ -153,6 +177,11 @@ async function setupTestUser(baseUrl) {
  */
 async function setupAdminTokens(baseUrl) {
   try {
+    // Load environment variables from config/.env BEFORE reading them
+    require('dotenv').config({
+      path: path.resolve(__dirname, '..', '..', '..', 'config', '.env'),
+    });
+
     const fetchFn = await getFetchFunction();
     if (!fetchFn) {
       return;

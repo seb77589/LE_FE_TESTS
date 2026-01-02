@@ -7,7 +7,8 @@
  */
 
 import { renderHook, waitFor } from '@testing-library/react';
-import { useCSRFToken, addCSRFToken } from '@/hooks/useCSRFToken';
+import { useCSRFToken } from '@/hooks/useCSRFToken';
+import { addCSRFTokenToHeaders } from '@/lib/cookies';
 import { CSRF_CONFIG } from '@/config/csrfConfig';
 
 // Mock fetch
@@ -151,7 +152,7 @@ describe('useCSRFToken', () => {
   });
 });
 
-describe('addCSRFToken', () => {
+describe('addCSRFTokenToHeaders', () => {
   beforeEach(() => {
     document.cookie = '';
   });
@@ -159,7 +160,7 @@ describe('addCSRFToken', () => {
   test('should add CSRF token to headers if cookie exists', () => {
     document.cookie = `${CSRF_CONFIG.COOKIE_NAME}=test-token-456; path=/`;
 
-    const headers = addCSRFToken({ 'Content-Type': 'application/json' });
+    const headers = addCSRFTokenToHeaders({ 'Content-Type': 'application/json' });
 
     expect(headers).toEqual({
       'Content-Type': 'application/json',
@@ -169,7 +170,7 @@ describe('addCSRFToken', () => {
 
   test('should return original headers if no CSRF token in cookie', () => {
     const originalHeaders = { 'Content-Type': 'application/json' };
-    const headers = addCSRFToken(originalHeaders);
+    const headers = addCSRFTokenToHeaders(originalHeaders);
 
     expect(headers).toEqual(originalHeaders);
   });
@@ -177,7 +178,7 @@ describe('addCSRFToken', () => {
   test('should handle empty headers object', () => {
     document.cookie = `${CSRF_CONFIG.COOKIE_NAME}=test-token-789; path=/`;
 
-    const headers = addCSRFToken();
+    const headers = addCSRFTokenToHeaders();
 
     expect(headers).toEqual({
       [CSRF_CONFIG.HEADER_NAME]: 'test-token-789',
@@ -187,7 +188,7 @@ describe('addCSRFToken', () => {
   test('should handle URL encoded cookie values', () => {
     document.cookie = `${CSRF_CONFIG.COOKIE_NAME}=test%20token%20with%20spaces; path=/`;
 
-    const headers = addCSRFToken();
+    const headers = addCSRFTokenToHeaders();
 
     // Note: getCSRFTokenFromCookie() does NOT decode URL-encoded values
     // This matches browser cookie behavior - values are stored as-is
@@ -199,7 +200,7 @@ describe('addCSRFToken', () => {
   test('should handle multiple cookies', () => {
     document.cookie = `othercookie=value; ${CSRF_CONFIG.COOKIE_NAME}=correct-token; anothercookie=value2`;
 
-    const headers = addCSRFToken();
+    const headers = addCSRFTokenToHeaders();
 
     expect(headers).toEqual({
       [CSRF_CONFIG.HEADER_NAME]: 'correct-token',
@@ -213,7 +214,7 @@ describe('Server-side rendering compatibility', () => {
     document.cookie = '';
   });
 
-  test('addCSRFToken should handle SSR environment', () => {
+  test('addCSRFTokenToHeaders should handle SSR environment', () => {
     // Mock typeof document === 'undefined' by temporarily hiding it
     const originalDocument = globalThis.document;
     // @ts-ignore
@@ -222,8 +223,8 @@ describe('Server-side rendering compatibility', () => {
     try {
       // Clear module cache and import fresh
       jest.resetModules();
-      const { addCSRFToken } = require('@/hooks/useCSRFToken');
-      const headers = addCSRFToken({ 'Content-Type': 'application/json' });
+      const { addCSRFTokenToHeaders } = require('@/lib/cookies');
+      const headers = addCSRFTokenToHeaders({ 'Content-Type': 'application/json' });
       expect(headers).toEqual({ 'Content-Type': 'application/json' });
     } finally {
       globalThis.document = originalDocument;

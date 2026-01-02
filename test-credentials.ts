@@ -2,8 +2,26 @@
  * Test Credentials Configuration
  * Centralized configuration for all test credentials used in E2E tests (Playwright)
  *
- * NOTE: This is the canonical source for E2E test credentials.
- * For Jest unit/integration tests, see src/__tests__/test-credentials.ts
+ * CREDENTIAL SECURITY POLICY:
+ * All test credentials MUST be loaded from environment variables in config/.env.
+ * This file provides fail-fast validation - tests will exit immediately with
+ * clear error messages if any required credentials are missing.
+ *
+ * WORKER ISOLATION:
+ * - 12-worker credential pool prevents session conflicts in parallel execution
+ * - Each worker gets unique credentials via modulo rotation
+ * - Credentials include role metadata (isAdmin, isSuperAdmin) for test gating
+ *
+ * CREDENTIAL POOLS:
+ * - TEST_CREDENTIALS: Basic roles (USER, ADMIN, SUPERADMIN)
+ * - WS_TEST_CREDENTIALS: WebSocket parallel testing (7 unique users)
+ * - PROFILE_TEST_CREDENTIALS: Profile change tests (14 unique users)
+ * - PASSWORD_TEST_CREDENTIALS: Password change tests (5 unique users)
+ *
+ * See also:
+ * - CLAUDE.md#test-credential-management-critical (Backend credential management)
+ * - frontend/tests/jest-test-credentials.ts (Jest unit/integration tests)
+ * - docs/testing/FRONTEND_TESTING_GUIDE.md (Complete testing guide)
  */
 
 import dotenv from 'dotenv';

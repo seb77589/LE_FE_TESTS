@@ -2,10 +2,36 @@
  * Frontend Test Credentials Configuration
  * Centralized configuration for all test credentials used in frontend unit and integration tests (Jest)
  *
+ * CREDENTIAL SECURITY POLICY:
+ * All test credentials MUST be loaded from environment variables in config/.env.
+ * This file provides fail-fast validation but only runs when JEST_WORKER_ID
+ * or NODE_ENV=test is set to avoid interference with Playwright tests.
+ *
+ * VALIDATION SCOPE:
+ * - Validates only in Jest context (JEST_WORKER_ID check prevents Playwright conflicts)
+ * - 65+ required environment variables for comprehensive test coverage
+ * - Helper function getRequiredEnvVar() provides type-safe access
+ *
+ * WORKER ISOLATION (Jest):
+ * - 6-worker credential pool for parallel test execution
+ * - setup/jest.setup.js provides getWorkerCredentials(workerIndex)
+ * - Automatic worker assignment prevents session conflicts
+ *
+ * CREDENTIAL POOLS:
+ * - FRONTEND_TEST_CREDENTIALS: 15+ test user accounts (USER, ADMIN, etc.)
+ * - FRONTEND_TEST_DATA: Email/password validation test data
+ * - FRONTEND_TEST_CONFIG: Environment configuration (API URLs, etc.)
+ *
  * NOTE: This file is specifically for Jest unit/integration tests.
  * For E2E tests (Playwright), use tests/test-credentials.ts instead.
- * Both files load from the same environment variables but export different structures
- * optimized for their respective test frameworks.
+ * Both files load from the same environment variables but export different
+ * structures optimized for their respective test frameworks.
+ *
+ * See also:
+ * - CLAUDE.md#test-credential-management-critical (Backend credential management)
+ * - frontend/tests/test-credentials.ts (E2E/Playwright tests)
+ * - frontend/tests/setup/jest.global-setup.js (Global test setup with validation)
+ * - docs/testing/FRONTEND_TESTING_GUIDE.md (Complete testing guide)
  */
 
 // Environment validation function
