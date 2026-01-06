@@ -14,6 +14,8 @@ import { TestHelpers } from '../../utils/test-helpers';
 // Test credentials are now provided via workerCredentials fixture
 const UNVERIFIED_EMAIL = process.env.TEST_UNVERIFIED_EMAIL || TEST_DATA.EMAIL.INVALID;
 const LOCKED_EMAIL = process.env.TEST_LOCKED_EMAIL || TEST_DATA.EMAIL.INVALID;
+const TEST_EMAIL = process.env.TEST_USER_EMAIL || TEST_DATA.EMAIL.VALID;
+const TEST_PASSWORD = process.env.TEST_USER_PASSWORD || TEST_DATA.PASSWORD.VALID;
 
 test.describe('Authentication Error Handling E2E', () => {
   test.beforeEach(async ({ page }) => {

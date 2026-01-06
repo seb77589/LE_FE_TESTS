@@ -47,7 +47,7 @@ test.describe('Real-Time Admin Streaming', () => {
     }) => {
       // Navigate to admin dashboard (use correct route /admin, not /app/admin)
       await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if activity feed exists (use 15s for lazy-loaded components)
       const activityFeed = await TestHelpers.checkUIElementExists(
@@ -78,7 +78,7 @@ test.describe('Real-Time Admin Streaming', () => {
 
     test('should receive real-time activity updates via SSE', async ({ page }) => {
       await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if activity feed exists (use 15s for lazy-loaded components)
       const activityFeed = await TestHelpers.checkUIElementExists(
@@ -131,7 +131,7 @@ test.describe('Real-Time Admin Streaming', () => {
       });
 
       await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if activity feed exists (use 15s for lazy-loaded components)
       const activityFeed = await TestHelpers.checkUIElementExists(
@@ -163,7 +163,7 @@ test.describe('Real-Time Admin Streaming', () => {
 
     test('should reconnect SSE stream after connection loss', async ({ page }) => {
       await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if activity feed exists (use 15s for lazy-loaded components)
       const activityFeed = await TestHelpers.checkUIElementExists(
@@ -202,7 +202,7 @@ test.describe('Real-Time Admin Streaming', () => {
 
     test('should apply filters to SSE stream', async ({ page }) => {
       await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if activity feed exists (use 15s for lazy-loaded components)
       const activityFeed = await TestHelpers.checkUIElementExists(
@@ -236,7 +236,7 @@ test.describe('Real-Time Admin Streaming', () => {
   test.describe('System Health WebSocket Streaming', () => {
     test('should subscribe to system health WebSocket events', async ({ page }) => {
       await page.goto('/admin/system');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if system health dashboard exists (use 15s for lazy-loaded components)
       const systemHealth = await TestHelpers.checkUIElementExists(
@@ -274,7 +274,7 @@ test.describe('Real-Time Admin Streaming', () => {
       await page.goto('/admin/system');
 
       // Wait for dashboard to load
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if system health dashboard exists (use 15s for lazy-loaded components)
       const systemHealth = await TestHelpers.checkUIElementExists(
@@ -324,7 +324,7 @@ test.describe('Real-Time Admin Streaming', () => {
 
       await page.goto('/admin/system');
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if system health dashboard exists (use 15s for lazy-loaded components)
       const systemHealth = await TestHelpers.checkUIElementExists(
@@ -390,8 +390,8 @@ test.describe('Real-Time Admin Streaming', () => {
         await page2.goto('/admin');
 
         // Wait for both to load
-        await page1.waitForLoadState('networkidle');
-        await page2.waitForLoadState('networkidle');
+        await page1.waitForLoadState('domcontentloaded');
+        await page2.waitForLoadState('domcontentloaded');
 
         // Check if activity feed exists in both tabs (use 15s for lazy-loaded components)
         const feed1Exists = await TestHelpers.checkUIElementExists(
@@ -463,7 +463,7 @@ test.describe('Real-Time Admin Streaming', () => {
 
     test('should handle SSE server errors gracefully', async ({ page }) => {
       await page.goto('/admin');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
 
       // Check if activity feed exists (use 15s for lazy-loaded components)
       const activityFeed = await TestHelpers.checkUIElementExists(

@@ -63,6 +63,8 @@ describe('changePassword API Function', () => {
   beforeEach(() => {
     // Clear fetch mocks
     mockFetch.mockClear();
+    // Ensure global fetch remains the mocked function (some modules wrap fetch)
+    globalThis.fetch = mockFetch;
     // Reset mock - use the function we created
     if (mockGetCSRFTokenFromCookieFn) {
       mockGetCSRFTokenFromCookieFn.mockClear();
@@ -303,7 +305,7 @@ describe('changePassword API Function', () => {
         new_password: FRONTEND_TEST_DATA.PASSWORD.NEW,
       });
 
-      expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           method: 'POST',
@@ -321,7 +323,7 @@ describe('changePassword API Function', () => {
         new_password: FRONTEND_TEST_DATA.PASSWORD.NEW,
       });
 
-      expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           credentials: 'include',
@@ -341,7 +343,7 @@ describe('changePassword API Function', () => {
 
       await changePassword(data);
 
-      expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         expect.any(String),
         expect.objectContaining({
           body: JSON.stringify(data),

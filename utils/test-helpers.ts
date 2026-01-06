@@ -1259,27 +1259,52 @@ export class TestHelpers {
    * Returns the access token for WebSocket authentication
    */
   static async loginViaAPI(
+    page: Page,
     email: string,
     password: string,
   ): Promise<{ accessToken: string; refreshToken: string; sessionId: string }> {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const response = await fetch(`${backendUrl}/api/v1/auth/login`, {
-      method: 'POST',
+    // IMPORTANT: The backend enforces CSRF (double-submit cookie + header).
+    // Using relative URLs routes through the frontend origin (Next rewrites),
+    // ensuring cookies/headers match how the real app authenticates.
+    const csrfResponse = await page.request.get('/api/v1/csrf/token', {
+      failOnStatusCode: false,
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        Accept: 'application/json',
       },
-      body: new URLSearchParams({
-        username: email,
-        password: password,
-      }).toString(),
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`API login failed: ${response.status} - ${error}`);
+    if (!csrfResponse.ok()) {
+      const error = await csrfResponse.text();
+      throw new Error(
+        `Failed to fetch CSRF token: ${csrfResponse.status()} - ${error}`,
+      );
     }
 
-    const data = await response.json();
+    const csrfData = (await csrfResponse.json().catch(() => null)) as
+      | { csrf_token?: string }
+      | null;
+    const csrfToken = csrfData?.csrf_token;
+    if (!csrfToken) {
+      throw new Error('Failed to fetch CSRF token: missing csrf_token in body');
+    }
+
+    const loginResponse = await page.request.post('/api/v1/auth/login', {
+      failOnStatusCode: false,
+      form: {
+        username: email,
+        password,
+      },
+      headers: {
+        'X-CSRFToken': csrfToken,
+      },
+    });
+
+    if (!loginResponse.ok()) {
+      const error = await loginResponse.text();
+      throw new Error(`API login failed: ${loginResponse.status()} - ${error}`);
+    }
+
+    const data = await loginResponse.json();
     console.log(`✅ API login successful for ${email}`);
     return {
       accessToken: data.access_token,
@@ -1297,12 +1322,12 @@ export class TestHelpers {
     email: string,
     password: string,
   ): Promise<string> {
-    // Get token via API
-    const { accessToken } = await this.loginViaAPI(email, password);
-
-    // Navigate to a page so we have a valid context
+    // Navigate first so we have a real origin/context for cookies.
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
+
+    // Get token via CSRF-compliant API login.
+    const { accessToken } = await this.loginViaAPI(page, email, password);
 
     // Store token in localStorage for WebSocket tests
     await page.evaluate((token) => {

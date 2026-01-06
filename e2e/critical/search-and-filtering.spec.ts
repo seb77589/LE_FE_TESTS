@@ -336,7 +336,7 @@ test.describe('Search - Admin User Search', () => {
 
   test('should search users by email', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to users tab
     const userTab = await TestHelpers.checkUIElementExists(
@@ -352,7 +352,7 @@ test.describe('Search - Admin User Search', () => {
       await page.waitForTimeout(1000);
     } else {
       await page.goto('/users');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Look for search input
@@ -380,7 +380,7 @@ test.describe('Search - Admin User Search', () => {
 
   test('should search users by name', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const userTab = await TestHelpers.checkUIElementExists(
       page,
@@ -395,7 +395,7 @@ test.describe('Search - Admin User Search', () => {
       await page.waitForTimeout(1000);
     } else {
       await page.goto('/users');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const searchInput = await TestHelpers.checkUIElementExists(
@@ -418,7 +418,7 @@ test.describe('Search - Admin User Search', () => {
 
   test('should filter users by role', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const userTab = await TestHelpers.checkUIElementExists(
       page,
@@ -433,7 +433,7 @@ test.describe('Search - Admin User Search', () => {
       await page.waitForTimeout(1000);
     } else {
       await page.goto('/users');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     // Look for role filter
@@ -469,7 +469,7 @@ test.describe('Search - Admin User Search', () => {
 
   test('should filter users by status (active/inactive)', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const userTab = await TestHelpers.checkUIElementExists(
       page,
@@ -484,7 +484,7 @@ test.describe('Search - Admin User Search', () => {
       await page.waitForTimeout(1000);
     } else {
       await page.goto('/users');
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
 
     const statusFilter = await TestHelpers.checkUIElementExists(
@@ -514,7 +514,7 @@ test.describe('Search - Activity Log Filtering', () => {
 
   test('should filter activities by type', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     // Navigate to activity tab
     const activityTab = await TestHelpers.checkUIElementExists(
@@ -566,7 +566,7 @@ test.describe('Search - Activity Log Filtering', () => {
 
   test('should filter activities by user', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const activityTab = await TestHelpers.checkUIElementExists(
       page,
@@ -596,7 +596,7 @@ test.describe('Search - Activity Log Filtering', () => {
 
   test('should filter activities by date range', async ({ page }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
 
     const activityTab = await TestHelpers.checkUIElementExists(
       page,

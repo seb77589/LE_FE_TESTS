@@ -841,7 +841,6 @@ describe('Error Tracking Comprehensive Tests', () => {
         filename: 'test.js',
         lineno: 10,
         colno: 5,
-        error: new Error('Test error'),
       });
 
       globalThis.window.dispatchEvent(errorEvent);

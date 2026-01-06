@@ -242,7 +242,9 @@ describe('lib/errors/index.ts barrel exports', () => {
 
     it('should export errorTracking instance', () => {
       expect(errorTracking).toBeDefined();
-      expect(errorTracking).toBeInstanceOf(ErrorTrackingService);
+      // errorTracking is a lazy Proxy to avoid SSR side effects; it is not an
+      // instance of ErrorTrackingService.
+      expect(typeof (errorTracking as any).captureException).toBe('function');
     });
   });
 
