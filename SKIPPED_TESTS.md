@@ -366,7 +366,7 @@ Failing:                             ~32 tests (4.6%) - actively being fixed
 - **Jest**: Running against Docker containers ✅
 - **Playwright**: Running against Docker containers ✅
 - **Backend API**: https://localhost:8443 (Docker) ✅
-- **Frontend**: https://localhost:3443 (Docker) ✅
+- **Frontend**: http://localhost:3000 (Docker) ✅
 - **Database**: PostgreSQL (Docker) ✅
 - **Redis**: Redis (Docker) ✅
 

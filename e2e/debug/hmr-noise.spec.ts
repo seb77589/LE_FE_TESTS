@@ -5,7 +5,7 @@ test.describe('HMR noise budget on login page', () => {
     page,
     browserName,
   }) => {
-    const FRONTEND_URL = process.env.FRONTEND_URL || 'https://127.0.0.1:3443';
+    const FRONTEND_URL = process.env.FRONTEND_URL || 'http://127.0.0.1:3000';
     const messages: string[] = [];
     page.on('console', (msg) => {
       if (msg.type() === 'error') messages.push(msg.text());
