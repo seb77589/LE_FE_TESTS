@@ -42,9 +42,6 @@ jest.mock('@/components/ui/Button', () => ({
   ),
 }));
 
-// Mock window.confirm
-globalThis.confirm = jest.fn(() => true);
-
 import useSWR from 'swr';
 import api from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -273,40 +270,43 @@ describe('SecurityTab', () => {
     it('should call onRevokeSession when provided', async () => {
       const mockOnRevokeSession = jest.fn().mockResolvedValue(undefined);
       render(<SecurityTab onRevokeSession={mockOnRevokeSession} />);
-      // Find revoke button for non-current session (button text is "Revoke")
-      // Button only shows for non-current sessions
-      const revokeButtons = screen.queryAllByRole('button');
-      const revokeButton = revokeButtons.find(
-        (btn) => btn.textContent === 'Revoke' && !btn.textContent.includes('All'),
-      );
-      if (revokeButton) {
-        // Mock confirm to return true
-        globalThis.confirm = jest.fn(() => true);
-        fireEvent.click(revokeButton);
-        await waitFor(() => {
-          expect(mockOnRevokeSession).toHaveBeenCalled();
-        });
-      } else {
+
+      const revokeButton = screen.queryByText(/^revoke$/i);
+      if (!revokeButton) {
         // If no revoke button exists (all sessions are current), test passes
         expect(mockSessions.filter((s) => !s.is_current).length).toBeGreaterThanOrEqual(
           0,
         );
+        return;
       }
+
+      fireEvent.click(revokeButton);
+      await waitFor(() => {
+        expect(screen.getByTestId('modal-title')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('modal-confirm'));
+      await waitFor(() => {
+        expect(mockOnRevokeSession).toHaveBeenCalledWith('session2');
+      });
     });
 
     it('should call API when onRevokeSession is not provided', async () => {
       (api.delete as jest.Mock) = jest.fn().mockResolvedValue({});
       render(<SecurityTab />);
-      const revokeButtons = screen.queryAllByText(/^revoke$/i);
-      const nonCurrentSessionButton = revokeButtons.find(
-        (btn) => !btn.textContent?.includes('All'),
-      );
-      if (nonCurrentSessionButton) {
-        fireEvent.click(nonCurrentSessionButton);
-        await waitFor(() => {
-          expect(api.delete).toHaveBeenCalled();
-        });
-      }
+
+      const revokeButton = screen.queryByText(/^revoke$/i);
+      if (!revokeButton) return;
+
+      fireEvent.click(revokeButton);
+      await waitFor(() => {
+        expect(screen.getByTestId('modal-title')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('modal-confirm'));
+      await waitFor(() => {
+        expect(api.delete).toHaveBeenCalledWith('/api/v1/auth/sessions/session2');
+      });
     });
 
     it('should call onRevokeAllSessions when provided', async () => {
@@ -316,6 +316,12 @@ describe('SecurityTab', () => {
       const revokeAllButton = screen.queryByText(/revoke all others/i);
       if (revokeAllButton) {
         fireEvent.click(revokeAllButton);
+
+        await waitFor(() => {
+          expect(screen.getByTestId('modal-title')).toBeInTheDocument();
+        });
+
+        fireEvent.click(screen.getByTestId('modal-confirm'));
         await waitFor(() => {
           expect(mockOnRevokeAllSessions).toHaveBeenCalledTimes(1);
         });
@@ -329,16 +335,18 @@ describe('SecurityTab', () => {
       const mockOnRevokeSession = jest.fn().mockResolvedValue(undefined);
       render(<SecurityTab onRevokeSession={mockOnRevokeSession} />);
       // Find revoke button for non-current session
-      const revokeButtons = screen.queryAllByText(/^revoke$/i);
-      const nonCurrentSessionButton = revokeButtons.find(
-        (btn) => !btn.textContent?.includes('All'),
-      );
-      if (nonCurrentSessionButton) {
-        fireEvent.click(nonCurrentSessionButton);
-        await waitFor(() => {
-          expect(toast.success).toHaveBeenCalledWith('Session revoked successfully');
-        });
-      }
+      const revokeButton = screen.queryByText(/^revoke$/i);
+      if (!revokeButton) return;
+
+      fireEvent.click(revokeButton);
+      await waitFor(() => {
+        expect(screen.getByTestId('modal-title')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('modal-confirm'));
+      await waitFor(() => {
+        expect(toast.success).toHaveBeenCalledWith('Session revoked successfully');
+      });
     });
   });
 

@@ -7,6 +7,37 @@ import { render, screen } from '@testing-library/react';
 import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 import { OverviewTab } from '@/components/admin/OverviewTab';
 
+// Mock next/dynamic to resolve the loader in an effect (ssr: false charts).
+jest.mock('next/dynamic', () => {
+  return (loader: () => Promise<any>, options: any) => {
+    const DynamicComponent = (props: any) => {
+      const [Resolved, setResolved] = React.useState<React.ComponentType<any> | null>(
+        null,
+      );
+
+      React.useEffect(() => {
+        let isActive = true;
+        loader().then((mod: any) => {
+          if (!isActive) return;
+          const Component = mod?.default ?? mod;
+          setResolved(() => Component);
+        });
+        return () => {
+          isActive = false;
+        };
+      }, []);
+
+      if (!Resolved) {
+        return options?.loading ? options.loading(props) : null;
+      }
+
+      return <Resolved {...props} />;
+    };
+
+    return DynamicComponent;
+  };
+});
+
 // Mock dependencies
 jest.mock('swr', () => ({
   __esModule: true,
@@ -83,6 +114,35 @@ describe('OverviewTab', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Ensure the chart placeholders become "visible" during tests.
+    (globalThis as any).IntersectionObserver = class {
+      private callback: IntersectionObserverCallback;
+
+      constructor(callback: IntersectionObserverCallback) {
+        this.callback = callback;
+      }
+
+      observe() {
+        this.callback(
+          [{ isIntersecting: true, target: {} as any }] as any,
+          this as any,
+        );
+      }
+
+      unobserve() {
+        // no-op
+      }
+
+      disconnect() {
+        // no-op
+      }
+
+      takeRecords() {
+        return [];
+      }
+    };
+
     mockUseAuth.mockReturnValue({
       user: {
         id: 1,
@@ -140,10 +200,11 @@ describe('OverviewTab', () => {
       expect(screen.getByText('500')).toBeInTheDocument(); // Documents
     });
 
-    it('should render charts', () => {
+    it('should render charts', async () => {
       render(<OverviewTab />);
-      expect(screen.getByTestId('users-chart')).toBeInTheDocument();
-      expect(screen.getByTestId('documents-chart')).toBeInTheDocument();
+
+      expect(await screen.findByTestId('users-chart')).toBeInTheDocument();
+      expect(await screen.findByTestId('documents-chart')).toBeInTheDocument();
     });
 
     it('should render activity feed', () => {
