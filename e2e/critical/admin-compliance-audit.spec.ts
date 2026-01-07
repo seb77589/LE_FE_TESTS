@@ -274,12 +274,25 @@ test.describe('Admin - Security Dashboard', () => {
     await page.goto('/admin/security');
     await page.waitForLoadState('load');
 
-    // Check for page title
-    const title = await page.locator('h1:has-text("Security Dashboard")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Security Dashboard UI not yet implemented
-      test.skip(true, 'Security Dashboard UI not yet implemented');
-      return;
+    // Wait for page heading with retry logic for loading states
+    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
+    let titleVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!titleVisible) {
+      // Check if we're in loading state and retry
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        titleVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!titleVisible) {
+        test.skip(true, 'Security Dashboard UI not yet implemented');
+        return;
+      }
     }
 
     // Check for risk card indicators (text content)
@@ -296,12 +309,31 @@ test.describe('Admin - Security Dashboard', () => {
     await page.goto('/admin/security');
     await page.waitForLoadState('load');
 
+    // Wait for page with loading state handling
+    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
+    let headingVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!headingVisible) {
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        headingVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!headingVisible) {
+        test.skip(true, 'Security dashboard time range filter not yet implemented');
+        return;
+      }
+    }
+
     const hasFilter = await page
       .getByTestId('time-range-filter')
       .isVisible()
       .catch(() => false);
     if (!hasFilter) {
-      // Skip reason: FUTURE_FEATURE - Security dashboard time range filter not yet implemented
       test.skip(true, 'Security dashboard time range filter not yet implemented');
       return;
     }
@@ -319,11 +351,24 @@ test.describe('Admin - Security Dashboard', () => {
     await page.goto('/admin/security');
     await page.waitForLoadState('load');
 
-    const title = await page.locator('h1:has-text("Security Dashboard")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Security Dashboard not yet implemented
-      test.skip(true, 'Security Dashboard not yet implemented');
-      return;
+    // Wait for page heading with retry logic for loading states
+    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
+    let titleVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!titleVisible) {
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        titleVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!titleVisible) {
+        test.skip(true, 'Security Dashboard not yet implemented');
+        return;
+      }
     }
 
     // Check for security events section
@@ -337,11 +382,24 @@ test.describe('Admin - Security Dashboard', () => {
     await page.goto('/admin/security');
     await page.waitForLoadState('load');
 
-    const title = await page.locator('h1:has-text("Security Dashboard")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Security Dashboard not yet implemented
-      test.skip(true, 'Security Dashboard not yet implemented');
-      return;
+    // Wait for page heading with retry logic for loading states
+    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
+    let titleVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!titleVisible) {
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        titleVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!titleVisible) {
+        test.skip(true, 'Security Dashboard not yet implemented');
+        return;
+      }
     }
 
     // Check for locked accounts section
@@ -355,11 +413,24 @@ test.describe('Admin - Security Dashboard', () => {
     await page.goto('/admin/security');
     await page.waitForLoadState('load');
 
-    const title = await page.locator('h1:has-text("Security Dashboard")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Security Dashboard not yet implemented
-      test.skip(true, 'Security Dashboard not yet implemented');
-      return;
+    // Wait for page heading with retry logic for loading states
+    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
+    let titleVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!titleVisible) {
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        titleVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!titleVisible) {
+        test.skip(true, 'Security Dashboard not yet implemented');
+        return;
+      }
     }
 
     // Check for suspicious IPs section
