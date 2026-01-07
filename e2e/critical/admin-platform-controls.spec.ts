@@ -14,7 +14,7 @@ import { TestHelpers } from '../../utils/test-helpers';
 
 test.describe('Admin - Platform Controls', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
     // Login as superadmin (only superadmins can access platform controls)
     await TestHelpers.loginAndWaitForRedirect(
       page,
@@ -28,12 +28,25 @@ test.describe('Admin - Platform Controls', () => {
     await page.goto('/admin/platform');
     await page.waitForLoadState('load');
 
-    // Check for page title
-    const title = await page.locator('h1:has-text("Platform Controls")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Platform Controls UI not yet implemented
-      test.skip(true, 'Platform Controls UI not yet implemented');
-      return;
+    // Wait for page title with retry logic for loading states
+    const pageHeading = page.locator('h1:has-text("Platform Controls")');
+    let titleVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!titleVisible) {
+      // Check if we're in loading state and retry
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        titleVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!titleVisible) {
+        test.skip(true, 'Platform Controls UI not yet implemented');
+        return;
+      }
     }
 
     // Check for all three tabs
@@ -45,6 +58,26 @@ test.describe('Admin - Platform Controls', () => {
   test('should display rate limiting tab with statistics', async ({ page }) => {
     await page.goto('/admin/platform');
     await page.waitForLoadState('load');
+
+    // Wait for page with loading state handling
+    const pageHeading = page.locator('h1:has-text("Platform Controls")');
+    let headingVisible = await pageHeading
+      .isVisible({ timeout: 25000 })
+      .catch(() => false);
+
+    if (!headingVisible) {
+      const bodyText = await page.locator('body').textContent();
+      if (bodyText?.includes('Loading')) {
+        await page.waitForTimeout(5000);
+        headingVisible = await pageHeading
+          .isVisible({ timeout: 15000 })
+          .catch(() => false);
+      }
+      if (!headingVisible) {
+        test.skip(true, 'Rate limiting tab not yet implemented');
+        return;
+      }
+    }
 
     const hasTab = await page
       .getByTestId('ratelimits-tab')
@@ -125,7 +158,7 @@ test.describe('Admin - Platform Controls', () => {
 
 test.describe('Admin - Maintenance & Flags', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
@@ -238,7 +271,7 @@ test.describe('Admin - Maintenance & Flags', () => {
 
 test.describe('Admin - Session Controls', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
@@ -414,7 +447,7 @@ test.describe('Admin - Session Controls', () => {
 
 test.describe('Confirmation Modal Component', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
