@@ -44,8 +44,9 @@ test.describe('Visual Regression', () => {
     await page.fill('input[type="password"]', workerCredentials.password);
     await page.click('button[type="submit"]');
 
-    // Wait for navigation to dashboard
-    await page.waitForURL('**/dashboard', { timeout: 10000 });
+    // Login may land on /admin for privileged roles; force navigation to dashboard for the screenshot.
+    await page.waitForLoadState('networkidle');
+    await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
     await expect(page).toHaveScreenshot('dashboard.png', {
@@ -60,6 +61,8 @@ test.describe('Visual Regression', () => {
     await page.fill('input[type="email"]', workerCredentials.email);
     await page.fill('input[type="password"]', workerCredentials.password);
     await page.click('button[type="submit"]');
+
+    await page.waitForLoadState('networkidle');
 
     // Navigate to profile
     await page.goto('/profile');

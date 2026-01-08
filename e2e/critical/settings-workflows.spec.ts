@@ -21,7 +21,8 @@ test.describe('Settings Page Workflows', () => {
     await page.fill('input[type="email"]', workerCredentials.email);
     await page.fill('input[type="password"]', workerCredentials.password);
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL(/.*\/dashboard/, { timeout: 10000 });
+    // Post-login landing page depends on role (e.g., SUPERADMIN/ADMIN may land on /admin)
+    await expect(page).toHaveURL(/.*\/(dashboard|admin)(\/.*)?$/, { timeout: 10000 });
 
     // Navigate to settings
     await page.goto('/settings');

@@ -236,6 +236,35 @@ describe('sessionApi', () => {
       expect(result).toHaveLength(1);
     });
 
+    it('should handle backend response with active_sessions property', async () => {
+      const mockSessions: SessionInfo[] = [
+        {
+          id: 'session-1',
+          device: 'Unknown Device',
+          location: 'Unknown Location',
+          lastActivity: '2025-12-18T23:00:00Z',
+          isCurrent: false,
+          ipAddress: '192.168.1.100',
+          userAgent: 'Mozilla/5.0...',
+          createdAt: '2025-12-18T20:00:00Z',
+          expiresAt: '',
+        },
+      ];
+
+      mockApi.get.mockResolvedValueOnce({
+        data: {
+          active_sessions: mockSessions,
+          session_count: 1,
+          max_concurrent_sessions: 10,
+        },
+      } as any);
+
+      const result = await sessionApi.getUserSessions();
+
+      expect(result).toEqual(mockSessions);
+      expect(result).toHaveLength(1);
+    });
+
     it('should return empty array for unexpected response structure', async () => {
       mockApi.get.mockResolvedValueOnce({ data: { unexpected: 'format' } } as any);
 

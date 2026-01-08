@@ -3,6 +3,7 @@
  */
 import { test, expect } from '../../fixtures/auth-fixture';
 import { TEST_CONFIG } from '../../test-credentials';
+import { TestHelpers } from '../../utils/test-helpers';
 
 // Admin endpoint access test (Phase 2.4 - Simplified)
 // Uses page.request API which automatically includes HttpOnly cookies
@@ -19,19 +20,9 @@ test.describe('Admin Endpoint Access', () => {
     const EMAIL = workerCredentials.email;
     const PASS = workerCredentials.password;
 
-    // Login via UI (sets HttpOnly cookies automatically)
-    await page.goto(`${FRONTEND_URL}/auth/login`, { waitUntil: 'domcontentloaded' });
-
-    // Fill login form
-    await page.getByLabel('Email Address').first().fill(EMAIL);
-    await page.getByLabel('Password').first().fill(PASS);
-    await page
-      .getByRole('button', { name: /sign in|log in/i })
-      .first()
-      .click();
-
-    // Wait for successful login (redirect to dashboard)
-    await page.waitForURL(/.*\/dashboard.*/, { timeout: 20000 });
+    // Login via shared helper (handles Suspense/hydration and role-based redirects)
+    await page.goto(FRONTEND_URL);
+    await TestHelpers.loginAndWaitForRedirect(page, EMAIL, PASS, true);
 
     // Use page.request API to probe admin endpoints (automatically includes cookies)
     const adminEndpoints = [

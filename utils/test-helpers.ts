@@ -797,11 +797,32 @@ export class TestHelpers {
   ): Promise<void> {
     await page.goto('/auth/login');
 
+    // If we're already authenticated, /auth/login may immediately redirect away.
+    // In that case, there is no login form to wait for.
+    await page.waitForLoadState('domcontentloaded');
+    // Admin landing can vary by environment/role (some flows land on /admin, others on /dashboard).
+    const expectedRedirectPattern = isAdmin
+      ? /\/(admin|dashboard)(\/|$)/
+      : /\/dashboard(\/|$)/;
+    if (!page.url().includes('/auth/login')) {
+      await page.waitForURL(expectedRedirectPattern, { timeout: 20000 });
+      return;
+    }
+
     // Wait for page to fully load (including lazy-loaded form via Suspense)
     await page.waitForLoadState('networkidle');
 
     // Wait for the form to be visible - increased timeout for React Suspense
-    await expect(page.locator('form')).toBeVisible({ timeout: 20000 });
+    try {
+      await expect(page.locator('form')).toBeVisible({ timeout: 20000 });
+    } catch (e) {
+      // If navigation happened while waiting, treat it as a successful redirect.
+      if (!page.url().includes('/auth/login')) {
+        await page.waitForURL(expectedRedirectPattern, { timeout: 20000 });
+        return;
+      }
+      throw e;
+    }
 
     // Wait for React hydration
     await TestHelpers.waitForFormHydration(page);

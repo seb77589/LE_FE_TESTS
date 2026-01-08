@@ -351,7 +351,7 @@ test.describe('Search - Admin User Search', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('domcontentloaded');
     }
 
@@ -394,7 +394,7 @@ test.describe('Search - Admin User Search', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('domcontentloaded');
     }
 
@@ -432,7 +432,7 @@ test.describe('Search - Admin User Search', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('domcontentloaded');
     }
 
@@ -483,7 +483,7 @@ test.describe('Search - Admin User Search', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('domcontentloaded');
     }
 

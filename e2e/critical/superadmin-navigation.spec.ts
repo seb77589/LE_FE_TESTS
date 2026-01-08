@@ -190,6 +190,37 @@ test.describe('SuperAdmin Navigation - Navigation Bar Presence', () => {
     console.log('✅ Navigation bar present on Admin page');
   });
 
+  test('should display a single navigation bar on Admin Security page', async ({
+    page,
+  }) => {
+    await page.goto('/admin/security');
+    await page.waitForLoadState('domcontentloaded');
+
+    // Ensure we did not render an extra Navigation inside the page content.
+    await expect(page.locator('nav.bg-white.shadow-sm.border-b')).toHaveCount(1);
+    await expect(page.locator('nav.bg-white.shadow-sm.border-b').first()).toBeVisible();
+
+    console.log('✅ Single navigation bar present on Admin Security page');
+  });
+
+  test('should not duplicate navigation during loading on admin routes', async ({
+    page,
+  }) => {
+    const adminRoutes = ['/admin', '/admin/security', '/admin/cases', '/admin/documents'];
+
+    for (const route of adminRoutes) {
+      // Check as early as possible to catch loading-state regressions.
+      await page.goto(route, { waitUntil: 'commit' });
+      await expect(page.locator('nav.bg-white.shadow-sm.border-b')).toHaveCount(1);
+
+      // Then check again once the page has rendered.
+      await page.waitForLoadState('domcontentloaded');
+      await expect(page.locator('nav.bg-white.shadow-sm.border-b')).toHaveCount(1);
+    }
+
+    console.log('✅ No duplicate navigation detected on admin routes');
+  });
+
   test('should allow navigation between pages using nav bar', async ({ page }) => {
     // Start on dashboard
     await page.goto('/dashboard');

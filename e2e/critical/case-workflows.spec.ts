@@ -35,7 +35,7 @@ test.describe('Case Management Workflows', () => {
     // Check if cases page loaded
     const hasCasesContent = await TestHelpers.checkUIElementExists(
       page,
-      'text=/cases|case list|new case/i',
+      'main >> h1:has-text("Cases")',
       5000,
     );
 
@@ -47,14 +47,28 @@ test.describe('Case Management Workflows', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
 
-    // Check for case list or empty state
-    const hasCaseList = await TestHelpers.checkUIElementExists(
+    // Deterministic smoke check:
+    // - the summary metrics should always be present
+    // - either an empty state is visible or at least one case item/link exists
+    const hasSummaryMetrics = await TestHelpers.checkUIElementExists(
       page,
-      '[data-testid*="case"], .case-card, .case-item, text=/no cases|empty/i',
+      'main >> text=Total Cases',
       5000,
     );
 
-    expect(hasCaseList).toBe(true);
+    const hasEmptyState = await TestHelpers.checkUIElementExists(
+      page,
+      'main >> text=No cases found',
+      2000,
+    );
+
+    const hasAnyCaseItem = await TestHelpers.checkUIElementExists(
+      page,
+      'main >> a[href^="/cases/"]',
+      2000,
+    );
+
+    expect(hasSummaryMetrics && (hasEmptyState || hasAnyCaseItem)).toBe(true);
   });
 
   test('should create new case', async ({ page }) => {

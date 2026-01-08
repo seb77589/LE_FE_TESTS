@@ -593,7 +593,7 @@ test.describe('Email Workflows - Admin Email Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('networkidle');
     }
 
@@ -627,7 +627,7 @@ test.describe('Email Workflows - Admin Email Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('networkidle');
     }
 

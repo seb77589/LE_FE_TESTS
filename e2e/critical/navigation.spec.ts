@@ -49,10 +49,8 @@ test.describe('Navigation Component', () => {
       await page.waitForLoadState('domcontentloaded');
 
       // Admin links should not be visible
-      const usersLink = page.locator('a[href="/users"]');
       const adminLink = page.locator('a[href="/admin"]');
 
-      await expect(usersLink).not.toBeVisible();
       await expect(adminLink).not.toBeVisible();
     });
 
@@ -117,10 +115,8 @@ test.describe('Navigation Component', () => {
 
       // Check admin-specific links are visible
       // Use .first() to handle multiple matching elements (strict mode)
-      const usersLink = page.locator('a[href="/users"]').first();
       const adminLink = page.locator('a[href="/admin"]').first();
 
-      await expect(usersLink).toBeVisible();
       await expect(adminLink).toBeVisible();
     });
 
@@ -146,11 +142,13 @@ test.describe('Navigation Component', () => {
       await page.goto('/admin');
       await page.waitForLoadState('domcontentloaded');
 
-      await page.click('a[href="/users"]');
-      await page.waitForURL(/\/users/);
+      // Users tab is in admin tabs and routes to /admin/users
+      const usersTab = page.locator('[data-testid="admin-tab-users"], a[href="/admin/users"]').first();
+      await usersTab.click();
+      await page.waitForURL(/\/admin\/users/);
 
       // Verify we're on users page
-      await expect(page).toHaveURL(/\/users/);
+      await expect(page).toHaveURL(/\/admin\/users/);
     });
   });
 
@@ -229,8 +227,10 @@ test.describe('Navigation Component', () => {
         workerCredentials.isAdmin,
       );
 
-      // Ensure we're on the dashboard and session is fully established
-      await page.waitForURL(/\/dashboard/, { timeout: 10000 });
+      // Ensure we're on the expected authenticated landing page and session is fully established
+      // Admin/superadmin users commonly land on /admin; regular users land on /dashboard.
+      const expectedLandingUrl = workerCredentials.isAdmin ? /\/admin/ : /\/dashboard/;
+      await page.waitForURL(expectedLandingUrl, { timeout: 15000 });
       await page.waitForLoadState('networkidle');
 
       // Navigate to root using client-side navigation to preserve auth state
@@ -245,16 +245,20 @@ test.describe('Navigation Component', () => {
       // Check final URL - should be dashboard if cookies preserved
       const currentUrl = page.url();
       const isOnDashboard = currentUrl.includes('/dashboard');
+      const isOnAdmin = currentUrl.includes('/admin');
       const isOnLogin = currentUrl.includes('/auth/login');
 
-      // Accept either behavior since SSR may not have immediate cookie access
-      // The key test is that root doesn't throw errors and redirects somewhere valid
-      expect(isOnDashboard || isOnLogin).toBeTruthy();
+      // Accept either behavior since SSR may not have immediate cookie access.
+      // The key test is that root doesn't throw errors and redirects somewhere valid.
+      // Also accept /admin for privileged roles.
+      expect(isOnDashboard || isOnAdmin || isOnLogin).toBeTruthy();
 
       if (isOnLogin) {
         console.log(
           'ℹ️ Redirected to login - SSR may not preserve cookies on root navigation',
         );
+      } else if (isOnAdmin) {
+        console.log('✅ Redirected to admin - privileged role landing');
       } else {
         console.log('✅ Redirected to dashboard - auth state preserved');
       }

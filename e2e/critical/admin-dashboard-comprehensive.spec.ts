@@ -246,7 +246,7 @@ test.describe('Admin Dashboard - User Management', () => {
       await page.waitForTimeout(1000);
     } else {
       // Try navigating to dedicated users page
-      await page.goto('/users');
+        await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
       await page.waitForTimeout(1000);
     }
@@ -322,7 +322,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+        await page.goto('/admin/users');
       await page.waitForLoadState('load');
     }
 
@@ -371,7 +371,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -405,7 +405,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+        await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -457,7 +457,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+        await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -511,7 +511,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+        await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -565,7 +565,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+        await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -600,7 +600,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -633,7 +633,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -701,7 +701,7 @@ test.describe('Admin Dashboard - Bulk Operations', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load');
     }
 
@@ -789,7 +789,7 @@ test.describe('Admin Dashboard - Bulk Operations', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
