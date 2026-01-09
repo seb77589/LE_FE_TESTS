@@ -31,18 +31,10 @@ jest.mock('@/components/admin/UserManagement', () => {
   };
 });
 
-jest.mock('@/components/admin/RealTimeActivityFeed', () => {
-  return {
-    __esModule: true,
-    default: () => <div data-testid="activity-feed-component">Activity Feed</div>,
-  };
-});
-
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import {
   LazyUserManagement,
-  LazyRealTimeActivityFeed,
   AdminComponentRegistry,
   DynamicAdminComponent,
   ConditionalAdminComponent,
@@ -59,18 +51,6 @@ describe('LazyAdminComponents', () => {
       // Wait for component to load
       await waitFor(() => {
         expect(screen.getByTestId('user-management-component')).toBeInTheDocument();
-      });
-    });
-
-    it('loads RealTimeActivityFeed component lazily', async () => {
-      render(<LazyRealTimeActivityFeed />);
-
-      // Should show loading state first
-      expect(screen.getByText('Loading Activity Feed...')).toBeInTheDocument();
-
-      // Wait for component to load
-      await waitFor(() => {
-        expect(screen.getByTestId('activity-feed-component')).toBeInTheDocument();
       });
     });
 
@@ -122,15 +102,6 @@ describe('LazyAdminComponents', () => {
         expect(screen.getByTestId('user-management-component')).toBeInTheDocument();
       });
     });
-
-    it('lazy loads ActivityFeed and renders successfully', async () => {
-      render(<LazyRealTimeActivityFeed />);
-
-      // Component should eventually load
-      await waitFor(() => {
-        expect(screen.getByTestId('activity-feed-component')).toBeInTheDocument();
-      });
-    });
   });
 
   describe('Dynamic Component Loading', () => {
@@ -139,14 +110,6 @@ describe('LazyAdminComponents', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('user-management-component')).toBeInTheDocument();
-      });
-    });
-
-    it('loads RealTimeActivityFeed from registry', async () => {
-      render(<DynamicAdminComponent component="RealTimeActivityFeed" />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('activity-feed-component')).toBeInTheDocument();
       });
     });
 
@@ -194,19 +157,14 @@ describe('LazyAdminComponents', () => {
   describe('Component Registry', () => {
     it('contains all admin components', () => {
       expect(AdminComponentRegistry).toHaveProperty('UserManagement');
-      expect(AdminComponentRegistry).toHaveProperty('RealTimeActivityFeed');
     });
 
     it('registry components are valid React lazy components', () => {
       // React.lazy() returns LazyExoticComponent objects, not functions
       // Check they exist and are renderable (object type with $$typeof)
       expect(AdminComponentRegistry.UserManagement).toBeDefined();
-      expect(AdminComponentRegistry.RealTimeActivityFeed).toBeDefined();
       // LazyExoticComponent has $$typeof property
       expect((AdminComponentRegistry.UserManagement as any).$$typeof).toBeDefined();
-      expect(
-        (AdminComponentRegistry.RealTimeActivityFeed as any).$$typeof,
-      ).toBeDefined();
     });
   });
 
@@ -229,13 +187,13 @@ describe('LazyAdminComponents', () => {
       render(
         <ConditionalAdminComponent
           isAdmin={true}
-          component="RealTimeActivityFeed"
+          component="UserManagement"
           testProp="value"
         />,
       );
 
       await waitFor(() => {
-        expect(screen.getByTestId('activity-feed-component')).toBeInTheDocument();
+        expect(screen.getByTestId('user-management-component')).toBeInTheDocument();
       });
     });
   });

@@ -74,21 +74,21 @@ describe('useAccountUnlock - Data fetching', () => {
     jest.restoreAllMocks();
   });
 
-  it('should fetch locked accounts when superadmin', async () => {
+  it('should fetch locked accounts when canUnlock is true', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(mockApi.get).toHaveBeenCalledWith('/admin/users/locked');
+    expect(mockApi.get).toHaveBeenCalledWith('/api/v1/admin/users/accounts-locked');
     unmount();
   });
 
-  it('should not fetch when not superadmin', () => {
-    const { unmount } = renderHook(() => useAccountUnlock({ isSuperadmin: false }));
+  it('should not fetch when canUnlock is false', () => {
+    const { unmount } = renderHook(() => useAccountUnlock({ canUnlock: false }));
 
     expect(mockApi.get).not.toHaveBeenCalled();
     unmount();
@@ -96,7 +96,7 @@ describe('useAccountUnlock - Data fetching', () => {
 
   it('should populate lockedAccounts on successful fetch', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -118,7 +118,7 @@ describe('useAccountUnlock - Data fetching', () => {
     mockApi.get.mockRejectedValue(new Error('Network error'));
 
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -133,7 +133,7 @@ describe('useAccountUnlock - Data fetching', () => {
     mockApi.get.mockRejectedValue(new Error('Network error'));
 
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {

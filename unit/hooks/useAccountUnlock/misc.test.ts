@@ -64,7 +64,7 @@ describe('useAccountUnlock - Manual refetch', () => {
 
   it('should allow manual refetch of locked accounts', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -98,15 +98,15 @@ describe('useAccountUnlock - isSuperadmin changes', () => {
     jest.restoreAllMocks();
   });
 
-  it('should refetch when isSuperadmin becomes true', async () => {
+  it('should refetch when canUnlock becomes true', async () => {
     const { rerender, unmount } = renderHook(
-      ({ isSuperadmin }) => useAccountUnlock({ isSuperadmin }),
-      { initialProps: { isSuperadmin: false } },
+      ({ canUnlock }) => useAccountUnlock({ canUnlock }),
+      { initialProps: { canUnlock: false } },
     );
 
     expect(mockApi.get).not.toHaveBeenCalled();
 
-    rerender({ isSuperadmin: true });
+    rerender({ canUnlock: true });
 
     await waitFor(() => {
       expect(mockApi.get).toHaveBeenCalled();

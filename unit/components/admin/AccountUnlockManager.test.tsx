@@ -13,6 +13,7 @@ jest.mock('@/lib/context/ConsolidatedAuthContext', () => {
     useAuth: jest.fn(() => ({
       user: { id: 1, email: creds.ADMIN.email, role: 'SUPERADMIN' },
       isAuthenticated: true,
+      isAdmin: () => true,
     })),
   };
 });
@@ -135,6 +136,7 @@ describe('AccountUnlockManager', () => {
     useAuth.mockReturnValue({
       user: mockUser,
       isAuthenticated: true,
+      isAdmin: () => true,
     });
 
     // Reset useAccountUnlock to default state
@@ -148,6 +150,7 @@ describe('AccountUnlockManager', () => {
       useAuth.mockReturnValueOnce({
         user: { ...mockUser, role: 'user' },
         isAuthenticated: true,
+        isAdmin: () => false,
       });
 
       render(<AccountUnlockManager />);

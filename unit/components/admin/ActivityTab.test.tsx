@@ -1,26 +1,14 @@
 /**
- * Tests for ActivityTab component
+ * ActivityTab was removed as part of the admin UI simplification.
+ *
+ * This file used to import removed modules and crash Jest at import-time.
+ * Keep a skipped suite as a guardrail to prevent stale expectations.
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { ActivityTab } from '@/components/admin/ActivityTab';
-
-// Mock LazyRealTimeActivityFeed
-jest.mock('@/components/admin/LazyAdminComponents', () => ({
-  LazyRealTimeActivityFeed: () => (
-    <div data-testid="lazy-activity-feed">Activity Feed</div>
-  ),
-}));
-
-describe('ActivityTab', () => {
-  it('should render activity tab', () => {
-    render(<ActivityTab />);
-    expect(screen.getByTestId('activity-tab')).toBeInTheDocument();
-  });
-
-  it('should render lazy-loaded activity feed', () => {
-    render(<ActivityTab />);
-    expect(screen.getByTestId('lazy-activity-feed')).toBeInTheDocument();
+describe.skip('ActivityTab (removed)', () => {
+  it('is no longer part of the admin UI', () => {
+    expect(true).toBe(true);
   });
 });
+
+export {};

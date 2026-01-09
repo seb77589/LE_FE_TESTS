@@ -40,12 +40,11 @@ describe('AdminTabs', () => {
       expect(screen.getByTestId('admin-tabs')).toBeInTheDocument();
     });
 
-    it('should render all three tabs', () => {
+    it('should render both tabs', () => {
       mockSearchParams.get.mockReturnValue(null);
       render(<AdminTabs />);
       expect(screen.getByTestId('admin-tab-overview')).toBeInTheDocument();
       expect(screen.getByTestId('admin-tab-users')).toBeInTheDocument();
-      expect(screen.getByTestId('admin-tab-activity')).toBeInTheDocument();
     });
 
     it('should display correct tab labels', () => {
@@ -53,7 +52,6 @@ describe('AdminTabs', () => {
       render(<AdminTabs />);
       expect(screen.getByText('Overview')).toBeInTheDocument();
       expect(screen.getByText('Users')).toBeInTheDocument();
-      expect(screen.getByText('Activity')).toBeInTheDocument();
     });
   });
 
@@ -74,14 +72,6 @@ describe('AdminTabs', () => {
       expect(usersTab).toHaveClass('border-blue-500', 'text-blue-600');
     });
 
-    it('should mark activity tab as active when tab=activity in URL', () => {
-      mockSearchParams.get.mockReturnValue('activity');
-      render(<AdminTabs />);
-      const activityTab = screen.getByTestId('admin-tab-activity');
-      expect(activityTab).toHaveAttribute('aria-current', 'page');
-      expect(activityTab).toHaveClass('border-blue-500', 'text-blue-600');
-    });
-
     it('should use activeTab prop when searchParams is null', () => {
       mockSearchParams.get.mockReturnValue(null);
       render(<AdminTabs activeTab="users" />);
@@ -100,11 +90,7 @@ describe('AdminTabs', () => {
       );
       expect(screen.getByTestId('admin-tab-users')).toHaveAttribute(
         'href',
-        '/admin?tab=users',
-      );
-      expect(screen.getByTestId('admin-tab-activity')).toHaveAttribute(
-        'href',
-        '/admin?tab=activity',
+        '/admin/users',
       );
     });
   });
@@ -114,11 +100,8 @@ describe('AdminTabs', () => {
       mockSearchParams.get.mockReturnValue('overview');
       render(<AdminTabs />);
       const usersTab = screen.getByTestId('admin-tab-users');
-      const activityTab = screen.getByTestId('admin-tab-activity');
       expect(usersTab).not.toHaveAttribute('aria-current');
-      expect(activityTab).not.toHaveAttribute('aria-current');
       expect(usersTab).toHaveClass('border-transparent', 'text-gray-500');
-      expect(activityTab).toHaveClass('border-transparent', 'text-gray-500');
     });
   });
 });

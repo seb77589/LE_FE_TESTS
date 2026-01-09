@@ -1,11 +1,19 @@
 /**
- * @jest-environment jsdom
+ * RealTimeActivityFeed was removed as part of the admin UI simplification.
+ *
+ * This file previously imported removed modules and crashed the unit test run.
+ * Keep a skipped suite as documentation/guardrail.
  */
-import React from 'react';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
-import RealTimeActivityFeed from '@/components/admin/RealTimeActivityFeed';
+
+describe.skip('RealTimeActivityFeed (removed)', () => {
+  it('is no longer part of the admin UI', () => {
+    expect(true).toBe(true);
+  });
+});
+
+export {};
+
+const _legacy = String.raw`
 
 // ==============================================================================
 // Module-level mock utilities (extracted to reduce nesting depth - fixes S2004)
@@ -18,7 +26,7 @@ function cnMock(...classes: unknown[]): string {
 
 // Utility function for formatDateTime mock
 function formatDateTimeMock(date: string): string {
-  return `Formatted: ${date}`;
+  return 'Formatted: ' + date;
 }
 
 // Lucide icon mock components
@@ -251,7 +259,7 @@ jest.mock('@/components/admin/activity', () => {
         ...(activities?.map((a: any) =>
           React.createElement(
             'div',
-            { key: a.id, 'data-testid': `activity-${a.id}` },
+            { key: a.id, 'data-testid': 'activity-' + a.id },
             a.action,
           ),
         ) || []),
@@ -1145,3 +1153,6 @@ describe('RealTimeActivityFeed', () => {
     });
   });
 });
+
+`;
+void _legacy;

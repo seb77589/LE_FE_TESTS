@@ -21,13 +21,15 @@ import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 jest.mock('@/lib/context/ConsolidatedAuthContext');
 jest.mock('swr');
 const mockGetSearchParams = jest.fn((key: string) => null);
+const mockRouterPush = jest.fn();
+const mockRouterReplace = jest.fn();
 jest.mock('next/navigation', () => ({
   useSearchParams: jest.fn(() => ({
     get: mockGetSearchParams,
   })),
   useRouter: jest.fn(() => ({
-    push: jest.fn(),
-    replace: jest.fn(),
+    push: mockRouterPush,
+    replace: mockRouterReplace,
   })),
 }));
 jest.mock('@/components/ui/Navigation', () => ({
@@ -89,12 +91,6 @@ jest.mock('@/components/admin/UserManagement', () => {
     return <div data-testid="user-management">User Management Component</div>;
   };
 });
-jest.mock('@/components/admin/LazyAdminComponents', () => ({
-  LazyRealTimeActivityFeed: function MockActivityFeed() {
-    return <div data-testid="activity-feed">Activity Feed Component</div>;
-  },
-  // LazySystemHealthDashboard removed - monitoring externalized to Prometheus
-}));
 jest.mock('@/components/admin/AdminTabs', () => ({
   AdminTabs: ({ activeTab = 'overview' }: any) => {
     const { useSearchParams } = require('next/navigation');
@@ -114,12 +110,6 @@ jest.mock('@/components/admin/AdminTabs', () => ({
           aria-current={currentTab === 'users' ? 'page' : undefined}
         >
           Users
-        </button>
-        <button
-          aria-label="Switch to Activity tab"
-          aria-current={currentTab === 'activity' ? 'page' : undefined}
-        >
-          Activity
         </button>
       </nav>
     );
@@ -195,9 +185,6 @@ jest.mock('@/components/admin/OverviewTab', () => {
 jest.mock('@/components/admin/UsersTab', () => ({
   UsersTab: () => <div data-testid="users-tab">Users Tab</div>,
 }));
-jest.mock('@/components/admin/ActivityTab', () => ({
-  ActivityTab: () => <div data-testid="activity-tab">Activity Tab</div>,
-}));
 // Health monitoring components removed - monitoring externalized to Prometheus
 // jest.mock('@/components/admin/HealthHistoryDashboard', ...)
 // jest.mock('@/components/admin/HealthAnalyticsAdvanced', ...)
@@ -250,6 +237,8 @@ describe('AdminPage', () => {
 
     // Reset search params mock
     mockGetSearchParams.mockImplementation((key: string) => null);
+    mockRouterPush.mockReset();
+    mockRouterReplace.mockReset();
 
     // Default SWR mocks
     mockUseSWR.mockImplementation((key: any) => {
@@ -342,9 +331,6 @@ describe('AdminPage', () => {
       expect(
         screen.getByRole('button', { name: /Switch to Users tab/i }),
       ).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /Switch to Activity tab/i }),
-      ).toBeInTheDocument();
     });
 
     it('should switch tabs when clicked', async () => {
@@ -355,10 +341,8 @@ describe('AdminPage', () => {
 
       render(<AdminPage />);
 
-      // Should render users tab content (not user-management, that's a different component)
-      await waitFor(() => {
-        expect(screen.getByTestId('users-tab')).toBeInTheDocument();
-      });
+      expect(mockRouterReplace).toHaveBeenCalledWith('/admin/users');
+      expect(screen.getByText(/Redirecting/i)).toBeInTheDocument();
     });
 
     it('should show active state on current tab', () => {

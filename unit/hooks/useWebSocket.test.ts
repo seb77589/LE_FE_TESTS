@@ -6,7 +6,7 @@
  * - Subscription management
  * - Event handling
  * - Connection state management
- * - Re-exported hooks (useRealTimeActivityFeed, useSystemStatusMonitoring)
+ * - Re-exported/specialized hooks (useRealTimeNotifications, useSystemStatusMonitoring)
  */
 
 // Mock WebSocket context BEFORE imports
@@ -150,10 +150,10 @@ describe('useWebSocket Hook', () => {
   });
 });
 
-describe('useRealTimeActivityFeed Hook', () => {
+describe('useRealTimeNotifications Hook', () => {
   it('should be importable', async () => {
-    const { useRealTimeActivityFeed } = await import('@/hooks/useWebSocket');
-    expect(typeof useRealTimeActivityFeed).toBe('function');
+    const { useRealTimeNotifications } = await import('@/hooks/useWebSocket');
+    expect(typeof useRealTimeNotifications).toBe('function');
   });
 });
 

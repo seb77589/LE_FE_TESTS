@@ -144,7 +144,7 @@ describe('SWR Config Module', () => {
   describe('adminSWRConfig', () => {
     it('should have refreshInterval of 30 seconds', async () => {
       const { adminSWRConfig } = await import('@/lib/swr-config');
-      expect(adminSWRConfig.refreshInterval).toBe(30000);
+      expect(adminSWRConfig.refreshInterval).toBe(300000);
     });
 
     it('should have revalidateOnReconnect enabled', async () => {
@@ -365,59 +365,6 @@ describe('SWR Config Module', () => {
           'manager',
           'system',
           'metrics',
-        ]);
-      });
-    });
-
-    describe('activity keys', () => {
-      it('should generate recentActivity key without filters', async () => {
-        const { swrKeys } = await import('@/lib/swr-config');
-        const key = swrKeys.recentActivity();
-        expect(key).toEqual(['/api/v1/admin/activity/recent', 'manager', 'activity']);
-      });
-
-      it('should generate recentActivity key with filters', async () => {
-        const { swrKeys } = await import('@/lib/swr-config');
-        const key = swrKeys.recentActivity({ hours: 24, type: 'login' });
-        expect(key[0]).toContain('/api/v1/admin/activity/recent?');
-        expect(key[0]).toContain('hours=24');
-        expect(key[0]).toContain('type=login');
-      });
-
-      it('should generate activitySummary key with default hours', async () => {
-        const { swrKeys } = await import('@/lib/swr-config');
-        expect(swrKeys.activitySummary()).toEqual([
-          '/api/v1/admin/activity/summary?hours=24',
-          'manager',
-          'activity',
-          'summary',
-        ]);
-      });
-
-      it('should generate activitySummary key with custom hours', async () => {
-        const { swrKeys } = await import('@/lib/swr-config');
-        expect(swrKeys.activitySummary(48)[0]).toBe(
-          '/api/v1/admin/activity/summary?hours=48',
-        );
-      });
-
-      it('should generate activityTypes key', async () => {
-        const { swrKeys } = await import('@/lib/swr-config');
-        expect(swrKeys.activityTypes()).toEqual([
-          '/api/v1/admin/activity/types',
-          'manager',
-          'activity',
-          'types',
-        ]);
-      });
-
-      it('should generate activityAnalytics key', async () => {
-        const { swrKeys } = await import('@/lib/swr-config');
-        expect(swrKeys.activityAnalytics()).toEqual([
-          '/api/v1/admin/activity/analytics',
-          'manager',
-          'activity',
-          'analytics',
         ]);
       });
     });

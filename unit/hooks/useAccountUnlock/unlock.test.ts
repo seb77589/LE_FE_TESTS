@@ -77,7 +77,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
 
   it('should call API with correct data when confirmUnlock is called', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -96,15 +96,15 @@ describe('useAccountUnlock - Unlock operation success', () => {
       await result.current.confirmUnlock();
     });
 
-    expect(mockApi.post).toHaveBeenCalledWith('/admin/users/1/unlock', {
-      reason: 'User verified identity',
-    });
+    expect(mockApi.post).toHaveBeenCalledWith(
+      '/api/v1/admin/users/1/unlock?reason=User%20verified%20identity',
+    );
     unmount();
   });
 
   it('should set success message on successful unlock', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -125,7 +125,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
 
   it('should close dialog after successful unlock', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -146,7 +146,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
 
   it('should clear selectedAccount after successful unlock', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {
@@ -167,7 +167,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
 
   it('should refetch locked accounts after successful unlock', async () => {
     const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ isSuperadmin: true }),
+      useAccountUnlock({ canUnlock: true }),
     );
 
     await waitFor(() => {

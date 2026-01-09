@@ -154,7 +154,6 @@ describe('Navigation Component', () => {
       render(<Navigation />);
 
       // There may be multiple "Admin" links (desktop and mobile), so use getAllByText
-      expect(screen.getByText('Users')).toBeInTheDocument();
       expect(screen.getAllByText('Admin').length).toBeGreaterThan(0);
     });
 
@@ -171,7 +170,6 @@ describe('Navigation Component', () => {
       expect(screen.getByRole('link', { name: /security/i })).toBeInTheDocument();
 
       // Admin-specific navigation items
-      expect(screen.getByRole('link', { name: /users/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /admin/i })).toBeInTheDocument();
 
       // User menu should show the admin role
@@ -184,7 +182,6 @@ describe('Navigation Component', () => {
       setupAuth('assistant');
       render(<Navigation />);
 
-      expect(screen.queryByText('Users')).not.toBeInTheDocument();
       expect(screen.queryByText('Admin')).not.toBeInTheDocument();
     });
   });

@@ -4,7 +4,6 @@
  * Tests the integration between:
  * - AdminTabs + data fetching
  * - UserManagement + API operations
- * - ActivityTab + real-time updates
  *
  * @integration
  */
@@ -14,7 +13,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AdminTabs } from '@/components/admin/AdminTabs';
 import { UsersTab } from '@/components/admin/UsersTab';
-import { ActivityTab } from '@/components/admin/ActivityTab';
 import { AuthProvider, useAuth } from '@/lib/context/ConsolidatedAuthContext';
 import useSWR from 'swr';
 
@@ -334,122 +332,10 @@ describe('Admin Dashboard Integration Tests', () => {
     });
   });
 
-  describe('ActivityTab + Real-time Updates', () => {
-    it('should render activity tab container', async () => {
-      render(
-        <AuthProvider>
-          <ActivityTab />
-        </AuthProvider>,
-      );
-
-      // ActivityTab renders a container with the activity-tab testid
-      await waitFor(() => {
-        expect(screen.getByTestId('activity-tab')).toBeInTheDocument();
-      });
-    });
-
-    it('should integrate with WebSocket context for real-time updates', async () => {
-      const mockSubscribe = jest.fn(() => jest.fn());
-      const { useWebSocket } = require('@/lib/context/WebSocketContext');
-
-      (useWebSocket as jest.Mock).mockReturnValue({
-        status: 'connected',
-        isConnected: true,
-        subscribe: mockSubscribe,
-        sendMessage: jest.fn(),
-      });
-
-      function TestComponent() {
-        const { subscribe } = useWebSocket();
-
-        React.useEffect(() => {
-          const unsubscribe = subscribe('user_activity', () => {
-            // Handle activity update
-          });
-
-          return unsubscribe;
-        }, [subscribe]);
-
-        return <ActivityTab />;
-      }
-
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>,
-      );
-
-      // Test that subscribe was called
-      await waitFor(() => {
-        expect(mockSubscribe).toHaveBeenCalled();
-      });
-    });
-
-    it('should call mutate when WebSocket event received', async () => {
-      const mockMutate = jest.fn();
-      mockUseSWR.mockReturnValue({
-        data: [],
-        error: undefined,
-        mutate: mockMutate,
-        isLoading: false,
-        isValidating: false,
-      } as any);
-
-      const mockSubscribe = jest.fn((eventType, callback) => {
-        // Simulate activity event after a short delay
-        setTimeout(() => {
-          callback({
-            type: 'user_activity',
-            timestamp: new Date().toISOString(),
-            data: { action: 'login', user_id: 1 },
-          });
-        }, 50);
-        return jest.fn();
-      });
-
-      const { useWebSocket } = require('@/lib/context/WebSocketContext');
-      (useWebSocket as jest.Mock).mockReturnValue({
-        status: 'connected',
-        isConnected: true,
-        subscribe: mockSubscribe,
-        sendMessage: jest.fn(),
-      });
-
-      function TestComponent() {
-        const { mutate } = useSWR('/api/v1/admin/activity');
-        const { subscribe } = useWebSocket();
-
-        React.useEffect(() => {
-          const unsubscribe = subscribe('user_activity', () => {
-            mutate();
-          });
-
-          return unsubscribe;
-        }, [subscribe, mutate]);
-
-        return <ActivityTab />;
-      }
-
-      render(
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>,
-      );
-
-      await waitFor(
-        () => {
-          expect(mockMutate).toHaveBeenCalled();
-        },
-        { timeout: 2000 },
-      );
-    });
-  });
-
   describe('Admin Dashboard Data Flow', () => {
     it('should coordinate data fetching across multiple tabs', async () => {
       const mockStats = { totalUsers: 100, totalDocuments: 500 };
       const mockUsers = [{ id: 1, email: 'user@example.com' }];
-      const mockActivities = [{ id: 1, action: 'login' }];
 
       let callCount = 0;
       mockUseSWR.mockImplementation((key: string) => {
@@ -472,15 +358,6 @@ describe('Admin Dashboard Integration Tests', () => {
             isValidating: false,
           } as any;
         }
-        if (key === '/api/v1/admin/activity') {
-          return {
-            data: mockActivities,
-            error: undefined,
-            mutate: jest.fn(),
-            isLoading: false,
-            isValidating: false,
-          } as any;
-        }
         return {
           data: undefined,
           error: undefined,
@@ -493,16 +370,12 @@ describe('Admin Dashboard Integration Tests', () => {
       function TestComponent() {
         const stats = useSWR('/api/v1/admin/stats');
         const users = useSWR('/api/v1/admin/users');
-        const activities = useSWR('/api/v1/admin/activity');
 
         return (
           <div>
             <AdminTabs />
             {stats.data && <div data-testid="stats-loaded">Stats loaded</div>}
             {users.data && <div data-testid="users-loaded">Users loaded</div>}
-            {activities.data && (
-              <div data-testid="activities-loaded">Activities loaded</div>
-            )}
           </div>
         );
       }
@@ -514,7 +387,7 @@ describe('Admin Dashboard Integration Tests', () => {
       );
 
       await waitFor(() => {
-        expect(callCount).toBeGreaterThanOrEqual(3);
+        expect(callCount).toBeGreaterThanOrEqual(2);
       });
     });
   });

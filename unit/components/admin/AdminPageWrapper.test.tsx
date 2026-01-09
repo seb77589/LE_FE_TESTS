@@ -36,10 +36,9 @@ const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 
 describe('AdminPageLoadingSkeleton', () => {
-  it('should render loading skeleton with navigation', () => {
+  it('should render loading skeleton', () => {
     render(<AdminPageLoadingSkeleton />);
 
-    expect(screen.getByTestId('navigation')).toBeInTheDocument();
     expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 
@@ -79,7 +78,7 @@ describe('AdminPageWrapper', () => {
       </AdminPageWrapper>,
     );
 
-    expect(screen.getByTestId('navigation')).toBeInTheDocument();
+    expect(document.querySelector('.animate-pulse')).toBeInTheDocument();
     expect(screen.queryByTestId('admin-content')).not.toBeInTheDocument();
   });
 

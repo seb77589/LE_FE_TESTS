@@ -477,9 +477,9 @@ describe('errors/types', () => {
         expect(ErrorUtils.getRetryDelay(3)).toBe(8000);
       });
 
-      it('caps at 30 seconds', () => {
-        expect(ErrorUtils.getRetryDelay(10)).toBe(30000);
-        expect(ErrorUtils.getRetryDelay(100)).toBe(30000);
+      it('caps at 5 minutes', () => {
+        expect(ErrorUtils.getRetryDelay(10)).toBe(300000);
+        expect(ErrorUtils.getRetryDelay(100)).toBe(300000);
       });
     });
 

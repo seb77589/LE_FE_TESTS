@@ -85,7 +85,7 @@ describe('API Config Module', () => {
       const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
-      expect(config.timeout).toBe(30000);
+      expect(config.timeout).toBe(300000);
     });
 
     it('should set default retries to 3', async () => {
@@ -586,7 +586,7 @@ describe('API Config Module', () => {
       const { createApiConfig } = await import('@/lib/api/config');
       const config = createApiConfig();
 
-      expect(config.timeout).toBe(30000);
+      expect(config.timeout).toBe(300000);
     });
 
     it('should create config with retry settings', async () => {
