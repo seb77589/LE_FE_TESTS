@@ -7,6 +7,11 @@
  * This file provides fail-fast validation - tests will exit immediately with
  * clear error messages if any required credentials are missing.
  *
+ * MANUAL TESTING ACCOUNTS EXCLUSION:
+ * The MANUAL_TEST_EMAILS_EXCLUDED set contains emails that are PROTECTED
+ * manual test accounts and MUST NOT be used in automated E2E tests.
+ * See CLAUDE.md "Protected Manual Test Accounts" section for details.
+ *
  * WORKER ISOLATION:
  * - 12-worker credential pool prevents session conflicts in parallel execution
  * - Each worker gets unique credentials via modulo rotation
@@ -32,6 +37,37 @@ dotenv.config({
   path: path.resolve(__dirname, '..', '..', 'config', '.env'),
   override: false, // Don't override if already loaded by playwright.config
 });
+
+// #############################################################################
+// MANUAL TESTING ACCOUNTS - EXCLUDED FROM E2E TESTS
+// #############################################################################
+// These emails are for manual QA testing ONLY - NEVER use in automated test code.
+// Attempting to use these accounts will throw an error.
+// See CLAUDE.md "Protected Manual Test Accounts" section.
+// #############################################################################
+export const MANUAL_TEST_EMAILS_EXCLUDED = new Set([
+  process.env.MANUAL_SUPERADMIN_EMAIL || 'superadmin@legalease.com',
+  process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com',
+  process.env.MANUAL_ASSISTANT_EMAIL || 'manual-assistant@legalease.com',
+]);
+
+/**
+ * Validate that an email is not a protected manual test account.
+ * Manual test accounts are EXCLUSIVELY for manual QA testing and OFF LIMITS
+ * for automated E2E tests.
+ *
+ * @param email - Email address to validate
+ * @throws Error if email is a protected manual test account
+ */
+export function validateNotManualAccount(email: string): void {
+  if (MANUAL_TEST_EMAILS_EXCLUDED.has(email)) {
+    throw new Error(
+      `FORBIDDEN: ${email} is a MANUAL TEST ACCOUNT and cannot be used in E2E tests. ` +
+        `Use TEST_CREDENTIALS, WS_TEST_CREDENTIALS, or PROFILE_TEST_CREDENTIALS instead. ` +
+        `See CLAUDE.md 'Protected Manual Test Accounts' section.`
+    );
+  }
+}
 
 // Environment validation function
 function validateTestEnvironment(): void {

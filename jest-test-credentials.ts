@@ -7,6 +7,11 @@
  * This file provides fail-fast validation but only runs when JEST_WORKER_ID
  * or NODE_ENV=test is set to avoid interference with Playwright tests.
  *
+ * MANUAL TESTING ACCOUNTS EXCLUSION:
+ * The MANUAL_TEST_EMAILS_EXCLUDED set contains emails that are PROTECTED
+ * manual test accounts and MUST NOT be used in automated Jest tests.
+ * See CLAUDE.md "Protected Manual Test Accounts" section for details.
+ *
  * VALIDATION SCOPE:
  * - Validates only in Jest context (JEST_WORKER_ID check prevents Playwright conflicts)
  * - 65+ required environment variables for comprehensive test coverage
@@ -33,6 +38,37 @@
  * - frontend/tests/setup/jest.global-setup.js (Global test setup with validation)
  * - docs/testing/FRONTEND_TESTING_GUIDE.md (Complete testing guide)
  */
+
+// #############################################################################
+// MANUAL TESTING ACCOUNTS - EXCLUDED FROM JEST TESTS
+// #############################################################################
+// These emails are for manual QA testing ONLY - NEVER use in automated test code.
+// Attempting to use these accounts will throw an error.
+// See CLAUDE.md "Protected Manual Test Accounts" section.
+// #############################################################################
+export const MANUAL_TEST_EMAILS_EXCLUDED = new Set([
+  process.env.MANUAL_SUPERADMIN_EMAIL || 'superadmin@legalease.com',
+  process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com',
+  process.env.MANUAL_ASSISTANT_EMAIL || 'manual-assistant@legalease.com',
+]);
+
+/**
+ * Validate that an email is not a protected manual test account.
+ * Manual test accounts are EXCLUSIVELY for manual QA testing and OFF LIMITS
+ * for automated Jest tests.
+ *
+ * @param email - Email address to validate
+ * @throws Error if email is a protected manual test account
+ */
+export function validateNotManualAccount(email: string): void {
+  if (MANUAL_TEST_EMAILS_EXCLUDED.has(email)) {
+    throw new Error(
+      `FORBIDDEN: ${email} is a MANUAL TEST ACCOUNT and cannot be used in Jest tests. ` +
+        `Use FRONTEND_TEST_CREDENTIALS or FRONTEND_TEST_DATA instead. ` +
+        `See CLAUDE.md 'Protected Manual Test Accounts' section.`
+    );
+  }
+}
 
 // Environment validation function
 function validateFrontendTestEnvironment(): void {
