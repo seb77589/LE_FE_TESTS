@@ -478,10 +478,12 @@ export class TestHelpers {
     console.log('✅ Submit button enabled successfully');
 
     // Setup response listener BEFORE clicking
+    // Note: Timeout increased to 60s to accommodate email sending retries
+    // which can take 20+ seconds when SMTP fails on test emails
     const registrationPromise = page.waitForResponse(
       (response) =>
         response.url().includes('/api/v1/auth/register') && response.status() !== 0,
-      { timeout: 15000 },
+      { timeout: 60000 },
     );
 
     await submitButton.click();
@@ -493,7 +495,7 @@ export class TestHelpers {
 
       // Wait for redirect to dashboard or verify-email page
       await page.waitForURL(/.*(dashboard|verify-email|auth\/register)/, {
-        timeout: 15000,
+        timeout: 30000,
       });
 
       // Brief wait for frontend state update

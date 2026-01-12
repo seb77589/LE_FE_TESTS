@@ -17,35 +17,40 @@ describe('FormSkeleton', () => {
   it('should render title by default', () => {
     const { container } = render(<FormSkeleton />);
 
-    const title = container.querySelector('.h-6.bg-gray-300');
+    // Component uses 'bg-muted-foreground/20' for title
+    const title = container.querySelector('.h-6');
     expect(title).toBeInTheDocument();
   });
 
   it('should hide title when showTitle is false', () => {
     const { container } = render(<FormSkeleton showTitle={false} />);
 
-    const title = container.querySelector('.h-6.bg-gray-300');
-    expect(title).not.toBeInTheDocument();
+    // Component uses 'bg-muted-foreground/20' for title, check wrapper doesn't exist
+    const titleWrapper = container.querySelector('.mb-6');
+    expect(titleWrapper).not.toBeInTheDocument();
   });
 
   it('should render submit button by default', () => {
     const { container } = render(<FormSkeleton />);
 
-    const buttons = container.querySelectorAll('.h-10.bg-gray-200');
+    // Component uses 'bg-muted' instead of 'bg-gray-200'
+    const buttons = container.querySelectorAll('.h-10.bg-muted');
     expect(buttons.length).toBeGreaterThan(0);
   });
 
   it('should render cancel button when showCancel is true', () => {
     const { container } = render(<FormSkeleton showCancel={true} />);
 
-    const buttons = container.querySelectorAll('.h-10.bg-gray-200');
+    // Component uses 'bg-muted' instead of 'bg-gray-200'
+    const buttons = container.querySelectorAll('.h-10.bg-muted');
     expect(buttons.length).toBeGreaterThanOrEqual(2);
   });
 
   it('should render specified number of fields', () => {
     const { container } = render(<FormSkeleton fields={6} />);
 
-    const fields = container.querySelectorAll('.h-10.bg-gray-200');
+    // Component uses 'bg-muted' for input fields
+    const fields = container.querySelectorAll('.h-10.bg-muted');
     // Should have 6 field inputs + submit button (and optionally cancel)
     expect(fields.length).toBeGreaterThanOrEqual(6);
   });

@@ -90,7 +90,8 @@ describe('PasswordResetForm', () => {
       expect(
         screen.getByText(/Enter your email address and we'll send you a link/),
       ).toBeInTheDocument();
-      expect(screen.getByLabelText('Email address')).toBeInTheDocument();
+      // Label has "*" appended for required fields, use regex
+      expect(screen.getByLabelText(/Email address/i)).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: /send reset link/i }),
       ).toBeInTheDocument();
@@ -107,7 +108,7 @@ describe('PasswordResetForm', () => {
     it('should have email input with correct attributes', () => {
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       expect(emailInput).toHaveAttribute('type', 'email');
       expect(emailInput).toHaveAttribute('placeholder', 'Enter your email');
       expect(emailInput).toHaveAttribute('autocomplete', 'email');
@@ -134,7 +135,7 @@ describe('PasswordResetForm', () => {
       const user = userEvent.setup();
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, 'invalid-email');
       await user.tab(); // Trigger onChange validation
 
@@ -149,7 +150,7 @@ describe('PasswordResetForm', () => {
       const user = userEvent.setup();
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -170,7 +171,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -193,7 +194,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -216,7 +217,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_DATA.EMAIL.NONEXISTENT);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -237,7 +238,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -268,7 +269,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -295,7 +296,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
@@ -326,7 +327,7 @@ describe('PasswordResetForm', () => {
 
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       const submitButton = screen.getByRole('button', { name: /send reset link/i });
 
       // First submission (error)
@@ -354,7 +355,7 @@ describe('PasswordResetForm', () => {
       const user = userEvent.setup();
       render(<PasswordResetForm />);
 
-      const emailInput = screen.getByLabelText('Email address');
+      const emailInput = screen.getByLabelText(/Email address/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
 
       const submitButton = screen.getByRole('button', { name: /send reset link/i });

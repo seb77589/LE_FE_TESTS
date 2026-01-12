@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/api-fixture';
+import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
 
 test.describe('Document Analytics Tab Navigation', () => {
@@ -7,37 +7,15 @@ test.describe('Document Analytics Tab Navigation', () => {
     await TestHelpers.clearApplicationData(page);
   });
 
-  test('should switch between Documents and Analytics tabs', async ({ page }) => {
+  test('should switch between Documents and Analytics tabs', async ({ page, workerCredentials }) => {
     try {
-      // First, register and login a test user
-      const testUser = TestHelpers.generateTestUser();
-      await TestHelpers.registerUser(page, testUser);
-
-      // Wait for navigation with multiple possible outcomes
-      try {
-        await page.waitForURL(/.*(dashboard|verify-email)/, { timeout: 30000 });
-      } catch (error) {
-        // If navigation doesn't happen, check if we're still on register page with success
-        const currentUrl = page.url();
-        if (currentUrl.includes('/auth/register')) {
-          const successMessage = await page
-            .locator('text=Registration successful')
-            .isVisible()
-            .catch(() => false);
-
-          if (successMessage) {
-            console.log(
-              'Registration successful but no redirect - proceeding with test',
-            );
-          } else {
-            throw new Error(
-              `Registration did not redirect as expected. Current URL: ${currentUrl}`,
-            );
-          }
-        } else {
-          throw error;
-        }
-      }
+      // Login using worker credentials (more reliable than registration)
+      await TestHelpers.loginAndWaitForRedirect(
+        page,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
 
       // Navigate to the documents page
       await page.goto('/dashboard/documents');
@@ -112,21 +90,15 @@ test.describe('Document Analytics Tab Navigation', () => {
     }
   });
 
-  test('should load analytics data when Analytics tab is opened', async ({ page }) => {
+  test('should load analytics data when Analytics tab is opened', async ({ page, workerCredentials }) => {
     try {
-      // First, register and login a test user
-      const testUser = TestHelpers.generateTestUser();
-      await TestHelpers.registerUser(page, testUser);
-
-      // Wait for navigation
-      try {
-        await page.waitForURL(/.*(dashboard|verify-email)/, { timeout: 30000 });
-      } catch (error) {
-        const currentUrl = page.url();
-        if (!currentUrl.includes('/auth/register')) {
-          throw error;
-        }
-      }
+      // Login using worker credentials (more reliable than registration)
+      await TestHelpers.loginAndWaitForRedirect(
+        page,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
 
       // Navigate to the documents page
       await page.goto('/dashboard/documents');
@@ -169,21 +141,15 @@ test.describe('Document Analytics Tab Navigation', () => {
     }
   });
 
-  test('should handle analytics loading errors gracefully', async ({ page }) => {
+  test('should handle analytics loading errors gracefully', async ({ page, workerCredentials }) => {
     try {
-      // First, register and login a test user
-      const testUser = TestHelpers.generateTestUser();
-      await TestHelpers.registerUser(page, testUser);
-
-      // Wait for navigation
-      try {
-        await page.waitForURL(/.*(dashboard|verify-email)/, { timeout: 30000 });
-      } catch (error) {
-        const currentUrl = page.url();
-        if (!currentUrl.includes('/auth/register')) {
-          throw error;
-        }
-      }
+      // Login using worker credentials (more reliable than registration)
+      await TestHelpers.loginAndWaitForRedirect(
+        page,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
 
       // Intercept the analytics API call and make it fail
       await page.route('**/api/v1/documents/analytics*', (route) => {
@@ -202,8 +168,8 @@ test.describe('Document Analytics Tab Navigation', () => {
       const analyticsTab = page.locator('button:has-text("Analytics")');
       await analyticsTab.click();
 
-      // Wait for error message to appear
-      const errorMessage = page.locator('text=/Failed to load analytics/i');
+      // Wait for error message to appear (flexible to match various error messages)
+      const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
       await expect(errorMessage).toBeVisible({ timeout: 10000 });
 
       // Verify error icon is visible

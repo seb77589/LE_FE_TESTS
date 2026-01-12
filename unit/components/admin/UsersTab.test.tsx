@@ -74,7 +74,7 @@ describe('UsersTab', () => {
   });
 
   it('should show import for superadmin users', () => {
-    (useAuth as jest.Mock).mockReturnValue({ user: { role: 'superadmin' } });
+    (useAuth as jest.Mock).mockReturnValue({ user: { role: 'SUPERADMIN' } });
     render(<UsersTab />);
     expect(
       screen.getByTestId('user-management').querySelector('[data-show-import="true"]'),

@@ -143,12 +143,10 @@ jest.mock('@/components/admin/UserImport', () => ({
   ),
 }));
 
-jest.mock('@/components/admin/UserManagementError', () => ({
-  UserManagementError: ({ showHeader, showBackLink }: any) => (
-    <div data-testid="user-management-error">
-      <span data-testid="error-header">{showHeader ? 'true' : 'false'}</span>
-      <span data-testid="error-back-link">{showBackLink ? 'true' : 'false'}</span>
-    </div>
+// UserManagementError component does not exist - error states use ErrorBanner inline
+jest.mock('@/components/ui/ErrorDisplay', () => ({
+  ErrorBanner: ({ message }: any) => (
+    <div data-testid="error-banner">{message}</div>
   ),
 }));
 
@@ -378,7 +376,7 @@ describe('UserManagement', () => {
   });
 
   describe('error state', () => {
-    it('should render error component when error exists', () => {
+    it('should render error banner when error exists', () => {
       mockHookReturn = {
         ...defaultHookReturn,
         error: new Error('Failed to load users'),
@@ -386,11 +384,11 @@ describe('UserManagement', () => {
 
       render(<UserManagement />);
 
-      expect(screen.getByTestId('user-management-error')).toBeInTheDocument();
+      expect(screen.getByTestId('error-banner')).toBeInTheDocument();
       expect(screen.queryByTestId('users-list')).not.toBeInTheDocument();
     });
 
-    it('should pass showHeader to error component', () => {
+    it('should show header when showHeader is true even with error', () => {
       mockHookReturn = {
         ...defaultHookReturn,
         error: new Error('Test error'),
@@ -398,18 +396,20 @@ describe('UserManagement', () => {
 
       render(<UserManagement showHeader />);
 
-      expect(screen.getByTestId('error-header')).toHaveTextContent('true');
+      expect(screen.getByText('User Management')).toBeInTheDocument();
+      expect(screen.getByTestId('error-banner')).toBeInTheDocument();
     });
 
-    it('should pass showBackLink to error component', () => {
+    it('should show back link when showBackLink is true with error', () => {
       mockHookReturn = {
         ...defaultHookReturn,
         error: new Error('Test error'),
       };
 
-      render(<UserManagement showBackLink={false} />);
+      render(<UserManagement showHeader showBackLink />);
 
-      expect(screen.getByTestId('error-back-link')).toHaveTextContent('false');
+      expect(screen.getByText(/Back to Admin Dashboard/)).toBeInTheDocument();
+      expect(screen.getByTestId('error-banner')).toBeInTheDocument();
     });
   });
 

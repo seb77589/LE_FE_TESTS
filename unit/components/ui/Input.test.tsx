@@ -62,7 +62,7 @@ describe('Input', () => {
     it('applies error styles to input', () => {
       const { container } = render(<Input error="Error" />);
       const input = container.querySelector('input');
-      expect(input).toHaveClass('border-red-500', 'focus-visible:ring-red-500');
+      expect(input).toHaveClass('border-destructive', 'focus-visible:ring-destructive');
     });
 
     it('renders error with aria-label', () => {
@@ -92,7 +92,7 @@ describe('Input', () => {
 
     it('applies correct styling to helper text', () => {
       const { container } = render(<Input helperText="Helper" />);
-      const helperText = container.querySelector('.text-gray-500');
+      const helperText = container.querySelector('.text-muted-foreground');
       expect(helperText).toBeInTheDocument();
     });
   });
@@ -137,7 +137,7 @@ describe('Input', () => {
     it('has focus-visible ring styles', () => {
       const { container } = render(<Input />);
       const input = container.querySelector('input');
-      expect(input).toHaveClass('focus-visible:ring-2', 'focus-visible:ring-blue-600');
+      expect(input).toHaveClass('focus-visible:ring-2', 'focus-visible:ring-ring');
     });
 
     it('has disabled styles', () => {

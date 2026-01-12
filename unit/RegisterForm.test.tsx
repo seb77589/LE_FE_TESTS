@@ -207,10 +207,11 @@ describe('RegisterForm', () => {
       render(<RegisterForm />);
 
       expect(screen.getByText('Create your account')).toBeInTheDocument();
-      expect(screen.getByLabelText('Full Name')).toBeInTheDocument();
-      expect(screen.getByLabelText('Email address')).toBeInTheDocument();
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
-      expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument();
+      // Use regex to handle labels with required asterisks
+      expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
       expect(
         screen.getByRole('button', { name: /create account/i }),
       ).toBeInTheDocument();
@@ -260,7 +261,7 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const passwordInput = screen.getByLabelText('Password');
+      const passwordInput = screen.getByLabelText(/^password$/i);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.VALID);
 
       await waitFor(() => {
@@ -286,7 +287,7 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
+      const fullNameInput = screen.getByLabelText(/full name/i);
       await user.type(fullNameInput, 'John Doe');
 
       const submitButton = screen.getByRole('button', { name: /create account/i });
@@ -303,10 +304,10 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -325,10 +326,10 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -372,10 +373,10 @@ describe('RegisterForm', () => {
 
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -402,7 +403,7 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const passwordInput = screen.getByLabelText('Password');
+      const passwordInput = screen.getByLabelText(/^password$/i);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.VALID);
 
       await waitFor(() => {
@@ -418,7 +419,7 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const passwordInput = screen.getByLabelText('Password');
+      const passwordInput = screen.getByLabelText(/^password$/i);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.SHORT);
 
       await waitFor(() => {
@@ -453,7 +454,7 @@ describe('RegisterForm', () => {
 
       render(<RegisterForm />);
 
-      const passwordInput = screen.getByLabelText('Password');
+      const passwordInput = screen.getByLabelText(/^password$/i);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.VALID);
 
       await waitFor(() => {
@@ -470,10 +471,10 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -496,10 +497,10 @@ describe('RegisterForm', () => {
       const user = userEvent.setup();
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -520,10 +521,10 @@ describe('RegisterForm', () => {
 
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -559,10 +560,10 @@ describe('RegisterForm', () => {
 
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.EXISTING.email);
@@ -590,10 +591,10 @@ describe('RegisterForm', () => {
 
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);
@@ -617,8 +618,8 @@ describe('RegisterForm', () => {
       const generateButton = screen.getByRole('button', { name: /generate/i });
       await user.click(generateButton);
 
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await waitFor(() => {
         expect((passwordInput as HTMLInputElement).value).not.toBe('');
@@ -642,10 +643,10 @@ describe('RegisterForm', () => {
 
       render(<RegisterForm />);
 
-      const fullNameInput = screen.getByLabelText('Full Name');
-      const emailInput = screen.getByLabelText('Email address');
-      const passwordInput = screen.getByLabelText('Password');
-      const confirmPasswordInput = screen.getByLabelText('Confirm Password');
+      const fullNameInput = screen.getByLabelText(/full name/i);
+      const emailInput = screen.getByLabelText(/email address/i);
+      const passwordInput = screen.getByLabelText(/^password$/i);
+      const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
 
       await user.type(fullNameInput, 'John Doe');
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.JOHN.email);

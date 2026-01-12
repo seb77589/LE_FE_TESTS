@@ -66,7 +66,8 @@ describe('UserManagementLoading', () => {
   describe('Loading Skeleton', () => {
     it('should render multiple skeleton elements', () => {
       const { container } = render(<UserManagementLoading />);
-      const skeletons = container.querySelectorAll('.bg-gray-200');
+      // Component uses bg-muted design token, not bg-gray-200
+      const skeletons = container.querySelectorAll('.bg-muted');
       expect(skeletons.length).toBeGreaterThan(0);
     });
   });

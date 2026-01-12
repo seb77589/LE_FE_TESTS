@@ -12,7 +12,7 @@ process.env.PLAYWRIGHT_MOCK = 'false';
 
 test.describe('Admin System Page – Live API', () => {
   test('admin can view system status page', async ({ page, workerCredentials }) => {
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
+    test.skip(!workerCredentials.isSuperAdmin, 'Test requires SuperAdmin credentials');
     // Login with admin credentials using TestHelpers for better reliability
     await TestHelpers.loginAndWaitForRedirect(
       page,

@@ -289,7 +289,7 @@ test.describe('Performance E2E Tests', () => {
 
   test.describe('Navigation Performance', () => {
     // Reason: This test assumes a login link exists on the homepage, but the homepage may not have a visible login link
-    test.skip('should navigate between pages efficiently', async ({ page }) => {
+    test('should navigate between pages efficiently', async ({ page }) => {
       // SKIPPED: This test assumes a login link exists on the homepage,
       // but the homepage may not have a visible login link (auth links may be
       // in navigation/header only visible when logged out). Test needs redesign

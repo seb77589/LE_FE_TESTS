@@ -32,37 +32,37 @@ describe('Alert', () => {
     it('applies default variant styles', () => {
       const { container } = render(<Alert>Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-blue-50', 'border-blue-200', 'text-blue-800');
+      expect(alert).toHaveClass('bg-primary/10', 'border-primary/30', 'text-primary');
     });
 
     it('applies info variant styles', () => {
       const { container } = render(<Alert variant="info">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-blue-50', 'border-blue-200', 'text-blue-800');
+      expect(alert).toHaveClass('bg-primary/10', 'border-primary/30', 'text-primary');
     });
 
     it('applies destructive variant styles', () => {
       const { container } = render(<Alert variant="destructive">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-red-50', 'border-red-200', 'text-red-800');
+      expect(alert).toHaveClass('bg-destructive/10', 'border-destructive/30', 'text-destructive');
     });
 
     it('applies warning variant styles', () => {
       const { container } = render(<Alert variant="warning">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-yellow-50', 'border-yellow-200', 'text-yellow-800');
+      expect(alert).toHaveClass('bg-accent', 'border-border', 'text-accent-foreground');
     });
 
     it('applies error variant styles', () => {
       const { container } = render(<Alert variant="error">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-red-50', 'border-red-200', 'text-red-800');
+      expect(alert).toHaveClass('bg-destructive/10', 'border-destructive/30', 'text-destructive');
     });
 
     it('applies success variant styles', () => {
       const { container } = render(<Alert variant="success">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-green-50', 'border-green-200', 'text-green-800');
+      expect(alert).toHaveClass('bg-primary/10', 'border-primary/30', 'text-primary');
     });
   });
 
@@ -115,7 +115,7 @@ describe('Alert', () => {
         </Alert>,
       );
       const closeButton = container.querySelector('button');
-      expect(closeButton).toHaveClass('text-red-500', 'hover:bg-red-100');
+      expect(closeButton).toHaveClass('text-destructive', 'hover:bg-destructive/20');
     });
   });
 

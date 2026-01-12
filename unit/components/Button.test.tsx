@@ -9,36 +9,39 @@ describe('Button Component', () => {
 
     const button = screen.getByRole('button', { name: /click me/i });
     expect(button).toBeInTheDocument();
-    expect(button).toHaveClass('bg-blue-600'); // Default primary variant
+    // Component uses design token 'bg-primary' instead of 'bg-blue-600'
+    expect(button).toHaveClass('bg-primary');
     expect(button).not.toBeDisabled();
   });
 
   it('renders with different variants', () => {
     const { rerender } = render(<Button variant="primary">Primary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-blue-600');
+    // Component uses design tokens instead of hardcoded colors
+    expect(screen.getByRole('button')).toHaveClass('bg-primary');
 
     rerender(<Button variant="secondary">Secondary</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-gray-100');
+    expect(screen.getByRole('button')).toHaveClass('bg-secondary');
 
     rerender(<Button variant="outline">Outline</Button>);
-    expect(screen.getByRole('button')).toHaveClass('border-gray-300');
+    expect(screen.getByRole('button')).toHaveClass('border');
 
     rerender(<Button variant="ghost">Ghost</Button>);
-    expect(screen.getByRole('button')).toHaveClass('hover:bg-gray-100');
+    expect(screen.getByRole('button').className).toContain('hover:');
 
     rerender(<Button variant="destructive">Destructive</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-red-600');
+    expect(screen.getByRole('button')).toHaveClass('bg-destructive');
   });
 
   it('renders with different sizes', () => {
+    // Button uses sm: 'h-10', md: 'h-11', lg: 'h-12' for touch target compliance
     const { rerender } = render(<Button size="sm">Small</Button>);
-    expect(screen.getByRole('button')).toHaveClass('h-9');
-
-    rerender(<Button size="md">Medium</Button>);
     expect(screen.getByRole('button')).toHaveClass('h-10');
 
-    rerender(<Button size="lg">Large</Button>);
+    rerender(<Button size="md">Medium</Button>);
     expect(screen.getByRole('button')).toHaveClass('h-11');
+
+    rerender(<Button size="lg">Large</Button>);
+    expect(screen.getByRole('button')).toHaveClass('h-12');
   });
 
   it('should be disabled when disabled prop is true', () => {

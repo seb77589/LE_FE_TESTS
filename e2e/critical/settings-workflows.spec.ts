@@ -13,16 +13,17 @@
  */
 
 import { test, expect } from '../../fixtures/auth-fixture';
+import { TestHelpers } from '../../utils/test-helpers';
 
 test.describe('Settings Page Workflows', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
-    // Login
-    await page.goto('/auth/login');
-    await page.fill('input[type="email"]', workerCredentials.email);
-    await page.fill('input[type="password"]', workerCredentials.password);
-    await page.click('button[type="submit"]');
-    // Post-login landing page depends on role (e.g., SUPERADMIN/ADMIN may land on /admin)
-    await expect(page).toHaveURL(/.*\/(dashboard|admin)(\/.*)?$/, { timeout: 10000 });
+    // Login using proper helper with form hydration wait
+    await TestHelpers.loginAndWaitForRedirect(
+      page,
+      workerCredentials.email,
+      workerCredentials.password,
+      workerCredentials.isAdmin,
+    );
 
     // Navigate to settings
     await page.goto('/settings');

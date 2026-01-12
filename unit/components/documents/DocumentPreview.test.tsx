@@ -147,23 +147,28 @@ jest.mock('@/components/documents/preview/PreviewActions', () => ({
   },
 }));
 
-jest.mock('@/components/documents/preview/PreviewLoading', () => ({
-  PreviewLoading: function MockPreviewLoading() {
+// Mock LoadingState component (used by DocumentPreview instead of PreviewLoading)
+jest.mock('@/components/ui/LoadingState', () => ({
+  __esModule: true,
+  default: function MockLoadingState() {
     return <div data-testid="preview-loading">Loading...</div>;
   },
 }));
 
-jest.mock('@/components/documents/preview/PreviewError', () => ({
-  PreviewError: function MockPreviewError({
-    error,
+// Mock ErrorDisplay components (used by DocumentPreview instead of PreviewError)
+jest.mock('@/components/ui/ErrorDisplay', () => ({
+  __esModule: true,
+  default: () => null,
+  LoadingError: function MockLoadingError({
+    message,
     onRetry,
   }: {
-    error: string;
+    message: string;
     onRetry: () => void;
   }) {
     return (
       <div data-testid="preview-error">
-        <div>Error: {error}</div>
+        <div>Error: {message}</div>
         <button onClick={onRetry} data-testid="retry-button">
           Retry
         </button>

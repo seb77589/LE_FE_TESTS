@@ -46,7 +46,8 @@ describe('LoginFormFields', () => {
           remainingAttempts={null}
         />,
       );
-      expect(screen.getByLabelText('Email Address')).toBeInTheDocument();
+      // Label has "*" appended for required fields, use regex
+      expect(screen.getByLabelText(/Email Address/i)).toBeInTheDocument();
       expect(screen.getByPlaceholderText('you@example.com')).toBeInTheDocument();
     });
 
@@ -59,7 +60,8 @@ describe('LoginFormFields', () => {
           remainingAttempts={null}
         />,
       );
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      // Label has "*" appended for required fields, use regex
+      expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument();
     });
 
@@ -102,8 +104,9 @@ describe('LoginFormFields', () => {
           remainingAttempts={null}
         />,
       );
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      // Label has "*" appended for required fields, use regex
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       expect(emailInput).toBeDisabled();
       expect(passwordInput).toBeDisabled();
     });
@@ -171,8 +174,10 @@ describe('LoginFormFields', () => {
           remainingAttempts={null}
         />,
       );
-      const emailInput = screen.getByLabelText('Email Address');
-      expect(emailInput).toHaveClass('border-red-500');
+      // Label has "*" appended for required fields, use regex
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      // Component uses design token 'border-destructive' instead of 'border-red-500'
+      expect(emailInput).toHaveClass('border-destructive');
     });
 
     it('should apply error styling to password input', () => {
@@ -189,8 +194,10 @@ describe('LoginFormFields', () => {
           remainingAttempts={null}
         />,
       );
-      const passwordInput = screen.getByLabelText('Password');
-      expect(passwordInput).toHaveClass('border-red-500');
+      // Use placeholder to avoid matching error message text
+      const passwordInput = screen.getByPlaceholderText('Enter your password');
+      // Component uses design token 'border-destructive' instead of 'border-red-500'
+      expect(passwordInput).toHaveClass('border-destructive');
     });
   });
 

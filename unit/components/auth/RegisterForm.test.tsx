@@ -203,12 +203,12 @@ describe('RegisterForm', () => {
 
     it('should render full name input', () => {
       render(<RegisterForm />);
-      expect(screen.getByLabelText('Full Name')).toBeInTheDocument();
+      expect(screen.getByLabelText(/Full Name/i)).toBeInTheDocument();
     });
 
     it('should render email input', () => {
       render(<RegisterForm />);
-      expect(screen.getByLabelText('Email address')).toBeInTheDocument();
+      expect(screen.getByLabelText(/Email address/i)).toBeInTheDocument();
     });
 
     it('should render password field component', () => {
@@ -218,7 +218,7 @@ describe('RegisterForm', () => {
 
     it('should render confirm password input', () => {
       render(<RegisterForm />);
-      expect(screen.getByLabelText('Confirm Password')).toBeInTheDocument();
+      expect(screen.getByLabelText(/Confirm Password/i)).toBeInTheDocument();
     });
 
     it('should render submit button', () => {

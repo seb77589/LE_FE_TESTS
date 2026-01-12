@@ -20,19 +20,19 @@ describe('Progress', () => {
   describe('Basic Rendering', () => {
     it('should render progress bar', () => {
       const { container } = render(<Progress value={50} />);
-      const progress = container.querySelector('.bg-gray-200');
+      const progress = container.querySelector('.bg-muted');
       expect(progress).toBeInTheDocument();
     });
 
     it('should display progress bar with correct width', () => {
       const { container } = render(<Progress value={75} />);
-      const progressBar = container.querySelector('.bg-blue-600');
+      const progressBar = container.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '75%' });
     });
 
     it('should handle custom max value', () => {
       const { container } = render(<Progress value={50} max={200} />);
-      const progressBar = container.querySelector('.bg-blue-600');
+      const progressBar = container.querySelector('.bg-primary');
       // 50/200 = 25%
       expect(progressBar).toHaveStyle({ width: '25%' });
     });
@@ -41,25 +41,25 @@ describe('Progress', () => {
   describe('Value Ranges', () => {
     it('should handle 0% value', () => {
       const { container } = render(<Progress value={0} />);
-      const progressBar = container.querySelector('.bg-blue-600');
+      const progressBar = container.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '0%' });
     });
 
     it('should handle 100% value', () => {
       const { container } = render(<Progress value={100} />);
-      const progressBar = container.querySelector('.bg-blue-600');
+      const progressBar = container.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '100%' });
     });
 
     it('should clamp values above max', () => {
       const { container } = render(<Progress value={150} max={100} />);
-      const progressBar = container.querySelector('.bg-blue-600');
+      const progressBar = container.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '100%' });
     });
 
     it('should clamp values below 0', () => {
       const { container } = render(<Progress value={-10} max={100} />);
-      const progressBar = container.querySelector('.bg-blue-600');
+      const progressBar = container.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '0%' });
     });
   });
@@ -67,7 +67,7 @@ describe('Progress', () => {
   describe('Custom Styling', () => {
     it('should apply custom className', () => {
       const { container } = render(<Progress value={50} className="custom-class" />);
-      const progress = container.querySelector('.bg-gray-200');
+      const progress = container.querySelector('.bg-muted');
       expect(progress).toHaveClass('custom-class');
     });
   });

@@ -23,6 +23,14 @@ jest.mock('next/link', () => {
   return MockLink;
 });
 
+// Mock useAuth to provide a user context
+jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
+  useAuth: jest.fn(() => ({
+    user: { role: 'MANAGER' },
+    isAuthenticated: true,
+  })),
+}));
+
 describe('AdminTabs', () => {
   const mockSearchParams = {
     get: jest.fn(),
@@ -61,7 +69,8 @@ describe('AdminTabs', () => {
       render(<AdminTabs />);
       const overviewTab = screen.getByTestId('admin-tab-overview');
       expect(overviewTab).toHaveAttribute('aria-current', 'page');
-      expect(overviewTab).toHaveClass('border-blue-500', 'text-blue-600');
+      // Component uses design tokens: 'border-primary' and 'text-primary' instead of hardcoded colors
+      expect(overviewTab).toHaveClass('border-primary', 'text-primary');
     });
 
     it('should mark users tab as active when tab=users in URL', () => {
@@ -69,7 +78,8 @@ describe('AdminTabs', () => {
       render(<AdminTabs />);
       const usersTab = screen.getByTestId('admin-tab-users');
       expect(usersTab).toHaveAttribute('aria-current', 'page');
-      expect(usersTab).toHaveClass('border-blue-500', 'text-blue-600');
+      // Component uses design tokens: 'border-primary' and 'text-primary' instead of hardcoded colors
+      expect(usersTab).toHaveClass('border-primary', 'text-primary');
     });
 
     it('should use activeTab prop when searchParams is null', () => {
@@ -101,7 +111,8 @@ describe('AdminTabs', () => {
       render(<AdminTabs />);
       const usersTab = screen.getByTestId('admin-tab-users');
       expect(usersTab).not.toHaveAttribute('aria-current');
-      expect(usersTab).toHaveClass('border-transparent', 'text-gray-500');
+      // Component uses design tokens: 'border-transparent' and 'text-muted-foreground' instead of hardcoded colors
+      expect(usersTab).toHaveClass('border-transparent', 'text-muted-foreground');
     });
   });
 });

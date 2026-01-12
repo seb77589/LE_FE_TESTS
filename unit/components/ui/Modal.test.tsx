@@ -203,7 +203,8 @@ describe('Modal', () => {
       const { container } = render(<Modal {...defaultProps} isOpen={true} />);
       const dialog = container.querySelector('dialog');
       expect(dialog).toHaveClass(
-        'bg-white',
+        'bg-card',
+        'text-card-foreground',
         'rounded-lg',
         'shadow-xl',
         'w-full',

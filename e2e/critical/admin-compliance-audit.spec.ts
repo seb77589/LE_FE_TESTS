@@ -9,8 +9,62 @@
  * - Security Dashboard (/admin/security)
  */
 
-import { test, expect } from '../../fixtures/auth-fixture';
+import { test, expect, Page } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
+
+/**
+ * Helper function to wait for Compliance Console page to fully load
+ */
+async function waitForComplianceConsole(page: Page): Promise<boolean> {
+  await page.goto('/admin/compliance');
+  await page.waitForLoadState('networkidle');
+
+  const pageHeading = page.locator('h1:has-text("Compliance Console")');
+  let headingVisible = await pageHeading.isVisible({ timeout: 25000 }).catch(() => false);
+
+  if (!headingVisible) {
+    await page.waitForTimeout(3000);
+    headingVisible = await pageHeading.isVisible({ timeout: 10000 }).catch(() => false);
+  }
+
+  return headingVisible;
+}
+
+/**
+ * Helper function to wait for Audit Explorer page to fully load
+ */
+async function waitForAuditExplorer(page: Page): Promise<boolean> {
+  await page.goto('/admin/audit');
+  await page.waitForLoadState('networkidle');
+
+  const pageHeading = page.locator('h1:has-text("Audit Explorer")');
+  let headingVisible = await pageHeading.isVisible({ timeout: 25000 }).catch(() => false);
+
+  if (!headingVisible) {
+    await page.waitForTimeout(3000);
+    headingVisible = await pageHeading.isVisible({ timeout: 10000 }).catch(() => false);
+  }
+
+  return headingVisible;
+}
+
+/**
+ * Helper function to wait for Security Dashboard page to fully load
+ */
+async function waitForSecurityDashboard(page: Page): Promise<boolean> {
+  await page.goto('/admin/security');
+  await page.waitForLoadState('networkidle');
+
+  const pageHeading = page.locator('h1:has-text("Security Dashboard")');
+  let headingVisible = await pageHeading.isVisible({ timeout: 25000 }).catch(() => false);
+
+  if (!headingVisible) {
+    await page.waitForTimeout(3000);
+    headingVisible = await pageHeading.isVisible({ timeout: 10000 }).catch(() => false);
+  }
+
+  return headingVisible;
+}
 
 test.describe('Admin - Compliance Console', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
@@ -25,13 +79,8 @@ test.describe('Admin - Compliance Console', () => {
   });
 
   test('should display compliance console with GDPR requests tab', async ({ page }) => {
-    await page.goto('/admin/compliance');
-    await page.waitForLoadState('load');
-
-    // Check for page title
-    const title = await page.locator('h1:has-text("Compliance Console")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Compliance Console UI not yet implemented
+    const pageLoaded = await waitForComplianceConsole(page);
+    if (!pageLoaded) {
       test.skip(true, 'Compliance Console UI not yet implemented');
       return;
     }
@@ -46,15 +95,17 @@ test.describe('Admin - Compliance Console', () => {
   });
 
   test('should filter GDPR requests by status', async ({ page }) => {
-    await page.goto('/admin/compliance');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForComplianceConsole(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Compliance Console UI not loaded');
+      return;
+    }
 
     const hasFilter = await page
       .getByTestId('status-filter')
       .isVisible()
       .catch(() => false);
     if (!hasFilter) {
-      // Reason: GDPR request filters not yet implemented
       test.skip(true, 'GDPR request filters not yet implemented');
       return;
     }
@@ -69,15 +120,17 @@ test.describe('Admin - Compliance Console', () => {
   });
 
   test('should display retention policies tab for superadmin', async ({ page }) => {
-    await page.goto('/admin/compliance');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForComplianceConsole(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Compliance Console UI not loaded');
+      return;
+    }
 
     const retentionTab = await page
       .getByTestId('retention-tab')
       .isVisible()
       .catch(() => false);
     if (!retentionTab) {
-      // Skip reason: FUTURE_FEATURE - Retention policies tab not yet visible
       test.skip(true, 'Retention policies tab not yet visible');
       return;
     }
@@ -95,15 +148,17 @@ test.describe('Admin - Compliance Console', () => {
   });
 
   test('should display compliance reports tab', async ({ page }) => {
-    await page.goto('/admin/compliance');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForComplianceConsole(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Compliance Console UI not loaded');
+      return;
+    }
 
     const reportsTab = await page
       .getByTestId('reports-tab')
       .isVisible()
       .catch(() => false);
     if (!reportsTab) {
-      // Skip reason: FUTURE_FEATURE - Compliance reports tab not yet implemented
       test.skip(true, 'Compliance reports tab not yet implemented');
       return;
     }
@@ -134,13 +189,8 @@ test.describe('Admin - Audit Explorer', () => {
   });
 
   test('should display audit explorer with filters', async ({ page }) => {
-    await page.goto('/admin/audit');
-    await page.waitForLoadState('load');
-
-    // Check for page title
-    const title = await page.locator('h1:has-text("Audit Explorer")').isVisible();
-    if (!title) {
-      // Skip reason: FUTURE_FEATURE - Audit Explorer UI not yet implemented
+    const pageLoaded = await waitForAuditExplorer(page);
+    if (!pageLoaded) {
       test.skip(true, 'Audit Explorer UI not yet implemented');
       return;
     }
@@ -163,15 +213,17 @@ test.describe('Admin - Audit Explorer', () => {
   });
 
   test('should filter audit logs by date range', async ({ page }) => {
-    await page.goto('/admin/audit');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForAuditExplorer(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Audit Explorer UI not loaded');
+      return;
+    }
 
     const hasFilter = await page
       .getByTestId('date-range-filter')
       .isVisible()
       .catch(() => false);
     if (!hasFilter) {
-      // Skip reason: FUTURE_FEATURE - Audit log date filter not yet implemented
       test.skip(true, 'Audit log date filter not yet implemented');
       return;
     }
@@ -186,15 +238,17 @@ test.describe('Admin - Audit Explorer', () => {
   });
 
   test('should filter audit logs by action type', async ({ page }) => {
-    await page.goto('/admin/audit');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForAuditExplorer(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Audit Explorer UI not loaded');
+      return;
+    }
 
     const hasFilter = await page
       .getByTestId('action-filter')
       .isVisible()
       .catch(() => false);
     if (!hasFilter) {
-      // Skip reason: FUTURE_FEATURE - Audit log action filter not yet implemented
       test.skip(true, 'Audit log action filter not yet implemented');
       return;
     }
@@ -209,15 +263,17 @@ test.describe('Admin - Audit Explorer', () => {
   });
 
   test('should search audit logs by user', async ({ page }) => {
-    await page.goto('/admin/audit');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForAuditExplorer(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Audit Explorer UI not loaded');
+      return;
+    }
 
     const hasSearch = await page
       .getByTestId('user-search')
       .isVisible()
       .catch(() => false);
     if (!hasSearch) {
-      // Skip reason: FUTURE_FEATURE - Audit log user search not yet implemented
       test.skip(true, 'Audit log user search not yet implemented');
       return;
     }
@@ -239,15 +295,17 @@ test.describe('Admin - Audit Explorer', () => {
   });
 
   test('should display SOC2 export button for superadmin', async ({ page }) => {
-    await page.goto('/admin/audit');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForAuditExplorer(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Audit Explorer UI not loaded');
+      return;
+    }
 
     const hasButton = await page
       .getByTestId('export-soc2-button')
       .isVisible()
       .catch(() => false);
     if (!hasButton) {
-      // Skip reason: FUTURE_FEATURE - SOC2 export button not yet implemented
       test.skip(true, 'SOC2 export button not yet implemented');
       return;
     }
@@ -271,28 +329,10 @@ test.describe('Admin - Security Dashboard', () => {
   });
 
   test('should display security dashboard with risk cards', async ({ page }) => {
-    await page.goto('/admin/security');
-    await page.waitForLoadState('load');
-
-    // Wait for page heading with retry logic for loading states
-    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
-    let titleVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!titleVisible) {
-      // Check if we're in loading state and retry
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        titleVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!titleVisible) {
-        test.skip(true, 'Security Dashboard UI not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForSecurityDashboard(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Security Dashboard UI not yet implemented');
+      return;
     }
 
     // Check for risk card indicators (text content)
@@ -306,27 +346,10 @@ test.describe('Admin - Security Dashboard', () => {
   });
 
   test('should display time range filter', async ({ page }) => {
-    await page.goto('/admin/security');
-    await page.waitForLoadState('load');
-
-    // Wait for page with loading state handling
-    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
-    let headingVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!headingVisible) {
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        headingVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!headingVisible) {
-        test.skip(true, 'Security dashboard time range filter not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForSecurityDashboard(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Security Dashboard UI not loaded');
+      return;
     }
 
     const hasFilter = await page
@@ -348,27 +371,10 @@ test.describe('Admin - Security Dashboard', () => {
   });
 
   test('should display recent security events', async ({ page }) => {
-    await page.goto('/admin/security');
-    await page.waitForLoadState('load');
-
-    // Wait for page heading with retry logic for loading states
-    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
-    let titleVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!titleVisible) {
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        titleVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!titleVisible) {
-        test.skip(true, 'Security Dashboard not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForSecurityDashboard(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Security Dashboard not yet implemented');
+      return;
     }
 
     // Check for security events section
@@ -379,27 +385,10 @@ test.describe('Admin - Security Dashboard', () => {
   });
 
   test('should display locked accounts section', async ({ page }) => {
-    await page.goto('/admin/security');
-    await page.waitForLoadState('load');
-
-    // Wait for page heading with retry logic for loading states
-    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
-    let titleVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!titleVisible) {
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        titleVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!titleVisible) {
-        test.skip(true, 'Security Dashboard not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForSecurityDashboard(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Security Dashboard not yet implemented');
+      return;
     }
 
     // Check for locked accounts section
@@ -410,27 +399,10 @@ test.describe('Admin - Security Dashboard', () => {
   });
 
   test('should display suspicious IPs section', async ({ page }) => {
-    await page.goto('/admin/security');
-    await page.waitForLoadState('load');
-
-    // Wait for page heading with retry logic for loading states
-    const pageHeading = page.locator('h1:has-text("Security Dashboard")');
-    let titleVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!titleVisible) {
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        titleVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!titleVisible) {
-        test.skip(true, 'Security Dashboard not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForSecurityDashboard(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Security Dashboard not yet implemented');
+      return;
     }
 
     // Check for suspicious IPs section

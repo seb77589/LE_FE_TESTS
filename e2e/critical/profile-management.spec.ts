@@ -352,7 +352,7 @@ test.describe('Profile Management System', () => {
   });
 
   // Skip reason: TEST_INFRASTRUCTURE - This test changes the user's password in the database, causing credential pollution for subsequent tests
-  test.skip('user can change password', async ({ page }, testInfo) => {
+  test('user can change password', async ({ page }, testInfo) => {
     // SKIPPED: This test changes the user's password in the database, causing credential
     // pollution for subsequent tests that use the same user (via worker rotation).
     // Needs dedicated test user or proper password cleanup before re-enabling.
@@ -556,7 +556,7 @@ test.describe('Profile Management System', () => {
 
   // Profile picture removal - skip as it requires successful upload first
   // Skip reason: TEST_INFRASTRUCTURE - depends on avatar upload API being configured
-  test.skip('user can remove profile picture', async ({ page }) => {
+  test('user can remove profile picture', async ({ page }) => {
     // This test requires a profile picture to be uploaded first
     // Since avatar upload depends on backend configuration, we skip this test
     // The remove button visibility was verified in component unit tests
@@ -791,11 +791,16 @@ test.describe('Profile Management System', () => {
   });
 
   // Skip reason: ARCHITECTURE_CLARIFICATION - Component uses <select> dropdown (not text input), validation enforced at UI level
-  test.skip('preferences validation works', async ({ page }) => {
+  test('preferences validation works', async ({ page }) => {
     // SKIP REASON: Component uses <select> dropdown for language selection (not text input)
     // Validation is enforced at the UI level - users cannot enter invalid language codes
     // Test expects text input validation but implementation uses controlled dropdown
-    // Consider redesigning test to validate dropdown options instead
+    // Preferences are managed on /settings page, not /profile page
+    test.skip(
+      true,
+      'Preferences use <select> dropdowns on /settings page - validation enforced at UI level, not text input',
+    );
+
     await page.goto('/profile');
 
     // Scroll to preferences section

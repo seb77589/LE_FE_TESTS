@@ -5,64 +5,27 @@ import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
 
 test.describe('Multi-Device Logout', () => {
-  test('should log out from all other devices', async ({ page, context }) => {
+  test('should log out from all other devices', async ({ page, context, workerCredentials }) => {
     try {
-      // Use regular user credentials (not SUPERADMIN) to access /dashboard routes
-      const testUser = TestHelpers.generateTestUser();
-
-      // Step 1: Register and login test user on first device
-      await TestHelpers.registerUser(page, testUser);
-      await page.waitForTimeout(3000); // Wait longer for registration to complete
-
-      // Login on first device
+      // Step 1: Login using worker credentials on first device
       console.log('🔐 Logging in on first device...');
-      await page.goto('/auth/login');
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000);
-
-      // Check if form exists
-      const formExists = await TestHelpers.checkUIElementExists(page, 'form', 10000);
-      if (!formExists) {
-        // Skip reason: TEST_INFRASTRUCTURE - Login form not available
-        test.skip(true, 'Login form not available');
-        return;
-      }
-
-      await page.fill('input[name="email"]', testUser.email);
-      await page.fill('input[name="password"]', testUser.password);
-
-      // Trigger validation
-      await page.locator('input[name="email"]').blur();
-      await page.locator('input[name="password"]').blur();
-      await page.waitForTimeout(500);
-
-      await page.click('button[type="submit"]');
-
-      // Wait for successful login (regular users redirect to /dashboard)
-      await page.waitForURL(/.*(dashboard|admin)/, { timeout: 20000 });
-      await page.waitForLoadState('networkidle');
+      await TestHelpers.loginAndWaitForRedirect(
+        page,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
       console.log('✅ First device logged in successfully');
 
-      // Step 2: Create second session (simulate second device)
+      // Step 2: Create second session (simulate second device using same credentials)
       console.log('🔐 Creating second session (simulating second device)...');
       const page2 = await context.newPage();
-      await page2.goto('/auth/login');
-      await page2.waitForLoadState('networkidle');
-      await page2.waitForTimeout(1000);
-
-      await page2.fill('input[name="email"]', testUser.email);
-      await page2.fill('input[name="password"]', testUser.password);
-
-      // Trigger validation
-      await page2.locator('input[name="email"]').blur();
-      await page2.locator('input[name="password"]').blur();
-      await page2.waitForTimeout(500);
-
-      await page2.click('button[type="submit"]');
-
-      // Wait for successful login (regular users redirect to /dashboard)
-      await page2.waitForURL(/.*(dashboard|admin)/, { timeout: 20000 });
-      await page2.waitForLoadState('networkidle');
+      await TestHelpers.loginAndWaitForRedirect(
+        page2,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
       console.log('✅ Second device logged in successfully');
 
       // Step 3: Navigate to security settings page (sessions are managed in SecurityTab)
@@ -174,31 +137,16 @@ test.describe('Multi-Device Logout', () => {
     }
   });
 
-  test('should show confirmation before logging out all devices', async ({ page }) => {
+  test('should show confirmation before logging out all devices', async ({ page, workerCredentials }) => {
     try {
-      // Use regular user credentials (not SUPERADMIN) to access /dashboard routes
-      const testUser = TestHelpers.generateTestUser();
-
-      // Register and login test user
-      await TestHelpers.registerUser(page, testUser);
-      await page.waitForURL(/.*(dashboard|verify-email)/, { timeout: 30000 });
-
-      if (page.url().includes('/verify-email')) {
-        // Skip reason: TEST_INFRASTRUCTURE - Email verification required for registration
-        test.skip(true, 'Email verification required for registration');
-        return;
-      }
-
-      // Ensure we're logged in
-      if (!page.url().includes('/dashboard')) {
-        await page.goto('/auth/login');
-        await page.fill('input[name="email"]', testUser.email);
-        await page.fill('input[name="password"]', testUser.password);
-        await page.click('button[type="submit"]');
-        await page.waitForURL(/\/dashboard/, { timeout: 15000 });
-      }
-
-      await page.waitForLoadState('networkidle');
+      // Login using worker credentials
+      console.log('🔐 Logging in...');
+      await TestHelpers.loginAndWaitForRedirect(
+        page,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
 
       // Navigate to security settings page (sessions are managed in SecurityTab)
       console.log('📱 Navigating to sessions page...');
@@ -260,33 +208,14 @@ test.describe('Multi-Device Logout', () => {
       // Skip if not admin - this test requires admin credentials
       test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
 
-      // Login
+      // Login using proper helper
       console.log('🔐 Logging in...');
-      await page.goto('/auth/login');
-      await page.waitForLoadState('networkidle');
-      await page.waitForTimeout(1000);
-
-      // Check if form exists
-      const formExists = await TestHelpers.checkUIElementExists(page, 'form', 10000);
-      if (!formExists) {
-        // Skip reason: TEST_INFRASTRUCTURE - Login form not available
-        test.skip(true, 'Login form not available');
-        return;
-      }
-
-      await page.fill('input[name="email"]', workerCredentials.email);
-      await page.fill('input[name="password"]', workerCredentials.password);
-
-      // Trigger validation
-      await page.locator('input[name="email"]').blur();
-      await page.locator('input[name="password"]').blur();
-      await page.waitForTimeout(500);
-
-      await page.click('button[type="submit"]');
-
-      // SUPERADMIN redirects to /admin, not /dashboard
-      await page.waitForURL(/.*(admin|dashboard)/, { timeout: 20000 });
-      await page.waitForLoadState('networkidle');
+      await TestHelpers.loginAndWaitForRedirect(
+        page,
+        workerCredentials.email,
+        workerCredentials.password,
+        workerCredentials.isAdmin,
+      );
 
       // Navigate to security page
       console.log('🔒 Navigating to security page...');

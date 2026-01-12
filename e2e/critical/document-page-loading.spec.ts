@@ -53,7 +53,7 @@ test.describe('Documents Page Loading', () => {
       }
 
       // CRITICAL: Verify no "Failed to load documents" error appears
-      const errorMessage = page.locator('text=/Failed to load documents/i');
+      const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
       await expect(errorMessage).not.toBeVisible({ timeout: 5000 });
 
       // Verify Documents tab is active by default
@@ -112,7 +112,7 @@ test.describe('Documents Page Loading', () => {
       }
 
       // Verify no error message
-      const errorMessage = page.locator('text=/Failed to load documents/i');
+      const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
       await expect(errorMessage).not.toBeVisible({ timeout: 5000 });
 
       // Empty state might show different UI, but no error should be present
@@ -157,7 +157,7 @@ test.describe('Documents Page Loading', () => {
       }
 
       // Verify no error on Documents tab
-      const errorMessage = page.locator('text=/Failed to load documents/i');
+      const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
       await expect(errorMessage).not.toBeVisible({ timeout: 5000 });
 
       // Click on Analytics tab

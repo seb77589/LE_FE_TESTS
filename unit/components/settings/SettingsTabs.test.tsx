@@ -41,7 +41,8 @@ describe('SettingsTabs', () => {
     render(<SettingsTabs />);
 
     const securityTab = screen.getByText('Security').closest('a');
-    expect(securityTab).toHaveClass('border-blue-500', 'text-blue-600');
+    // Component uses design tokens: border-primary and text-primary
+    expect(securityTab).toHaveClass('border-primary', 'text-primary');
   });
 
   it('should use default activeTab when no search param', () => {
@@ -51,7 +52,8 @@ describe('SettingsTabs', () => {
     render(<SettingsTabs activeTab="general" />);
 
     const generalTab = screen.getByText('General').closest('a');
-    expect(generalTab).toHaveClass('border-blue-500', 'text-blue-600');
+    // Component uses design tokens: border-primary and text-primary
+    expect(generalTab).toHaveClass('border-primary', 'text-primary');
   });
 
   it('should use custom activeTab prop', () => {
@@ -61,7 +63,8 @@ describe('SettingsTabs', () => {
     render(<SettingsTabs activeTab="privacy" />);
 
     const privacyTab = screen.getByText('Privacy & Data').closest('a');
-    expect(privacyTab).toHaveClass('border-blue-500', 'text-blue-600');
+    // Component uses design tokens: border-primary and text-primary
+    expect(privacyTab).toHaveClass('border-primary', 'text-primary');
   });
 
   it('should render all tabs with correct hrefs', () => {

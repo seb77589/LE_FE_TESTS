@@ -38,14 +38,16 @@ describe('CardSkeleton', () => {
   it('should render image placeholder when showImage is true', () => {
     const { container } = render(<CardSkeleton showImage={true} />);
 
-    const image = container.querySelector('.h-48.bg-gray-200');
+    // Component uses design token 'bg-muted' instead of 'bg-gray-200'
+    const image = container.querySelector('.h-48.bg-muted');
     expect(image).toBeInTheDocument();
   });
 
   it('should render specified number of lines', () => {
     const { container } = render(<CardSkeleton lines={5} />);
 
-    const lines = container.querySelectorAll('.h-4.bg-gray-200');
+    // Component uses design token 'bg-muted' instead of 'bg-gray-200'
+    const lines = container.querySelectorAll('.h-4.bg-muted');
     expect(lines.length).toBe(5);
   });
 
@@ -58,7 +60,8 @@ describe('CardSkeleton', () => {
   it('should render with default 3 lines', () => {
     const { container } = render(<CardSkeleton />);
 
-    const lines = container.querySelectorAll('.h-4.bg-gray-200');
+    // Component uses design token 'bg-muted' instead of 'bg-gray-200'
+    const lines = container.querySelectorAll('.h-4.bg-muted');
     expect(lines.length).toBe(3);
   });
 });

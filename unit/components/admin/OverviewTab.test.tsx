@@ -48,6 +48,10 @@ jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
+jest.mock('@/lib/auth/roleChecks', () => ({
+  useRoleCheck: jest.fn(),
+}));
+
 jest.mock('@/lib/api', () => ({
   fetcher: jest.fn(),
 }));
@@ -82,9 +86,11 @@ jest.mock('@/components/ui/ErrorDisplay', () => ({
 
 import useSWR from 'swr';
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
+import { useRoleCheck } from '@/lib/auth/roleChecks';
 
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+const mockUseRoleCheck = useRoleCheck as jest.MockedFunction<typeof useRoleCheck>;
 
 describe('OverviewTab', () => {
   const mockStatsData = {
@@ -144,13 +150,41 @@ describe('OverviewTab', () => {
       user: {
         id: 1,
         email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
-        role: 'superadmin',
+        role: 'SUPERADMIN',
+      },
+    } as any);
+
+    // Default: superadmin role
+    mockUseRoleCheck.mockReturnValue({
+      isSuperAdmin: true,
+      isAdmin: true,
+      isAssistant: false,
+      hasRole: jest.fn((role) => role === 'SUPERADMIN'),
+      hasAnyRole: jest.fn((roles) => roles.includes('SUPERADMIN')),
+      hasAllRoles: jest.fn((roles) => roles.includes('SUPERADMIN')),
+      currentRole: 'SUPERADMIN',
+      user: {
+        id: 1,
+        email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
+        role: 'SUPERADMIN',
       },
     } as any);
 
     // Default SWR mocks
     mockUseSWR.mockImplementation((key: any) => {
-      if (typeof key === 'function' && key().includes('/admin/stats')) {
+      // Handle function keys that may return null
+      let resolvedKey: string | null = null;
+      if (typeof key === 'function') {
+        try {
+          resolvedKey = key();
+        } catch {
+          resolvedKey = null;
+        }
+      } else if (typeof key === 'string') {
+        resolvedKey = key;
+      }
+
+      if (resolvedKey && resolvedKey.includes('/admin/stats')) {
         return {
           data: mockStatsData,
           error: undefined,
@@ -158,7 +192,7 @@ describe('OverviewTab', () => {
           mutate: jest.fn(),
         } as any;
       }
-      if (typeof key === 'function' && key().includes('/admin/system/status')) {
+      if (resolvedKey && resolvedKey.includes('/admin/system/status')) {
         return {
           data: mockSystemStatus,
           error: undefined,
@@ -213,25 +247,25 @@ describe('OverviewTab', () => {
 
   describe('SuperAdmin Features', () => {
     it('should display admin tools for superadmin', () => {
-      mockUseAuth.mockReturnValue({
-        user: {
-          id: 1,
-          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
-          role: 'superadmin',
-        },
-      } as any);
-
+      // Default mock is superadmin, no need to override
       render(<OverviewTab />);
       // SuperAdmin sees Admin Tools section
       expect(screen.getByText('Admin Tools')).toBeInTheDocument();
     });
 
     it('should not display admin tools for non-superadmin', () => {
-      mockUseAuth.mockReturnValue({
+      mockUseRoleCheck.mockReturnValue({
+        isSuperAdmin: false,
+        isAdmin: true,
+        isAssistant: false,
+        hasRole: jest.fn((role) => role === 'MANAGER'),
+        hasAnyRole: jest.fn((roles) => roles.includes('MANAGER')),
+        hasAllRoles: jest.fn((roles) => roles.includes('MANAGER')),
+        currentRole: 'MANAGER',
         user: {
           id: 1,
           email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
-          role: 'admin',
+          role: 'MANAGER',
         },
       } as any);
 
@@ -241,14 +275,7 @@ describe('OverviewTab', () => {
     });
 
     it('should display quick links for superadmin', () => {
-      mockUseAuth.mockReturnValue({
-        user: {
-          id: 1,
-          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
-          role: 'superadmin',
-        },
-      } as any);
-
+      // Default mock is superadmin, no need to override
       render(<OverviewTab />);
       // Quick links for superadmin
       expect(screen.getByText('Companies')).toBeInTheDocument();
@@ -277,7 +304,9 @@ describe('OverviewTab', () => {
   describe('Error Handling', () => {
     it('should handle stats error', () => {
       mockUseSWR.mockImplementation((key: any) => {
-        if (typeof key === 'function' && key().includes('/admin/stats')) {
+        // Handle key as string or function
+        const keyStr = typeof key === 'function' ? key() : key;
+        if (keyStr && typeof keyStr === 'string' && keyStr.includes('/admin/stats')) {
           return {
             data: undefined,
             error: new Error('Failed to fetch stats'),
@@ -299,16 +328,12 @@ describe('OverviewTab', () => {
     });
 
     it('should handle system status error', () => {
-      mockUseAuth.mockReturnValue({
-        user: {
-          id: 1,
-          email: FRONTEND_TEST_CREDENTIALS.ADMIN.email,
-          role: 'superadmin',
-        },
-      } as any);
+      // useRoleCheck is already mocked as superadmin in beforeEach
 
       mockUseSWR.mockImplementation((key: any) => {
-        if (typeof key === 'function' && key().includes('/admin/stats')) {
+        // Handle key as string or function
+        const keyStr = typeof key === 'function' ? key() : key;
+        if (keyStr && typeof keyStr === 'string' && keyStr.includes('/admin/stats')) {
           return {
             data: mockStatsData,
             error: undefined,
@@ -316,7 +341,7 @@ describe('OverviewTab', () => {
             mutate: jest.fn(),
           } as any;
         }
-        if (typeof key === 'function' && key().includes('/admin/system/status')) {
+        if (keyStr && typeof keyStr === 'string' && keyStr.includes('/admin/system/status')) {
           return {
             data: undefined,
             error: new Error('Failed to fetch system status'),

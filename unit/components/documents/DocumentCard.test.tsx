@@ -239,7 +239,8 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} document={processedDoc} />);
 
       const badge = screen.getByText('processed');
-      expect(badge).toHaveClass('bg-blue-100', 'text-blue-800');
+      // Component uses design tokens for processed status
+      expect(badge).toHaveClass('text-primary');
     });
 
     it('returns red styling for error status', () => {
@@ -247,7 +248,8 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} document={errorDoc} />);
 
       const badge = screen.getByText('error');
-      expect(badge).toHaveClass('bg-red-100', 'text-red-800');
+      // Component uses design tokens for error status
+      expect(badge).toHaveClass('text-destructive');
     });
 
     it('returns gray styling for unknown status', () => {
@@ -255,7 +257,8 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} document={unknownDoc} />);
 
       const badge = screen.getByText('unknown');
-      expect(badge).toHaveClass('bg-gray-100', 'text-gray-800');
+      // Component uses design tokens: bg-muted and text-muted-foreground
+      expect(badge).toHaveClass('bg-muted', 'text-muted-foreground');
     });
 
     it('handles uppercase status correctly', () => {
@@ -286,7 +289,8 @@ describe('DocumentCard', () => {
       render(<DocumentCard {...defaultProps} onSelect={onSelect} isSelected={true} />);
 
       const card = screen.getByTestId('document-item');
-      expect(card).toHaveClass('ring-2', 'ring-blue-500', 'border-blue-500');
+      // Component uses design tokens: ring-primary and border-primary
+      expect(card).toHaveClass('ring-2', 'ring-primary', 'border-primary');
     });
 
     it('checkbox reflects isSelected state', () => {
@@ -716,9 +720,9 @@ describe('DocumentCard', () => {
       const emptyStatusDoc = { ...mockDocument, status: '' };
       render(<DocumentCard {...defaultProps} document={emptyStatusDoc} />);
 
-      // Should use default gray styling for unknown/empty status
+      // Should use default styling for unknown/empty status (design tokens)
       const badge = screen.getByText('', { selector: 'span.inline-flex' });
-      expect(badge).toHaveClass('bg-gray-100', 'text-gray-800');
+      expect(badge).toHaveClass('bg-muted', 'text-muted-foreground');
     });
   });
 });

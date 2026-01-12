@@ -79,6 +79,7 @@ describe('Input Component', () => {
 
   test('error styling is applied when error prop is provided', () => {
     render(<Input error="Error message" />);
-    expect(screen.getByRole('textbox')).toHaveClass('border-red-500');
+    // Component uses design token 'border-destructive' instead of 'border-red-500'
+    expect(screen.getByRole('textbox')).toHaveClass('border-destructive');
   });
 });

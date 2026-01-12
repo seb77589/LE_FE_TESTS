@@ -201,8 +201,8 @@ describe('UnifiedLoginForm', () => {
       render(<UnifiedLoginForm />);
 
       expect(screen.getByText('Welcome Back')).toBeInTheDocument();
-      expect(screen.getByLabelText('Email Address')).toBeInTheDocument();
-      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      expect(screen.getByLabelText(/Email Address/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
     });
   });
@@ -224,8 +224,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(emailInput, 'invalid-email');
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.VALID); // Need valid password to see email error
 
@@ -241,8 +241,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, 'short');
 
@@ -260,7 +260,7 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
+      const emailInput = screen.getByLabelText(/Email Address/i);
       await user.type(emailInput, 'invalid-email');
 
       const submitButton = screen.getByRole('button', { name: /sign in/i });
@@ -276,8 +276,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
 
@@ -297,8 +297,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -319,8 +319,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -337,8 +337,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -357,8 +357,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -377,8 +377,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm onSuccess={onSuccessMock} />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -395,8 +395,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -427,8 +427,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.WRONG);
@@ -454,8 +454,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.WRONG);
@@ -481,8 +481,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -504,8 +504,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.WRONG);
@@ -524,8 +524,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.WRONG);
@@ -550,8 +550,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -581,8 +581,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.WRONG);
@@ -610,8 +610,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -636,8 +636,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -661,8 +661,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -719,8 +719,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       const submitButton = screen.getByRole('button', { name: /sign in/i });
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
@@ -752,8 +752,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -770,8 +770,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(emailInput, '   '); // Whitespace only
       await user.type(passwordInput, FRONTEND_TEST_DATA.PASSWORD.VALID);
 
@@ -787,8 +787,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       // Zod's email validator accepts long emails as valid, so this tests that
       // very long (but valid format) emails can be submitted
       const longEmail = 'a'.repeat(50) + '@example.com';
@@ -808,8 +808,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(emailInput, 'test+tag@example.com');
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
 
@@ -826,8 +826,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, '    '); // 4 spaces only - less than 8 chars
 
@@ -849,8 +849,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -870,8 +870,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -904,8 +904,8 @@ describe('UnifiedLoginForm', () => {
 
       render(<UnifiedLoginForm />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);
@@ -942,8 +942,8 @@ describe('UnifiedLoginForm', () => {
       const user = userEvent.setup();
       render(<UnifiedLoginForm redirectTo="/custom-redirect" />);
 
-      const emailInput = screen.getByLabelText('Email Address');
-      const passwordInput = screen.getByLabelText('Password');
+      const emailInput = screen.getByLabelText(/Email Address/i);
+      const passwordInput = screen.getByLabelText(/Password/i);
 
       await user.type(emailInput, FRONTEND_TEST_CREDENTIALS.USER.email);
       await user.type(passwordInput, FRONTEND_TEST_CREDENTIALS.USER.password);

@@ -102,10 +102,9 @@ describe('UserImport', () => {
         />,
       );
       expect(screen.getByText(successResult)).toBeInTheDocument();
-      expect(screen.getByText(successResult)).toHaveClass(
-        'bg-green-100',
-        'text-green-800',
-      );
+      // Component uses design tokens bg-green-100 and text-green-800
+      expect(screen.getByText(successResult)).toHaveClass('bg-green-100');
+      expect(screen.getByText(successResult)).toHaveClass('text-green-800');
     });
 
     it('should display error message when import fails', () => {
@@ -118,7 +117,8 @@ describe('UserImport', () => {
         />,
       );
       expect(screen.getByText(errorResult)).toBeInTheDocument();
-      expect(screen.getByText(errorResult)).toHaveClass('bg-red-100', 'text-red-800');
+      // Component uses design tokens bg-destructive/10 and text-destructive for errors
+      expect(screen.getByText(errorResult)).toHaveClass('text-destructive');
     });
 
     it('should not display result when importResult is null', () => {

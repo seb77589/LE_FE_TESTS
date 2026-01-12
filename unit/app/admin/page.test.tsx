@@ -14,11 +14,13 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import AdminPage from '@/app/(admin)/admin/page';
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
+import { useRoleCheck } from '@/lib/auth/roleChecks';
 import useSWR from 'swr';
 import { FRONTEND_TEST_CREDENTIALS } from '@tests/jest-test-credentials';
 
 // Mock dependencies
 jest.mock('@/lib/context/ConsolidatedAuthContext');
+jest.mock('@/lib/auth/roleChecks');
 jest.mock('swr');
 const mockGetSearchParams = jest.fn((key: string) => null);
 const mockRouterPush = jest.fn();
@@ -191,6 +193,7 @@ jest.mock('@/components/admin/UsersTab', () => ({
 
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+const mockUseRoleCheck = useRoleCheck as jest.MockedFunction<typeof useRoleCheck>;
 
 describe('AdminPage', () => {
   const mockUser = {
@@ -233,6 +236,18 @@ describe('AdminPage', () => {
       refreshAuth: jest.fn(),
       getValidAccessToken: jest.fn(),
       refreshAccessToken: jest.fn(),
+    } as any);
+
+    // Default role check mock - manager role
+    mockUseRoleCheck.mockReturnValue({
+      isSuperAdmin: false,
+      isAdmin: true,
+      isAssistant: false,
+      hasRole: jest.fn((role) => role === 'MANAGER'),
+      hasAnyRole: jest.fn((roles) => roles.includes('MANAGER')),
+      hasAllRoles: jest.fn((roles) => roles.includes('MANAGER')),
+      currentRole: 'MANAGER',
+      user: mockUser,
     } as any);
 
     // Reset search params mock
@@ -294,21 +309,32 @@ describe('AdminPage', () => {
     });
 
     it('should show superadmin role badge for superadmin users', () => {
+      const superAdminUser = { ...mockUser, role: 'SUPERADMIN' };
       mockUseAuth.mockReturnValue({
-        user: { ...mockUser, role: 'superadmin' },
+        user: superAdminUser,
         isAuthenticated: true,
         isLoading: false,
-        isAdmin: jest.fn(() => true), // Add isAdmin function
+        isAdmin: jest.fn(() => true),
         login: jest.fn(),
         logout: jest.fn(),
         refreshAuth: jest.fn(),
         getValidAccessToken: jest.fn(),
         refreshAccessToken: jest.fn(),
       } as any);
+      mockUseRoleCheck.mockReturnValue({
+        isSuperAdmin: true,
+        isAdmin: true,
+        isAssistant: false,
+        hasRole: jest.fn((role) => role === 'SUPERADMIN'),
+        hasAnyRole: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        hasAllRoles: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        currentRole: 'SUPERADMIN',
+        user: superAdminUser,
+      } as any);
 
       render(<AdminPage />);
 
-      // formatRole('superadmin') returns 'Super Admin' (with space)
+      // formatRole('SUPERADMIN') returns 'Super Admin' (with space)
       const roleBadge = screen.getByTestId('admin-role-badge');
       expect(roleBadge.textContent).toMatch(/Super.*Admin/i);
     });
@@ -355,16 +381,27 @@ describe('AdminPage', () => {
     });
 
     it('should show health tabs for superadmin only', () => {
+      const superAdminUser = { ...mockUser, role: 'SUPERADMIN' };
       mockUseAuth.mockReturnValue({
-        user: { ...mockUser, role: 'superadmin' },
+        user: superAdminUser,
         isAuthenticated: true,
         isLoading: false,
-        isAdmin: jest.fn(() => true), // Add isAdmin function
+        isAdmin: jest.fn(() => true),
         login: jest.fn(),
         logout: jest.fn(),
         refreshAuth: jest.fn(),
         getValidAccessToken: jest.fn(),
         refreshAccessToken: jest.fn(),
+      } as any);
+      mockUseRoleCheck.mockReturnValue({
+        isSuperAdmin: true,
+        isAdmin: true,
+        isAssistant: false,
+        hasRole: jest.fn((role) => role === 'SUPERADMIN'),
+        hasAnyRole: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        hasAllRoles: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        currentRole: 'SUPERADMIN',
+        user: superAdminUser,
       } as any);
 
       render(<AdminPage />);
@@ -443,8 +480,9 @@ describe('AdminPage', () => {
     });
 
     it('should display error message when system status fails to load', async () => {
+      const superAdminUser = { ...mockUser, role: 'SUPERADMIN' };
       mockUseAuth.mockReturnValue({
-        user: { ...mockUser, role: 'superadmin' },
+        user: superAdminUser,
         isAuthenticated: true,
         isLoading: false,
         isAdmin: jest.fn(() => true),
@@ -453,6 +491,16 @@ describe('AdminPage', () => {
         refreshAuth: jest.fn(),
         getValidAccessToken: jest.fn(),
         refreshAccessToken: jest.fn(),
+      } as any);
+      mockUseRoleCheck.mockReturnValue({
+        isSuperAdmin: true,
+        isAdmin: true,
+        isAssistant: false,
+        hasRole: jest.fn((role) => role === 'SUPERADMIN'),
+        hasAnyRole: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        hasAllRoles: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        currentRole: 'SUPERADMIN',
+        user: superAdminUser,
       } as any);
 
       mockUseSWR.mockImplementation((key: any) => {
@@ -483,8 +531,9 @@ describe('AdminPage', () => {
     });
 
     it('should show retry button for system status errors', async () => {
+      const superAdminUser = { ...mockUser, role: 'SUPERADMIN' };
       mockUseAuth.mockReturnValue({
-        user: { ...mockUser, role: 'superadmin' },
+        user: superAdminUser,
         isAuthenticated: true,
         isLoading: false,
         isAdmin: jest.fn(() => true),
@@ -493,6 +542,16 @@ describe('AdminPage', () => {
         refreshAuth: jest.fn(),
         getValidAccessToken: jest.fn(),
         refreshAccessToken: jest.fn(),
+      } as any);
+      mockUseRoleCheck.mockReturnValue({
+        isSuperAdmin: true,
+        isAdmin: true,
+        isAssistant: false,
+        hasRole: jest.fn((role) => role === 'SUPERADMIN'),
+        hasAnyRole: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        hasAllRoles: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        currentRole: 'SUPERADMIN',
+        user: superAdminUser,
       } as any);
 
       const mockMutate = jest.fn();
@@ -530,8 +589,9 @@ describe('AdminPage', () => {
 
   describe('Role-Based Access', () => {
     it('should show system status for superadmin', () => {
+      const superAdminUser = { ...mockUser, role: 'SUPERADMIN' };
       mockUseAuth.mockReturnValue({
-        user: { ...mockUser, role: 'superadmin' },
+        user: superAdminUser,
         isAuthenticated: true,
         isLoading: false,
         isAdmin: jest.fn(() => true),
@@ -540,6 +600,16 @@ describe('AdminPage', () => {
         refreshAuth: jest.fn(),
         getValidAccessToken: jest.fn(),
         refreshAccessToken: jest.fn(),
+      } as any);
+      mockUseRoleCheck.mockReturnValue({
+        isSuperAdmin: true,
+        isAdmin: true,
+        isAssistant: false,
+        hasRole: jest.fn((role) => role === 'SUPERADMIN'),
+        hasAnyRole: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        hasAllRoles: jest.fn((roles) => roles.includes('SUPERADMIN')),
+        currentRole: 'SUPERADMIN',
+        user: superAdminUser,
       } as any);
 
       render(<AdminPage />);

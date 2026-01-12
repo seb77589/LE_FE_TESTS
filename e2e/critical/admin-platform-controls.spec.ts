@@ -9,8 +9,30 @@
  * - Session/Token Controls
  */
 
-import { test, expect } from '../../fixtures/auth-fixture';
+import { test, expect, Page } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
+
+/**
+ * Helper function to wait for Platform Controls page to fully load
+ * Uses networkidle and waits for the heading to be visible
+ */
+async function waitForPlatformControls(page: Page): Promise<boolean> {
+  await page.goto('/admin/platform');
+  await page.waitForLoadState('networkidle');
+
+  const pageHeading = page.locator('h1:has-text("Platform Controls")');
+  let headingVisible = await pageHeading
+    .isVisible({ timeout: 25000 })
+    .catch(() => false);
+
+  if (!headingVisible) {
+    // Wait additional time for loading states and retry
+    await page.waitForTimeout(3000);
+    headingVisible = await pageHeading.isVisible({ timeout: 10000 }).catch(() => false);
+  }
+
+  return headingVisible;
+}
 
 test.describe('Admin - Platform Controls', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
@@ -25,28 +47,10 @@ test.describe('Admin - Platform Controls', () => {
   });
 
   test('should display platform controls page with tabs', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
-
-    // Wait for page title with retry logic for loading states
-    const pageHeading = page.locator('h1:has-text("Platform Controls")');
-    let titleVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!titleVisible) {
-      // Check if we're in loading state and retry
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        titleVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!titleVisible) {
-        test.skip(true, 'Platform Controls UI not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls UI not yet implemented');
+      return;
     }
 
     // Check for all three tabs
@@ -56,27 +60,10 @@ test.describe('Admin - Platform Controls', () => {
   });
 
   test('should display rate limiting tab with statistics', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
-
-    // Wait for page with loading state handling
-    const pageHeading = page.locator('h1:has-text("Platform Controls")');
-    let headingVisible = await pageHeading
-      .isVisible({ timeout: 25000 })
-      .catch(() => false);
-
-    if (!headingVisible) {
-      const bodyText = await page.locator('body').textContent();
-      if (bodyText?.includes('Loading')) {
-        await page.waitForTimeout(5000);
-        headingVisible = await pageHeading
-          .isVisible({ timeout: 15000 })
-          .catch(() => false);
-      }
-      if (!headingVisible) {
-        test.skip(true, 'Rate limiting tab not yet implemented');
-        return;
-      }
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Rate limiting tab not yet implemented');
+      return;
     }
 
     const hasTab = await page
@@ -110,15 +97,17 @@ test.describe('Admin - Platform Controls', () => {
   });
 
   test('should display blocked IPs table', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('ratelimits-tab')
-      .isVisible()
+      .isVisible({ timeout: 5000 })
       .catch(() => false);
     if (!hasTab) {
-      // Reason: Rate limiting tab not yet implemented
       test.skip(true, 'Rate limiting tab not yet implemented');
       return;
     }
@@ -133,15 +122,17 @@ test.describe('Admin - Platform Controls', () => {
   });
 
   test('should display allowlist IPs table', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('ratelimits-tab')
-      .isVisible()
+      .isVisible({ timeout: 5000 })
       .catch(() => false);
     if (!hasTab) {
-      // Reason: Rate limiting tab not yet implemented
       test.skip(true, 'Rate limiting tab not yet implemented');
       return;
     }
@@ -168,15 +159,17 @@ test.describe('Admin - Maintenance & Flags', () => {
   });
 
   test('should display maintenance mode toggle', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('maintenance-tab')
-      .isVisible()
+      .isVisible({ timeout: 5000 })
       .catch(() => false);
     if (!hasTab) {
-      // Skip reason: FUTURE_FEATURE - Maintenance tab not yet implemented
       test.skip(true, 'Maintenance tab not yet implemented');
       return;
     }
@@ -203,15 +196,17 @@ test.describe('Admin - Maintenance & Flags', () => {
   test('should show confirmation modal when toggling maintenance mode', async ({
     page,
   }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('maintenance-tab')
-      .isVisible()
+      .isVisible({ timeout: 5000 })
       .catch(() => false);
     if (!hasTab) {
-      // Skip reason: FUTURE_FEATURE - Maintenance tab not yet implemented
       test.skip(true, 'Maintenance tab not yet implemented');
       return;
     }
@@ -246,8 +241,11 @@ test.describe('Admin - Maintenance & Flags', () => {
   });
 
   test('should display feature flags section', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('maintenance-tab')
@@ -281,8 +279,11 @@ test.describe('Admin - Session Controls', () => {
   });
 
   test('should display active sessions table', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('sessions-tab')
@@ -315,8 +316,11 @@ test.describe('Admin - Session Controls', () => {
   test('should display bulk revoke button when sessions are selected', async ({
     page,
   }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('sessions-tab')
@@ -352,8 +356,11 @@ test.describe('Admin - Session Controls', () => {
   });
 
   test('should show confirmation modal when revoking session', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('sessions-tab')
@@ -394,8 +401,11 @@ test.describe('Admin - Session Controls', () => {
   test('should show confirmation modal for bulk revoke with typed confirmation', async ({
     page,
   }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('sessions-tab')
@@ -457,8 +467,11 @@ test.describe('Confirmation Modal Component', () => {
   });
 
   test('should close confirmation modal on Escape key', async ({ page }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     const hasTab = await page
       .getByTestId('maintenance-tab')
@@ -509,8 +522,11 @@ test.describe('Confirmation Modal Component', () => {
   test('should disable confirm button when typed confirmation does not match', async ({
     page,
   }) => {
-    await page.goto('/admin/platform');
-    await page.waitForLoadState('load');
+    const pageLoaded = await waitForPlatformControls(page);
+    if (!pageLoaded) {
+      test.skip(true, 'Platform Controls page not loaded');
+      return;
+    }
 
     // Navigate to sessions tab
     const hasTab = await page

@@ -244,17 +244,24 @@ describe('RootLayout', () => {
   describe('Metadata', () => {
     it('should export correct metadata', () => {
       expect(metadata).toBeDefined();
-      expect(metadata.title).toBe('LegalEase');
+      // Title is an object with default and template for Next.js App Router
+      expect(metadata.title).toEqual({
+        default: 'LegalEase - Legal Document Management & Automation Platform',
+        template: '%s | LegalEase',
+      });
       expect(metadata.description).toBe(
-        'Legal document management and automation platform',
+        'Professional legal document management and automation platform. Streamline your legal workflows, manage cases efficiently, and collaborate with your team.',
       );
     });
 
     it('should have metadata with title and description', () => {
       expect(metadata).toEqual(
         expect.objectContaining({
-          title: 'LegalEase',
-          description: 'Legal document management and automation platform',
+          title: expect.objectContaining({
+            default: expect.stringContaining('LegalEase'),
+            template: '%s | LegalEase',
+          }),
+          description: expect.stringContaining('legal document management'),
         }),
       );
     });

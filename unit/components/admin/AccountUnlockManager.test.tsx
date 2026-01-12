@@ -63,8 +63,10 @@ jest.mock('@/components/admin/unlock/UnlockAccountDialog', () => ({
   UnlockAccountDialog: () => <div data-testid="unlock-dialog">Dialog</div>,
 }));
 
-jest.mock('@/components/admin/unlock/AccountsLoading', () => ({
-  AccountsLoading: () => <div data-testid="accounts-loading">Loading</div>,
+// Mock LoadingState component (used by AccountUnlockManager instead of AccountsLoading)
+jest.mock('@/components/ui/LoadingState', () => ({
+  __esModule: true,
+  default: () => <div data-testid="accounts-loading">Loading</div>,
 }));
 
 jest.mock('@/components/admin/unlock/AccountsEmpty', () => ({
@@ -90,6 +92,16 @@ jest.mock('lucide-react', () => ({
   RefreshCw: () => <div data-testid="refresh-icon">Refresh</div>,
   AlertTriangle: () => <div data-testid="alert-icon">Alert</div>,
   CheckCircle: () => <div data-testid="check-icon">Check</div>,
+}));
+
+jest.mock('@/lib/logging', () => ({
+  __esModule: true,
+  default: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
 }));
 
 // Define mock data for tests

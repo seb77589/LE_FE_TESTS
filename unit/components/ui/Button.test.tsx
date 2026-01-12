@@ -30,44 +30,44 @@ describe('Button', () => {
   describe('Variants', () => {
     it('applies primary variant styles by default', () => {
       const { container } = render(<Button>Button</Button>);
-      expect(container.firstChild).toHaveClass('bg-blue-600', 'text-white');
+      expect(container.firstChild).toHaveClass('bg-primary', 'text-primary-foreground');
     });
 
     it('applies secondary variant styles', () => {
       const { container } = render(<Button variant="secondary">Button</Button>);
-      expect(container.firstChild).toHaveClass('bg-gray-100', 'text-gray-900');
+      expect(container.firstChild).toHaveClass('bg-secondary', 'text-secondary-foreground');
     });
 
     it('applies outline variant styles', () => {
       const { container } = render(<Button variant="outline">Button</Button>);
-      expect(container.firstChild).toHaveClass('border', 'border-gray-300');
+      expect(container.firstChild).toHaveClass('border', 'border-input', 'bg-background');
     });
 
     it('applies ghost variant styles', () => {
       const { container } = render(<Button variant="ghost">Button</Button>);
-      expect(container.firstChild).toHaveClass('hover:bg-gray-100');
+      expect(container.firstChild).toHaveClass('hover:bg-accent', 'hover:text-accent-foreground');
     });
 
     it('applies destructive variant styles', () => {
       const { container } = render(<Button variant="destructive">Button</Button>);
-      expect(container.firstChild).toHaveClass('bg-red-600', 'text-white');
+      expect(container.firstChild).toHaveClass('bg-destructive', 'text-destructive-foreground');
     });
   });
 
   describe('Sizes', () => {
     it('applies medium size by default', () => {
       const { container } = render(<Button>Button</Button>);
-      expect(container.firstChild).toHaveClass('h-10', 'px-4', 'py-2');
+      expect(container.firstChild).toHaveClass('h-11', 'px-4', 'py-2');
     });
 
     it('applies small size', () => {
       const { container } = render(<Button size="sm">Button</Button>);
-      expect(container.firstChild).toHaveClass('h-9', 'px-3', 'text-sm');
+      expect(container.firstChild).toHaveClass('h-10', 'px-3', 'text-sm');
     });
 
     it('applies large size', () => {
       const { container } = render(<Button size="lg">Button</Button>);
-      expect(container.firstChild).toHaveClass('h-11', 'px-8');
+      expect(container.firstChild).toHaveClass('h-12', 'px-8');
     });
   });
 

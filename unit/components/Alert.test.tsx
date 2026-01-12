@@ -8,7 +8,8 @@ describe('Alert Component', () => {
 
     const alert = screen.getByRole('alert');
     expect(alert).toBeInTheDocument();
-    expect(alert).toHaveClass('bg-blue-50');
+    // Component uses design token 'bg-primary/10' instead of 'bg-blue-50'
+    expect(alert.className).toContain('bg-primary');
     expect(alert).toHaveTextContent('This is a default alert');
   });
 
@@ -16,7 +17,8 @@ describe('Alert Component', () => {
     render(<Alert variant="info">This is an info alert</Alert>);
 
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveClass('bg-blue-50');
+    // Component uses design token 'bg-primary/10' instead of 'bg-blue-50'
+    expect(alert.className).toContain('bg-primary');
     expect(alert).toHaveTextContent('This is an info alert');
   });
 
@@ -24,7 +26,8 @@ describe('Alert Component', () => {
     render(<Alert variant="success">Operation successful</Alert>);
 
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveClass('bg-green-50');
+    // Component uses design token 'bg-primary/10' for success
+    expect(alert.className).toContain('bg-primary');
     expect(alert).toHaveTextContent('Operation successful');
   });
 
@@ -32,7 +35,8 @@ describe('Alert Component', () => {
     render(<Alert variant="error">An error occurred</Alert>);
 
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveClass('bg-red-50');
+    // Component uses design token 'bg-destructive/10' instead of 'bg-red-50'
+    expect(alert.className).toContain('bg-destructive');
     expect(alert).toHaveTextContent('An error occurred');
   });
 
@@ -40,7 +44,8 @@ describe('Alert Component', () => {
     render(<Alert variant="warning">This is a warning</Alert>);
 
     const alert = screen.getByRole('alert');
-    expect(alert).toHaveClass('bg-yellow-50');
+    // Component uses design token 'bg-accent' instead of 'bg-yellow-50'
+    expect(alert.className).toContain('bg-accent');
     expect(alert).toHaveTextContent('This is a warning');
   });
 
@@ -85,7 +90,8 @@ describe('Alert Component', () => {
     );
 
     const closeButton = screen.getByRole('button');
-    expect(closeButton).toHaveClass('text-red-500');
-    expect(closeButton).toHaveClass('hover:bg-red-100');
+    // Component uses design tokens 'text-destructive' and 'hover:bg-destructive/20'
+    expect(closeButton).toHaveClass('text-destructive');
+    expect(closeButton.className).toContain('hover:bg-destructive');
   });
 });

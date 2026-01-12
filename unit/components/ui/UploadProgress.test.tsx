@@ -10,7 +10,7 @@ describe('UploadProgress', () => {
   describe('Basic Rendering', () => {
     it('should render progress bar', () => {
       const { container } = render(<UploadProgress progress={50} />);
-      const progressBar = container.querySelector('.bg-blue-500');
+      const progressBar = container.querySelector('.bg-primary');
       expect(progressBar).toBeInTheDocument();
     });
 
@@ -21,7 +21,7 @@ describe('UploadProgress', () => {
 
     it('should set correct width based on progress', () => {
       render(<UploadProgress progress={60} />);
-      const progressBar = document.querySelector('.bg-blue-500');
+      const progressBar = document.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '60%' });
     });
   });
@@ -42,21 +42,21 @@ describe('UploadProgress', () => {
     it('should handle 0% progress', () => {
       render(<UploadProgress progress={0} />);
       expect(screen.getByText('0%')).toBeInTheDocument();
-      const progressBar = document.querySelector('.bg-blue-500');
+      const progressBar = document.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '0%' });
     });
 
     it('should handle 100% progress', () => {
       render(<UploadProgress progress={100} />);
       expect(screen.getByText('100%')).toBeInTheDocument();
-      const progressBar = document.querySelector('.bg-blue-500');
+      const progressBar = document.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '100%' });
     });
 
     it('should handle progress values above 100', () => {
       render(<UploadProgress progress={150} />);
       expect(screen.getByText('150%')).toBeInTheDocument();
-      const progressBar = document.querySelector('.bg-blue-500');
+      const progressBar = document.querySelector('.bg-primary');
       expect(progressBar).toHaveStyle({ width: '150%' });
     });
   });

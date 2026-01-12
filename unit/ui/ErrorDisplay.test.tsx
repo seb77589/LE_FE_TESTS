@@ -60,7 +60,8 @@ describe('ErrorDisplay', () => {
       );
 
       const alertDiv = container.querySelector('[role="alert"]');
-      expect(alertDiv).toHaveClass('bg-red-50', 'border-red-200');
+      // Component uses design tokens instead of hardcoded colors
+      expect(alertDiv?.className).toContain('bg-destructive');
       expect(screen.getByText('Error')).toBeInTheDocument();
     });
 
@@ -70,7 +71,8 @@ describe('ErrorDisplay', () => {
       );
 
       const alertDiv = container.querySelector('[role="alert"]');
-      expect(alertDiv).toHaveClass('bg-yellow-50', 'border-yellow-200');
+      // Component uses design token 'bg-accent' instead of 'bg-yellow-50'
+      expect(alertDiv?.className).toContain('bg-accent');
       expect(screen.getByText('Warning')).toBeInTheDocument();
     });
 
@@ -80,7 +82,8 @@ describe('ErrorDisplay', () => {
       );
 
       const alertDiv = container.querySelector('[role="alert"]');
-      expect(alertDiv).toHaveClass('bg-blue-50', 'border-blue-200');
+      // Component uses design token 'bg-primary' instead of 'bg-blue-50'
+      expect(alertDiv?.className).toContain('bg-primary');
       expect(screen.getByText('Information')).toBeInTheDocument();
     });
 
@@ -289,7 +292,8 @@ describe('InlineError', () => {
     const { container } = render(<InlineError message="Error" />);
 
     const alertDiv = container.querySelector('[role="alert"]');
-    expect(alertDiv).toHaveClass('text-red-600');
+    // Component uses design token 'text-destructive' instead of 'text-red-600'
+    expect(alertDiv?.className).toContain('text-destructive');
   });
 });
 

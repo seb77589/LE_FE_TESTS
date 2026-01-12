@@ -21,6 +21,10 @@ jest.mock('@/lib/context/ConsolidatedAuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
+jest.mock('@/lib/auth/roleChecks', () => ({
+  useRoleCheck: jest.fn(),
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
@@ -30,9 +34,11 @@ jest.mock('@/components/ui/Navigation', () => ({
 }));
 
 import { useAuth } from '@/lib/context/ConsolidatedAuthContext';
+import { useRoleCheck } from '@/lib/auth/roleChecks';
 import { useRouter } from 'next/navigation';
 
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+const mockUseRoleCheck = useRoleCheck as jest.MockedFunction<typeof useRoleCheck>;
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 
 describe('AdminPageLoadingSkeleton', () => {
@@ -45,7 +51,8 @@ describe('AdminPageLoadingSkeleton', () => {
   it('should render skeleton elements', () => {
     render(<AdminPageLoadingSkeleton />);
 
-    const skeletons = document.querySelectorAll('.bg-gray-200');
+    // Component uses bg-muted design token, not bg-gray-200
+    const skeletons = document.querySelectorAll('.bg-muted');
     expect(skeletons.length).toBeGreaterThan(0);
   });
 });
@@ -71,6 +78,16 @@ describe('AdminPageWrapper', () => {
       isLoading: true,
       isAuthenticated: false,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: false,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: () => false,
+      hasAnyRole: () => false,
+      hasAllRoles: () => false,
+      currentRole: undefined,
+      user: null,
+    });
 
     render(
       <AdminPageWrapper>
@@ -83,11 +100,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should render children when user is manager', () => {
+    const mockUser = { id: 1, email: 'manager@test.com', role: 'MANAGER' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'manager@test.com', role: 'manager' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'MANAGER',
+      hasAnyRole: (roles: string[]) => roles.includes('MANAGER'),
+      hasAllRoles: (roles: string[]) => roles.every((r) => r === 'MANAGER'),
+      currentRole: 'MANAGER',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper>
@@ -99,11 +127,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should render children when user is superadmin', () => {
+    const mockUser = { id: 1, email: 'superadmin@test.com', role: 'SUPERADMIN' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'superadmin@test.com', role: 'superadmin' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: true,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'SUPERADMIN',
+      hasAnyRole: (roles: string[]) => roles.includes('SUPERADMIN'),
+      hasAllRoles: () => true,
+      currentRole: 'SUPERADMIN',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper>
@@ -115,11 +154,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should redirect unauthorized users to dashboard', async () => {
+    const mockUser = { id: 1, email: 'user@test.com', role: 'ASSISTANT' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'user@test.com', role: 'assistant' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: false,
+      isSuperAdmin: false,
+      isAssistant: true,
+      hasRole: (role: string) => role === 'ASSISTANT',
+      hasAnyRole: (roles: string[]) => roles.includes('ASSISTANT'),
+      hasAllRoles: () => false,
+      currentRole: 'ASSISTANT',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper>
@@ -138,6 +188,16 @@ describe('AdminPageWrapper', () => {
       isLoading: false,
       isAuthenticated: false,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: false,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: () => false,
+      hasAnyRole: () => false,
+      hasAllRoles: () => false,
+      currentRole: undefined,
+      user: null,
+    });
 
     render(
       <AdminPageWrapper>
@@ -151,11 +211,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should redirect to custom path when specified', async () => {
+    const mockUser = { id: 1, email: 'user@test.com', role: 'ASSISTANT' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'user@test.com', role: 'assistant' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: false,
+      isSuperAdmin: false,
+      isAssistant: true,
+      hasRole: (role: string) => role === 'ASSISTANT',
+      hasAnyRole: (roles: string[]) => roles.includes('ASSISTANT'),
+      hasAllRoles: () => false,
+      currentRole: 'ASSISTANT',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper redirectPath="/custom-redirect">
@@ -169,11 +240,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should require superadmin when requireSuperAdmin is true', async () => {
+    const mockUser = { id: 1, email: 'manager@test.com', role: 'MANAGER' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'manager@test.com', role: 'manager' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'MANAGER',
+      hasAnyRole: (roles: string[]) => roles.includes('MANAGER'),
+      hasAllRoles: () => false,
+      currentRole: 'MANAGER',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper requireSuperAdmin>
@@ -187,11 +269,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should allow superadmin when requireSuperAdmin is true', () => {
+    const mockUser = { id: 1, email: 'superadmin@test.com', role: 'SUPERADMIN' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'superadmin@test.com', role: 'superadmin' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: true,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'SUPERADMIN',
+      hasAnyRole: (roles: string[]) => roles.includes('SUPERADMIN'),
+      hasAllRoles: () => true,
+      currentRole: 'SUPERADMIN',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper requireSuperAdmin>
@@ -203,11 +296,22 @@ describe('AdminPageWrapper', () => {
   });
 
   it('should handle case-insensitive role checking', () => {
+    const mockUser = { id: 1, email: 'manager@test.com', role: 'MANAGER' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'manager@test.com', role: 'manager' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'MANAGER',
+      hasAnyRole: (roles: string[]) => roles.includes('MANAGER'),
+      hasAllRoles: () => false,
+      currentRole: 'MANAGER',
+      user: mockUser,
+    });
 
     render(
       <AdminPageWrapper>
@@ -238,11 +342,22 @@ describe('useAdminAccess', () => {
   }
 
   it('should return correct access for manager', () => {
+    const mockUser = { id: 1, email: 'manager@test.com', role: 'MANAGER' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'manager@test.com', role: 'manager' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'MANAGER',
+      hasAnyRole: (roles: string[]) => roles.includes('MANAGER'),
+      hasAllRoles: () => false,
+      currentRole: 'MANAGER',
+      user: mockUser,
+    });
 
     render(<TestComponent />);
 
@@ -252,11 +367,22 @@ describe('useAdminAccess', () => {
   });
 
   it('should return correct access for superadmin', () => {
+    const mockUser = { id: 1, email: 'superadmin@test.com', role: 'SUPERADMIN' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'superadmin@test.com', role: 'superadmin' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: true,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'SUPERADMIN',
+      hasAnyRole: (roles: string[]) => roles.includes('SUPERADMIN'),
+      hasAllRoles: () => true,
+      currentRole: 'SUPERADMIN',
+      user: mockUser,
+    });
 
     render(<TestComponent />);
 
@@ -266,11 +392,22 @@ describe('useAdminAccess', () => {
   });
 
   it('should deny access for regular user', () => {
+    const mockUser = { id: 1, email: 'user@test.com', role: 'ASSISTANT' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'user@test.com', role: 'assistant' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: false,
+      isSuperAdmin: false,
+      isAssistant: true,
+      hasRole: (role: string) => role === 'ASSISTANT',
+      hasAnyRole: (roles: string[]) => roles.includes('ASSISTANT'),
+      hasAllRoles: () => false,
+      currentRole: 'ASSISTANT',
+      user: mockUser,
+    });
 
     render(<TestComponent />);
 
@@ -280,11 +417,22 @@ describe('useAdminAccess', () => {
   });
 
   it('should deny manager access when requireSuperAdmin is true', () => {
+    const mockUser = { id: 1, email: 'manager@test.com', role: 'MANAGER' };
     mockUseAuth.mockReturnValue({
-      user: { id: 1, email: 'manager@test.com', role: 'manager' },
+      user: mockUser,
       isLoading: false,
       isAuthenticated: true,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: true,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: (role: string) => role === 'MANAGER',
+      hasAnyRole: (roles: string[]) => roles.includes('MANAGER'),
+      hasAllRoles: () => false,
+      currentRole: 'MANAGER',
+      user: mockUser,
+    });
 
     render(<TestComponent requireSuperAdmin />);
 
@@ -298,6 +446,16 @@ describe('useAdminAccess', () => {
       isLoading: true,
       isAuthenticated: false,
     } as any);
+    mockUseRoleCheck.mockReturnValue({
+      isAdmin: false,
+      isSuperAdmin: false,
+      isAssistant: false,
+      hasRole: () => false,
+      hasAnyRole: () => false,
+      hasAllRoles: () => false,
+      currentRole: undefined,
+      user: null,
+    });
 
     render(<TestComponent />);
 

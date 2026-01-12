@@ -19,7 +19,8 @@ describe('TableSkeleton', () => {
 
     const table = container.querySelector('table');
     expect(table).toBeInTheDocument();
-    expect(table).toHaveClass('min-w-full', 'divide-y', 'divide-gray-200');
+    // Component uses design token 'divide-border' instead of 'divide-gray-200'
+    expect(table).toHaveClass('min-w-full', 'divide-y', 'divide-border');
   });
 
   it('should render header by default', () => {
@@ -27,7 +28,8 @@ describe('TableSkeleton', () => {
 
     const thead = container.querySelector('thead');
     expect(thead).toBeInTheDocument();
-    expect(thead).toHaveClass('bg-gray-50');
+    // Component uses design token 'bg-muted/50' instead of 'bg-gray-50'
+    expect(thead.className).toContain('bg-muted');
   });
 
   it('should hide header when showHeader is false', () => {
