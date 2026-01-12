@@ -173,8 +173,8 @@ test.describe.serial('User Login', () => {
 
       // Should still be on dashboard (session persisted)
       const urlAfterRefresh = page.url();
-      // Admin users redirect to /admin, regular users to /dashboard
-      const expectedPath = workerCredentials.isAdmin ? '/admin' : '/dashboard';
+      // All users now land on /dashboard after login (unified landing page)
+      const expectedPath = '/dashboard';
       expect(urlAfterRefresh).toContain(expectedPath);
       console.log('✅ Session persisted after page refresh');
     } catch (error) {

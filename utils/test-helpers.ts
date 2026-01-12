@@ -698,22 +698,7 @@ export class TestHelpers {
       return true;
     }
 
-    // Allow admin users to briefly land on /dashboard before redirecting to /admin
-    if (isAdmin && currentUrl.includes('/dashboard')) {
-      console.log(
-        '⚠️ Admin landed on /dashboard, waiting for automatic redirect to /admin...',
-      );
-      try {
-        await page.waitForURL('**/admin', { timeout: 15000 });
-        await TestHelpers.logAuthCookies(page, 'post-admin-wait check');
-        console.log('✅ Admin redirect completed after intermediate /dashboard step');
-        return true;
-      } catch (error) {
-        console.warn('⌛ Still on /dashboard after waiting for /admin redirect', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
+    // All users now land on /dashboard - no special admin redirect logic needed
 
     return false;
   }
@@ -802,10 +787,8 @@ export class TestHelpers {
     // If we're already authenticated, /auth/login may immediately redirect away.
     // In that case, there is no login form to wait for.
     await page.waitForLoadState('domcontentloaded');
-    // Admin landing can vary by environment/role (some flows land on /admin, others on /dashboard).
-    const expectedRedirectPattern = isAdmin
-      ? /\/(admin|dashboard)(\/|$)/
-      : /\/dashboard(\/|$)/;
+    // All users land on /dashboard after login (unified landing page)
+    const expectedRedirectPattern = /\/dashboard(\/|$)/;
     if (!page.url().includes('/auth/login')) {
       await page.waitForURL(expectedRedirectPattern, { timeout: 20000 });
       return;
@@ -835,8 +818,8 @@ export class TestHelpers {
     // Wait for login API response
     await TestHelpers.waitForLoginResponse(page);
 
-    // Handle redirect
-    const expectedUrl = isAdmin ? '/admin' : '/dashboard';
+    // Handle redirect - all users now land on /dashboard
+    const expectedUrl = '/dashboard';
     const redirectSuccess = await TestHelpers.handleLoginRedirect(
       page,
       expectedUrl,

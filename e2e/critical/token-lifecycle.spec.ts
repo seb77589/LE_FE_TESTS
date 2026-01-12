@@ -27,10 +27,6 @@ test.describe('Token Lifecycle Management', () => {
     page,
     workerCredentials,
   }) => {
-    test.skip(
-      !workerCredentials.isAdmin,
-      'Test requires admin credentials for /admin redirect',
-    );
     try {
       console.log('🔐 Testing token creation on login (HttpOnly cookies)...');
 
@@ -43,9 +39,9 @@ test.describe('Token Lifecycle Management', () => {
       await page.fill('input[name="password"]', workerCredentials.password);
       await page.click('button[type="submit"]');
 
-      // Wait for successful login (admin redirects to /admin)
-      await page.waitForURL(/\/admin/, { timeout: 15000 });
-      console.log('✅ Login successful, redirected to admin dashboard');
+      // Wait for successful login (all users now redirect to /dashboard)
+      await page.waitForURL(/\/dashboard/, { timeout: 15000 });
+      console.log('✅ Login successful, redirected to dashboard');
 
       // Phase 2: Tokens are now in HttpOnly cookies (not accessible via JavaScript)
       // Verify authentication by checking HttpOnly cookie presence via browser API
