@@ -64,57 +64,59 @@ test.describe('Dashboard Module', () => {
       await expect(dashboardContent).toBeVisible();
     });
 
-    test('should display welcome message with user email', async ({
+    test('should display welcome message with user name', async ({
       page,
       workerCredentials,
     }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
 
-      // Check welcome message
+      // Check welcome message with first name (not email)
       const heading = page.locator('h1');
-      await expect(heading).toContainText('Welcome back');
+      await expect(heading).toContainText('Welcome');
 
-      // Check user email is displayed
-      const userEmail = page.locator('[data-testid="user-email"]');
-      await expect(userEmail).toBeVisible();
-      await expect(userEmail).toContainText(workerCredentials.email);
+      // Check user name is displayed (not email)
+      const userName = page.locator('[data-testid="user-name"]');
+      await expect(userName).toBeVisible();
+      // User name should be visible (either from full_name or email prefix)
+      const nameText = await userName.textContent();
+      expect(nameText).toBeTruthy();
     });
 
-    test('should display verification and account status badges', async ({ page }) => {
+    test('should display user role badge', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
 
-      // Check verification status badge
-      const verificationStatus = page.locator('[data-testid="verification-status"]');
-      await expect(verificationStatus).toBeVisible();
-
-      // Check account status badge
-      const accountStatus = page.locator('[data-testid="account-status"]');
-      await expect(accountStatus).toBeVisible();
+      // Check role badge is displayed - it's a span with specific styling
+      const roleBadge = page.locator('span.text-blue-800');
+      await expect(roleBadge).toBeVisible();
+      
+      // Verify it contains a valid role text
+      const roleText = await roleBadge.textContent();
+      expect(roleText).toMatch(/(admin|user|superadmin|manager|assistant)/i);
     });
   });
 
-  test.describe('KPI Cards', () => {
-    test('should display all three KPI cards', async ({ page }) => {
+  test.describe('Case Status Cards', () => {
+    test('should display all three case status cards', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(2000); // Wait for stats to load
 
-      // Check for My Documents card
-      const documentsCard = page.locator('text=My Documents').first();
-      await documentsCard.scrollIntoViewIfNeeded();
-      await expect(documentsCard).toBeVisible();
+      // Check for Closed Cases card
+      const closedCasesCard = page.locator('text=Closed Cases').first();
+      await closedCasesCard.scrollIntoViewIfNeeded();
+      await expect(closedCasesCard).toBeVisible();
 
-      // Check for Active Sessions card
-      const sessionsCard = page.locator('text=Active Sessions').first();
-      await sessionsCard.scrollIntoViewIfNeeded();
-      await expect(sessionsCard).toBeVisible();
+      // Check for Cases In Progress card
+      const inProgressCard = page.locator('text=Cases In Progress').first();
+      await inProgressCard.scrollIntoViewIfNeeded();
+      await expect(inProgressCard).toBeVisible();
 
-      // Check for Open Cases card
-      const casesCard = page.locator('text=Open Cases').first();
-      await casesCard.scrollIntoViewIfNeeded();
-      await expect(casesCard).toBeVisible();
+      // Check for Cases To Review card
+      const toReviewCard = page.locator('text=Cases To Review').first();
+      await toReviewCard.scrollIntoViewIfNeeded();
+      await expect(toReviewCard).toBeVisible();
     });
 
     test('should load sessions page successfully', async ({ page }) => {
@@ -144,134 +146,72 @@ test.describe('Dashboard Module', () => {
       await expect(sessionsHeading).toBeVisible({ timeout: 5000 });
     });
 
-    test('should display KPI values', async ({ page }) => {
+    test('should display case status values', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(2000); // Wait for stats to load
 
-      // Check that KPI cards have values (either numbers or '--')
-      const statValues = page.locator('.text-2xl.font-bold');
+      // Check that case status cards have values (either numbers or '--')
+      const statValues = page.locator('.text-3xl');
       const count = await statValues.count();
       expect(count).toBeGreaterThanOrEqual(3);
     });
   });
 
-  test.describe('Quick Actions', () => {
-    test('should display quick actions section', async ({ page }) => {
+  test.describe('Case Card Navigation', () => {
+    test('should navigate to closed cases when clicking Closed Cases card', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      // Check quick actions heading
-      const quickActionsHeading = page.locator('text=Quick Actions');
-      await quickActionsHeading.scrollIntoViewIfNeeded();
-      await expect(quickActionsHeading).toBeVisible();
+      // Click Closed Cases card link
+      const closedCasesLink = page.locator('[href="/cases/closed"]').first();
+      await closedCasesLink.scrollIntoViewIfNeeded();
+      await closedCasesLink.click();
+
+      // Should navigate to cases/closed
+      await page.waitForURL(/\/cases\/closed/);
     });
 
-    test('should display Create Document action', async ({ page }) => {
+    test('should navigate to in-progress cases when clicking Cases In Progress card', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      const createDocAction = page.locator('text=Create Document').first();
-      await createDocAction.scrollIntoViewIfNeeded();
-      await expect(createDocAction).toBeVisible();
+      // Click Cases In Progress card link
+      const inProgressLink = page.locator('[href="/cases/in-progress"]').first();
+      await inProgressLink.scrollIntoViewIfNeeded();
+      await inProgressLink.click();
+
+      // Should navigate to cases/in-progress
+      await page.waitForURL(/\/cases\/in-progress/);
     });
 
-    test('should display Upload Files action', async ({ page }) => {
+    test('should navigate to cases to review when clicking Cases To Review card', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      const uploadAction = page.locator('text=Upload Files').first();
-      await uploadAction.scrollIntoViewIfNeeded();
-      await expect(uploadAction).toBeVisible();
-    });
+      // Click Cases To Review card link
+      const toReviewLink = page.locator('[href="/cases/to-review"]').first();
+      await toReviewLink.scrollIntoViewIfNeeded();
+      await toReviewLink.click();
 
-    test('should display View My Cases action', async ({ page }) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('domcontentloaded');
-
-      const casesAction = page.locator('text=View My Cases').first();
-      await casesAction.scrollIntoViewIfNeeded();
-      await expect(casesAction).toBeVisible();
-    });
-
-    test('should navigate to documents when clicking Create Document', async ({
-      page,
-    }) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('domcontentloaded');
-
-      // Click Create Document button
-      const createDocBtn = page.locator('button:has-text("Create Document")');
-      await createDocBtn.scrollIntoViewIfNeeded();
-      await createDocBtn.click();
-
-      // Should navigate to documents/create
-      await page.waitForURL(/\/documents\/create/);
-    });
-
-    test('should navigate to cases when clicking View My Cases', async ({ page }) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('domcontentloaded');
-
-      // Click View My Cases button
-      const casesBtn = page.locator('button:has-text("View My Cases")');
-      await casesBtn.scrollIntoViewIfNeeded();
-      await casesBtn.click();
-
-      // Should navigate to cases
-      await page.waitForURL(/\/cases/);
+      // Should navigate to cases/to-review
+      await page.waitForURL(/\/cases\/to-review/);
     });
   });
 
-  test.describe('Recent Activity', () => {
-    test('should display recent activity section', async ({ page }) => {
+  test.describe('Template Widget', () => {
+    test('should display template widget on dashboard', async ({ page }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      // Check recent activity heading
-      const activityHeading = page.locator('text=Recent Activity');
-      await activityHeading.scrollIntoViewIfNeeded();
-      await expect(activityHeading).toBeVisible();
-    });
-
-    // Reason: Recent Activity may have mock data or real backend data
-    test('should display activity items', async ({ page }) => {
-      await page.goto('/dashboard');
-      await page.waitForLoadState('networkidle');
-
-      // Wait for dashboard to fully load
-      await page.waitForTimeout(2000);
-
-      // Check for any activity items or empty state
-      const hasTemplateActivity = await page
-        .locator('text=Created contract template')
-        .isVisible()
-        .catch(() => false);
-      const hasPermissionsActivity = await page
-        .locator('text=Updated user permissions')
-        .isVisible()
-        .catch(() => false);
-      const hasAnyActivity = await page
-        .locator('[data-testid="activity-item"], .activity-item')
-        .first()
-        .isVisible()
-        .catch(() => false);
-      const hasEmptyState = await page
-        .locator('text=/no recent activity|no activity/i')
-        .isVisible()
-        .catch(() => false);
-
-      // Either activity items or empty state is acceptable
-      const hasValidState =
-        hasTemplateActivity || hasPermissionsActivity || hasAnyActivity || hasEmptyState;
-
-      if (!hasValidState) {
-        // Skip if no activity section found (feature may not be implemented)
-        test.skip(true, 'Activity feed not yet implemented or no activity data');
-        return;
-      }
-
-      expect(hasValidState).toBeTruthy();
+      // Template widget should be visible (either with templates or empty state)
+      // Widget component renders regardless of whether templates exist
+      const templateSection = page.locator('text=/Templates|Popular Templates|No templates available/i').first();
+      await expect(templateSection).toBeVisible();
     });
   });
 
