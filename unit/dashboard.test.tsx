@@ -165,11 +165,17 @@ describe('DashboardPage', () => {
 
     render(<DashboardPage />);
 
-    // Check that regular user elements are present
-    expect(screen.getByTestId('user-email')).toHaveTextContent(
-      FRONTEND_TEST_CREDENTIALS.USER.email,
-    );
-    expect(screen.getByText(/create document/i)).toBeInTheDocument();
+    // Check that welcome banner shows first name via test ID
+    const userName = screen.getByTestId('user-name');
+    expect(userName).toHaveTextContent('Regular');
+
+    // Check that role badge is present
+    expect(screen.getByText(/assistant/i)).toBeInTheDocument();
+
+    // Check that stats cards are present
+    expect(screen.getByText('Closed Cases')).toBeInTheDocument();
+    expect(screen.getByText('Cases In Progress')).toBeInTheDocument();
+    expect(screen.getByText('Cases To Review')).toBeInTheDocument();
 
     // Check that admin features are not present
     const adminSection = screen.queryByText(/administrator access/i);
@@ -180,47 +186,40 @@ describe('DashboardPage', () => {
   // automatically redirected to /admin and should never see the dashboard page.
   // Redirect behavior is tested in E2E tests.
 
-  it('displays dashboard statistics', () => {
+  it('displays clickable case status cards', () => {
     setupRegularUser();
 
     render(<DashboardPage />);
 
-    // Check statistics are displayed (use specific text to avoid matching multiple elements)
-    expect(screen.getByText('My Documents')).toBeInTheDocument();
-    expect(screen.getByText('Active Sessions')).toBeInTheDocument();
+    // Check that stats cards are links to filtered case pages
+    const closedLink = screen.getByRole('link', { name: /closed cases/i });
+    expect(closedLink).toHaveAttribute('href', '/cases/closed');
+
+    const inProgressLink = screen.getByRole('link', { name: /cases in progress/i });
+    expect(inProgressLink).toHaveAttribute('href', '/cases/in-progress');
+
+    const toReviewLink = screen.getByRole('link', { name: /cases to review/i });
+    expect(toReviewLink).toHaveAttribute('href', '/cases/to-review');
   });
 
-  it('displays recent activity section', () => {
+  it('shows condensed welcome banner with first name', () => {
     setupRegularUser();
 
     render(<DashboardPage />);
 
-    // Check recent activity section
-    expect(screen.getByText(/recent activity/i)).toBeInTheDocument();
-    expect(screen.getByText(/created contract template/i)).toBeInTheDocument();
-    expect(screen.getByText(/updated user permissions/i)).toBeInTheDocument();
+    // Welcome shows first name via test ID, not email
+    const userName = screen.getByTestId('user-name');
+    expect(userName).toHaveTextContent('Regular');
+    // Role badge is inline
+    expect(screen.getByText(/assistant/i)).toBeInTheDocument();
   });
 
-  it('displays verification status for verified user', () => {
-    setupRegularUser();
-
-    render(<DashboardPage />);
-
-    const verificationStatus = screen.getByTestId('verification-status');
-    expect(verificationStatus).toHaveTextContent('Verified');
-    expect(verificationStatus).toHaveClass('bg-green-100');
-  });
-
-  it('displays verification warning for unverified user', () => {
+  it('displays verification alert for unverified user', () => {
     setupUnverifiedUser();
 
     render(<DashboardPage />);
 
-    const verificationStatus = screen.getByTestId('verification-status');
-    expect(verificationStatus).toHaveTextContent('Unverified');
-    expect(verificationStatus).toHaveClass('bg-yellow-100');
-
-    // Check for verification alert
+    // Check for verification alert (verification badge was removed, but alert remains)
     expect(screen.getByText(/email verification required/i)).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /resend verification email/i }),
