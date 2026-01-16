@@ -53,8 +53,8 @@ test.describe('Cases Module', () => {
       // Wait for stats to load (they should be visible even if 0)
       await page.waitForTimeout(1000);
 
-      // Check for stat cards - should show Total, Open, Closed
-      const statsCards = page.locator('.text-2xl.font-bold');
+      // Check for stat cards - should show Closed Cases, Cases In Progress, Cases To Review
+      const statsCards = page.locator('.text-3xl.font-semibold');
       await expect(statsCards.first()).toBeVisible();
     });
 
