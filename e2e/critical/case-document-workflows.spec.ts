@@ -576,10 +576,10 @@ test.describe('Case-Document Workflows - Navigation Flows', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
-    // Verify Dashboard loaded
+    // Verify Dashboard loaded - check for Welcome message which is always present
     const onDashboard = await TestHelpers.checkUIElementExists(
       page,
-      'h1:has-text("Dashboard"), [data-page="dashboard"]',
+      'text=Welcome',
       5000,
     );
 

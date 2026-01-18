@@ -13,7 +13,7 @@
  * NOTE: Tests skip if worker doesn't have admin/superadmin credentials
  */
 
-import { test } from '../../fixtures/auth-fixture';
+import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
 
 test.beforeEach(async ({ page }) => {
@@ -91,8 +91,8 @@ test.describe('Admin Dashboard - Overview', () => {
   });
 
   test('should display system status indicators', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Look for system status indicators
     const statusIndicators = await page
@@ -123,50 +123,8 @@ test.describe('Admin Dashboard - Overview', () => {
   });
 
   test('should navigate between admin tabs', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('domcontentloaded');
-
-    // Wait for either the admin dashboard OR the loading spinner to disappear
-    // The page may show loading state while fetching auth/data
-    await page
-      .waitForFunction(
-        () => {
-          // Check if dashboard is rendered (not in loading state)
-          const dashboard = document.querySelector('[data-testid="admin-dashboard"]');
-          const h1 = document.querySelector('h1');
-          const loadingText = document.body.textContent?.includes(
-            'Loading admin dashboard',
-          );
-          return (
-            (dashboard !== null || (h1 && h1.textContent?.includes('Admin'))) &&
-            !loadingText
-          );
-        },
-        { timeout: 20000 },
-      )
-      .catch(() => null);
-
-    // Give React time to hydrate
-    await page.waitForTimeout(1000);
-
-    // Wait for the admin dashboard to be fully loaded
-    const dashboardLoaded = await page
-      .locator('[data-testid="admin-dashboard"]')
-      .isVisible({ timeout: 10000 })
-      .catch(() => false);
-
-    if (!dashboardLoaded) {
-      console.log('ℹ️  Admin dashboard container not found - page may not have loaded');
-      // Debug: check page state
-      const bodyText = await page
-        .locator('body')
-        .textContent()
-        .catch(() => '');
-      const hasLoading = bodyText?.includes('Loading') || false;
-      const hasAdmin = bodyText?.includes('Admin') || false;
-      console.log(`Debug: hasLoading=${hasLoading}, hasAdmin=${hasAdmin}`);
-      return;
-    }
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000);
 
     // Wait for admin tabs container to be visible
     const adminTabsContainer = page.locator('[data-testid="admin-tabs"]');
@@ -175,36 +133,42 @@ test.describe('Admin Dashboard - Overview', () => {
       .catch(() => false);
 
     if (!tabsContainerVisible) {
-      // Debug: check what's on the page
-      const navElements = await page.locator('nav').count();
-      const linkElements = await page.locator('a').count();
-      console.log(
-        `ℹ️  Admin tabs container not found (nav count: ${navElements}, link count: ${linkElements})`,
-      );
+      console.log('ℹ️  Admin tabs container not found');
       return;
     }
 
-    // Look for tab navigation using data-testid selectors
-    const usersTabLocator = page.locator('[data-testid="admin-tab-users"]');
+    // Test Activity tab (stays on /admin with query param)
     const activityTabLocator = page.locator('[data-testid="admin-tab-activity"]');
-
-    const userTab = await usersTabLocator
+    const activityTab = await activityTabLocator
       .isVisible({ timeout: 5000 })
       .catch(() => false);
-    const activityTab = await activityTabLocator
+
+    if (activityTab) {
+      await activityTabLocator.click();
+      await page.waitForTimeout(1000);
+      console.log('✅ Navigated to Activity tab');
+
+      // Verify URL changed to activity tab
+      expect(page.url()).toContain('tab=activity');
+    }
+
+    // Navigate back to overview
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(1000);
+
+    // Test Users tab (navigates to separate /admin/users page)
+    const usersTabLocator = page.locator('[data-testid="admin-tab-users"]');
+    const userTab = await usersTabLocator
       .isVisible({ timeout: 5000 })
       .catch(() => false);
 
     if (userTab) {
       await usersTabLocator.click();
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(1000);
       console.log('✅ Navigated to Users tab');
-    }
 
-    if (activityTab) {
-      await activityTabLocator.click();
-      await page.waitForTimeout(500);
-      console.log('✅ Navigated to Activity tab');
+      // Verify URL changed to users page
+      expect(page.url()).toContain('/admin/users');
     }
 
     if (userTab || activityTab) {
@@ -229,8 +193,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should display list of users', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users tab if tabs exist
     const userTab = await TestHelpers.checkUIElementExists(
@@ -285,8 +249,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should search for users', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load');
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Wait for admin dashboard to load - may need retry if Loading state is shown
     const dashboardContainer = page.locator('[data-testid="admin-dashboard"]');
@@ -355,13 +319,15 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should filter users by role', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    // Admin page has heavy analytics - use domcontentloaded instead of load
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
       page,
       '[data-testid="admin-tab-users"], [role="tab"]:has-text("Users")',
+      3000,
     );
 
     if (userTab) {
@@ -371,14 +337,15 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/admin/users');
-      await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+      await page.goto('/admin/users', { waitUntil: 'domcontentloaded', timeout: 90000 });
+      await page.waitForTimeout(2000);
     }
 
     // Look for role filter
     const roleFilter = await TestHelpers.checkUIElementExists(
       page,
       'select[name="role"], [data-testid="role-filter"], button:has-text("Filter")',
+      3000,
     );
 
     if (roleFilter) {
@@ -389,8 +356,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should view user details', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -441,8 +408,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should edit user information', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -495,8 +462,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should deactivate user', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -549,8 +516,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should unlock locked user account', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -584,8 +551,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should change user role', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -617,8 +584,8 @@ test.describe('Admin Dashboard - User Management', () => {
   });
 
   test('should verify user email manually', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -664,8 +631,8 @@ test.describe('Admin Dashboard - Bulk Operations', () => {
   });
 
   test('should select multiple users for bulk operations', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load');
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Wait for admin dashboard to load - may need retry if Loading state is shown
     const dashboardContainer = page.locator('[data-testid="admin-dashboard"]');
@@ -773,8 +740,8 @@ test.describe('Admin Dashboard - Bulk Operations', () => {
   });
 
   test('should export users to CSV', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to users section
     const userTab = await TestHelpers.checkUIElementExists(
@@ -823,8 +790,8 @@ test.describe('Admin Dashboard - Activity Monitoring', () => {
   });
 
   test('should display activity feed', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to activity tab
     const activityTab = await TestHelpers.checkUIElementExists(
@@ -859,8 +826,8 @@ test.describe('Admin Dashboard - Activity Monitoring', () => {
   });
 
   test('should filter activities by type', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to activity tab
     const activityTab = await TestHelpers.checkUIElementExists(
@@ -891,8 +858,8 @@ test.describe('Admin Dashboard - Activity Monitoring', () => {
   });
 
   test('should filter activities by date range', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to activity tab
     const activityTab = await TestHelpers.checkUIElementExists(
@@ -923,8 +890,8 @@ test.describe('Admin Dashboard - Activity Monitoring', () => {
   });
 
   test('should view activity details', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to activity tab
     const activityTab = await TestHelpers.checkUIElementExists(
@@ -974,8 +941,8 @@ test.describe('Admin Dashboard - Activity Monitoring', () => {
   });
 
   test('should export activity logs', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Navigate to activity tab
     const activityTab = await TestHelpers.checkUIElementExists(
@@ -1125,8 +1092,8 @@ test.describe('Admin Dashboard - Analytics', () => {
   });
 
   test('should display user analytics', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Look for analytics or charts
     const hasAnalytics = await TestHelpers.checkUIElementExists(
@@ -1141,8 +1108,8 @@ test.describe('Admin Dashboard - Analytics', () => {
   });
 
   test('should display document analytics', async ({ page }) => {
-    await page.goto('/admin');
-    await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
+    await page.goto('/admin', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(2000); // Wait for initial render
 
     // Look for document statistics
     const docStats = await TestHelpers.checkUIElementExists(

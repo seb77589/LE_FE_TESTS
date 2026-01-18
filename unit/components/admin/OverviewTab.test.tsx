@@ -231,11 +231,11 @@ describe('OverviewTab', () => {
       expect(screen.getByText('500')).toBeInTheDocument(); // Documents
     });
 
-    it('should render charts', async () => {
+    it('should render admin tools section', () => {
       render(<OverviewTab />);
 
-      expect(await screen.findByTestId('users-chart')).toBeInTheDocument();
-      expect(await screen.findByTestId('documents-chart')).toBeInTheDocument();
+      // Charts were removed in Phase 1; verify admin tools are displayed
+      expect(screen.getByText('Admin Tools')).toBeInTheDocument();
     });
 
     it('should render activity feed', () => {
