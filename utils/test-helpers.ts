@@ -1169,7 +1169,7 @@ export class TestHelpers {
   ): Promise<boolean> {
     try {
       const locator = typeof selector === 'string' ? page.locator(selector) : selector;
-      return await locator.isVisible({ timeout });
+      return await locator.first().isVisible({ timeout });
     } catch {
       return false;
     }

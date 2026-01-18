@@ -15,6 +15,18 @@
 
 import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
+import type { Page } from '@playwright/test';
+
+/**
+ * Wait for cases table to load with data
+ */
+async function waitForCasesTable(page: Page) {
+  // Wait for table rows to exist
+  await page.waitForSelector('tbody tr', { timeout: 10000 });
+  // Wait for case detail links in tbody to exist
+  await page.waitForSelector('tbody a[href*="/cases/"]', { timeout: 10000 });
+  await page.waitForTimeout(1000); // Allow data to fully render
+}
 
 test.describe('Case Management Workflows', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
@@ -48,27 +60,22 @@ test.describe('Case Management Workflows', () => {
     await page.waitForTimeout(2000);
 
     // Deterministic smoke check:
-    // - the summary metrics should always be present
-    // - either an empty state is visible or at least one case item/link exists
-    const hasSummaryMetrics = await TestHelpers.checkUIElementExists(
+    // - the stat cards should always be present (Closed Cases, In Progress, To Review)
+    // - cases table may or may not be present (depends on data)
+    const hasClosedCasesCard = await TestHelpers.checkUIElementExists(
       page,
-      'main >> text=Total Cases',
+      'main >> text=Closed Cases',
       5000,
     );
 
-    const hasEmptyState = await TestHelpers.checkUIElementExists(
+    const hasCaseTrendsSection = await TestHelpers.checkUIElementExists(
       page,
-      'main >> text=No cases found',
-      2000,
+      'main >> text=Case Trends',
+      5000,
     );
 
-    const hasAnyCaseItem = await TestHelpers.checkUIElementExists(
-      page,
-      'main >> a[href^="/cases/"]',
-      2000,
-    );
-
-    expect(hasSummaryMetrics && (hasEmptyState || hasAnyCaseItem)).toBe(true);
+    // Both stat cards and case trends section should be visible
+    expect(hasClosedCasesCard && hasCaseTrendsSection).toBe(true);
   });
 
   test('should create new case', async ({ page }) => {
@@ -136,21 +143,18 @@ test.describe('Case Management Workflows', () => {
   test('should view case details', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
-    // Look for case card/link
+    // Look for "View Details" link in the actions column
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"], .case-card',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 
     if (caseLink) {
-      // Click first case
-      await page
-        .locator('a[href*="/cases/"], [data-testid*="case-card"]')
-        .first()
-        .click();
+      // Click first "View Details" link
+      await page.locator('tbody a[href*="/cases/"]').first().click();
       await page.waitForTimeout(2000);
 
       // Check if on case detail page
@@ -172,12 +176,12 @@ test.describe('Case Management Workflows', () => {
   test('should update case information', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
     // Navigate to a case
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"]',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 
@@ -187,10 +191,7 @@ test.describe('Case Management Workflows', () => {
       return;
     }
 
-    await page
-      .locator('a[href*="/cases/"], [data-testid*="case-card"]')
-      .first()
-      .click();
+    await page.locator('tbody a[href*="/cases/"]').first().click();
     await page.waitForTimeout(2000);
 
     // Look for edit button
@@ -301,12 +302,12 @@ test.describe('Case Management Workflows', () => {
   test('should assign case to lawyer', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
     // Navigate to case detail
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"]',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 
@@ -359,12 +360,12 @@ test.describe('Case Management Workflows', () => {
   test('should close case', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
     // Navigate to case detail
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"]',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 
@@ -420,12 +421,12 @@ test.describe('Case Management Workflows', () => {
   test('should add document to case', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
     // Navigate to case detail
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"]',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 
@@ -465,12 +466,12 @@ test.describe('Case Management Workflows', () => {
   test('should view case documents', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
     // Navigate to case detail
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"]',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 
@@ -523,12 +524,12 @@ test.describe('Case Management Workflows', () => {
   test('should handle case deletion', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForCasesTable(page);
 
     // Navigate to case detail
     const caseLink = await TestHelpers.checkUIElementExists(
       page,
-      'a[href*="/cases/"], [data-testid*="case-card"]',
+      'tbody a[href*="/cases/"]',
       5000,
     );
 

@@ -87,10 +87,13 @@ test.describe('Dashboard Module', () => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
 
-      // Check role badge is displayed - it's a span with specific styling
+      // Wait for the welcome section with user name to appear first
+      await page.waitForSelector('[data-testid="user-name"]', { timeout: 10000 });
+
+      // Check role badge is displayed - it's a span with specific styling next to the welcome message
       const roleBadge = page.locator('span.text-blue-800');
-      await expect(roleBadge).toBeVisible();
-      
+      await expect(roleBadge).toBeVisible({ timeout: 5000 });
+
       // Verify it contains a valid role text
       const roleText = await roleBadge.textContent();
       expect(roleText).toMatch(/(admin|user|superadmin|manager|assistant)/i);
