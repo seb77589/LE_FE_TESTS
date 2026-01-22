@@ -1,6 +1,10 @@
 /**
  * Document Page Loading E2E Tests
  *
+ * ARCHITECTURE NOTE (v0.2.0): Documents are now case-centric.
+ * The /dashboard/documents route redirects to /cases.
+ * Documents are accessed through case detail pages.
+ *
  * MIGRATED: Uses worker-scoped credentials via auth-fixture
  */
 
@@ -17,18 +21,16 @@ test.describe('Documents Page Loading', () => {
     );
   });
 
-  test('should load documents page successfully for authenticated user', async ({
+  test('should redirect /dashboard/documents to /cases (v0.2.0 architecture)', async ({
     page,
   }) => {
     try {
-      // User is already authenticated via beforeEach
-      // Navigate to the documents page
+      // Navigate to the old documents page
       await page.goto('/dashboard/documents');
       await page.waitForLoadState('networkidle');
 
       // Check if redirected to login (route protection active)
       if (page.url().includes('/auth/login')) {
-        // Skip reason: TEST_INFRASTRUCTURE - Documents route requires authentication - protected route active
         test.skip(
           true,
           'Documents route requires authentication - protected route active',
@@ -36,159 +38,106 @@ test.describe('Documents Page Loading', () => {
         return;
       }
 
-      // Verify we're on the documents page
-      await expect(page).toHaveURL(/\/dashboard\/documents/);
+      // v0.2.0: Documents page redirects to /cases (case-centric architecture)
+      // Wait for client-side redirect via router.replace()
+      await page.waitForURL(/\/cases/, { timeout: 15000 });
 
-      // Check if documents page UI is implemented
-      const pageHeader = await TestHelpers.checkUIElementExists(
-        page,
-        'text=/My Documents|Documents/i',
-        5000,
-      );
+      // Verify cases page loads correctly
+      const casesHeading = page.locator('h1:has-text("Cases")');
+      await expect(casesHeading).toBeVisible({ timeout: 10000 });
 
-      if (!pageHeader) {
-        // Skip reason: FUTURE_FEATURE - Documents page UI not yet implemented
-        test.skip(true, 'Documents page UI not yet implemented');
-        return;
-      }
-
-      // CRITICAL: Verify no "Failed to load documents" error appears
-      const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
-      await expect(errorMessage).not.toBeVisible({ timeout: 5000 });
-
-      // Verify Documents tab is active by default
-      // Use more specific selector to avoid matching "Upload Documents" button
-      const documentsTab = page
-        .locator('button.border-b-2:has-text("Documents")')
-        .first();
-      await expect(documentsTab).toBeVisible();
-      await expect(documentsTab).toHaveClass(/border-blue-500/);
-
-      // Verify Analytics tab is present
-      const analyticsTab = page
-        .locator('button.border-b-2:has-text("Analytics")')
-        .first();
-      await expect(analyticsTab).toBeVisible();
-
-      // Verify Upload Documents button is visible
-      const uploadButton = page.locator('button:has-text("Upload Documents")');
-      await expect(uploadButton).toBeVisible();
-
-      console.log('Documents page loaded successfully - no errors detected');
+      console.log('Documents page correctly redirects to Cases page (v0.2.0 architecture)');
     } catch (error) {
-      await TestHelpers.takeScreenshot(page, 'document-page-loading-failed');
+      await TestHelpers.takeScreenshot(page, 'document-redirect-failed');
       throw error;
     }
   });
 
-  test('should handle empty documents list gracefully', async ({ page }) => {
+  test('should load cases page successfully after redirect', async ({ page }) => {
     try {
-      // User is already authenticated via beforeEach
-      // Navigate to the documents page
+      // Navigate to the old documents URL
       await page.goto('/dashboard/documents');
       await page.waitForLoadState('networkidle');
 
-      // Check if redirected to login (route protection active)
+      // Check if redirected to login
       if (page.url().includes('/auth/login')) {
-        // Skip reason: TEST_INFRASTRUCTURE - Documents route requires authentication - protected route active
         test.skip(
           true,
-          'Documents route requires authentication - protected route active',
+          'Route requires authentication - protected route active',
         );
         return;
       }
 
-      // Check if documents page UI is implemented
-      const pageHeader = await TestHelpers.checkUIElementExists(
-        page,
-        'text=/My Documents|Documents/i',
-        5000,
-      );
+      // Wait for client-side redirect to /cases
+      await page.waitForURL(/\/cases/, { timeout: 15000 });
 
-      if (!pageHeader) {
-        // Skip reason: FUTURE_FEATURE - Documents page UI not yet implemented
-        test.skip(true, 'Documents page UI not yet implemented');
-        return;
-      }
-
-      // Verify no error message
+      // CRITICAL: Verify no error appears
       const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
       await expect(errorMessage).not.toBeVisible({ timeout: 5000 });
 
-      // Empty state might show different UI, but no error should be present
-      const uploadButton = page.locator('button:has-text("Upload Documents")');
-      await expect(uploadButton).toBeVisible();
+      // Verify cases page UI elements
+      const casesHeading = page.locator('h1:has-text("Cases")');
+      await expect(casesHeading).toBeVisible();
 
-      console.log('Empty documents list handled gracefully');
+      // Check for case status cards (standard UI)
+      const hasClosedCases = await TestHelpers.checkUIElementExists(
+        page,
+        'text=/Closed Cases/i',
+        5000,
+      );
+      expect(hasClosedCases).toBe(true);
+
+      console.log('Cases page loaded successfully after redirect');
     } catch (error) {
-      await TestHelpers.takeScreenshot(page, 'empty-documents-list-failed');
+      await TestHelpers.takeScreenshot(page, 'cases-page-loading-failed');
       throw error;
     }
   });
 
-  test('should switch between Documents and Analytics tabs', async ({ page }) => {
+  test('should display case list or empty state', async ({ page }) => {
     try {
-      // User is already authenticated via beforeEach
-      // Navigate to the documents page
+      // Navigate via old documents URL (redirect test)
       await page.goto('/dashboard/documents');
       await page.waitForLoadState('networkidle');
 
-      // Check if redirected to login (route protection active)
+      // Check if redirected to login
       if (page.url().includes('/auth/login')) {
-        // Skip reason: TEST_INFRASTRUCTURE - Documents route requires authentication - protected route active
         test.skip(
           true,
-          'Documents route requires authentication - protected route active',
+          'Route requires authentication - protected route active',
         );
         return;
       }
 
-      // Check if documents page UI is implemented
-      const hasDocumentsUI = await TestHelpers.checkUIElementExists(
+      // Wait for client-side redirect to /cases
+      await page.waitForURL(/\/cases/, { timeout: 15000 });
+
+      // Wait for data to load
+      await page.waitForTimeout(2000);
+
+      // Either case list (table) or empty state should be visible
+      const hasTable = await TestHelpers.checkUIElementExists(
         page,
-        'button.border-b-2:has-text("Documents")',
-        5000,
+        'table, tbody',
+        3000,
       );
 
-      if (!hasDocumentsUI) {
-        // Skip reason: FUTURE_FEATURE - Documents page UI not yet implemented
-        test.skip(true, 'Documents page UI not yet implemented');
-        return;
-      }
+      const hasEmptyState = await TestHelpers.checkUIElementExists(
+        page,
+        'text=/no cases|empty|get started/i',
+        3000,
+      );
 
-      // Verify no error on Documents tab
+      // One of these should be true
+      expect(hasTable || hasEmptyState).toBe(true);
+
+      // No error messages
       const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
-      await expect(errorMessage).not.toBeVisible({ timeout: 5000 });
+      await expect(errorMessage).not.toBeVisible({ timeout: 3000 });
 
-      // Click on Analytics tab
-      // Use more specific selector to avoid matching "Upload Documents" button
-      const analyticsTab = page
-        .locator('button.border-b-2:has-text("Analytics")')
-        .first();
-      await analyticsTab.click();
-      await page.waitForTimeout(300);
-
-      // Verify Analytics tab content loads
-      const analyticsHeader = page.locator('text=Document Analytics');
-      await expect(analyticsHeader).toBeVisible({ timeout: 10000 });
-
-      // Switch back to Documents tab
-      const documentsTabButton = page
-        .locator('button.border-b-2:has-text("Documents")')
-        .first();
-      await documentsTabButton.click();
-      await page.waitForTimeout(300);
-
-      // Verify Documents tab content is visible again
-      const uploadButton = page.locator('button:has-text("Upload Documents")');
-      await expect(uploadButton).toBeVisible();
-
-      // Verify no errors after tab switching
-      await expect(errorMessage).not.toBeVisible();
-
-      console.log('Tab switching works without errors');
+      console.log(hasTable ? 'Case list displayed' : 'Empty state displayed gracefully');
     } catch (error) {
-      await TestHelpers.takeScreenshot(page, 'tab-switching-failed');
+      await TestHelpers.takeScreenshot(page, 'cases-list-failed');
       throw error;
     }
   });

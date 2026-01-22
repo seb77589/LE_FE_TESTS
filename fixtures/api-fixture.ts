@@ -29,6 +29,19 @@ if (process.env.PLAYWRIGHT_MOCK === 'true') {
   );
 }
 
+// Worker credential pool for parallel test execution
+// All credentials are validated from environment at import time
+const WORKER_CREDENTIAL_POOL = [
+  TEST_CREDENTIALS.USER,           // Worker 0
+  PROFILE_TEST_CREDENTIALS.USER_1, // Worker 1
+  PROFILE_TEST_CREDENTIALS.USER_2, // Worker 2
+  PROFILE_TEST_CREDENTIALS.USER_3, // Worker 3
+  PROFILE_TEST_CREDENTIALS.USER_4, // Worker 4
+  PROFILE_TEST_CREDENTIALS.USER_5, // Worker 5
+  PROFILE_TEST_CREDENTIALS.USER_6, // Worker 6
+  PROFILE_TEST_CREDENTIALS.USER_7, // Worker 7
+];
+
 // Profile test credentials map for worker isolation
 const PROFILE_TEST_USER_MAP = [
   PROFILE_TEST_CREDENTIALS.USER_1,
@@ -51,16 +64,12 @@ export const test = base.extend<{
   workerCredentials: { email: string; password: string };
   profileWorkerCredentials: { email: string; password: string };
 }>({
-  // Default worker credentials (uses TEST_USER for worker 0, rotates for others)
+  // Default worker credentials using validated credential pool
   workerCredentials: async ({}, use, testInfo: TestInfo) => {
-    // Use TEST_USER for first worker, or rotate through available test users
+    // Assign unique credentials per worker using modulo rotation
+    // All credentials are validated at import - fails fast if env vars missing
     const credentials =
-      testInfo.parallelIndex === 0
-        ? TEST_CREDENTIALS.USER
-        : {
-            email: `test_user_${testInfo.parallelIndex}@example.com`,
-            password: TEST_CREDENTIALS.USER.password,
-          };
+      WORKER_CREDENTIAL_POOL[testInfo.parallelIndex % WORKER_CREDENTIAL_POOL.length];
     // eslint-disable-next-line react-hooks/rules-of-hooks -- Playwright fixture 'use', not React's use hook
     await use(credentials);
   },

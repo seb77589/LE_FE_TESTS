@@ -32,14 +32,18 @@ test.describe('Navigation Component', () => {
       await expect(logo).toBeVisible();
 
       // Check regular navigation items - use .first() to handle multiple nav elements
+      // Navigation items: Dashboard, Cases, Templates, Notifications
+      // Note: Documents is under /dashboard/documents, not a main nav item
+      // Sessions and Security are in the profile dropdown menu, not main nav
       await expect(page.locator('nav a:has-text("Dashboard")').first()).toBeVisible();
-      await expect(page.locator('nav a:has-text("Documents")').first()).toBeVisible();
       await expect(page.locator('nav a:has-text("Cases")').first()).toBeVisible();
+      await expect(page.locator('nav a:has-text("Templates")').first()).toBeVisible();
       await expect(
         page.locator('nav a:has-text("Notifications")').first(),
       ).toBeVisible();
-      await expect(page.locator('nav a:has-text("Sessions")').first()).toBeVisible();
-      await expect(page.locator('nav a:has-text("Security")').first()).toBeVisible();
+
+      // Admin link should NOT be visible for regular users (filtered out in navigation)
+      await expect(page.locator('nav a:has-text("Admin")').first()).not.toBeVisible();
     });
 
     test('should NOT display admin navigation items for regular users', async ({
@@ -130,9 +134,10 @@ test.describe('Navigation Component', () => {
       await page.waitForSelector('nav', { timeout: 5000 });
 
       // Regular items should still be visible - use .first() to handle multiple nav elements
+      // Navigation items: Dashboard, Cases, Templates, Notifications, Admin
       await expect(page.locator('nav a:has-text("Dashboard")').first()).toBeVisible();
-      await expect(page.locator('nav a:has-text("Documents")').first()).toBeVisible();
       await expect(page.locator('nav a:has-text("Cases")').first()).toBeVisible();
+      await expect(page.locator('nav a:has-text("Templates")').first()).toBeVisible();
       await expect(
         page.locator('nav a:has-text("Notifications")').first(),
       ).toBeVisible();
@@ -190,14 +195,15 @@ test.describe('Navigation Component', () => {
       await page.waitForTimeout(500); // Wait for menu animation
 
       // Check mobile menu items are visible (in .sm:hidden container)
+      // Navigation items: Dashboard, Cases, Templates, Notifications
       await expect(
         page.locator('.sm\\:hidden a:has-text("Dashboard")').first(),
       ).toBeVisible();
       await expect(
-        page.locator('.sm\\:hidden a:has-text("Documents")').first(),
+        page.locator('.sm\\:hidden a:has-text("Cases")').first(),
       ).toBeVisible();
       await expect(
-        page.locator('.sm\\:hidden a:has-text("Cases")').first(),
+        page.locator('.sm\\:hidden a:has-text("Templates")').first(),
       ).toBeVisible();
       await expect(
         page.locator('.sm\\:hidden a:has-text("Notifications")').first(),
@@ -219,7 +225,7 @@ test.describe('Navigation Component', () => {
       page,
       workerCredentials,
     }) => {
-      // Login first
+      // Login first - loginAndWaitForRedirect already handles the initial redirect
       await TestHelpers.loginAndWaitForRedirect(
         page,
         workerCredentials.email,
@@ -227,10 +233,7 @@ test.describe('Navigation Component', () => {
         workerCredentials.isAdmin,
       );
 
-      // Ensure we're on the expected authenticated landing page and session is fully established
-      // Admin/superadmin users commonly land on /admin; regular users land on /dashboard.
-      const expectedLandingUrl = workerCredentials.isAdmin ? /\/admin/ : /\/dashboard/;
-      await page.waitForURL(expectedLandingUrl, { timeout: 15000 });
+      // Session is established after loginAndWaitForRedirect returns
       await page.waitForLoadState('networkidle');
 
       // Navigate to root using client-side navigation to preserve auth state

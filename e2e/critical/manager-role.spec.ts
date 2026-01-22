@@ -15,12 +15,11 @@
 
 import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
+import { WS_TEST_CREDENTIALS } from '../../test-credentials';
 
-// Use dedicated MANAGER role test credentials
-const MANAGER_CREDENTIALS = {
-  email: process.env.WS_TEST_ADMIN_1_EMAIL || 'ws-test-admin-1@example.com',
-  password: process.env.TEST_USER_PASSWORD || '',
-};
+// Use dedicated MANAGER role test credentials from centralized config
+// Credentials validated at import - fails fast if env vars missing
+const MANAGER_CREDENTIALS = WS_TEST_CREDENTIALS.ADMIN_1;
 
 test.describe('MANAGER Role - Navigation', () => {
   test.beforeEach(async ({ page }) => {

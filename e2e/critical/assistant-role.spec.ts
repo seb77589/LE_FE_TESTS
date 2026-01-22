@@ -14,12 +14,11 @@
 
 import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
+import { WS_TEST_CREDENTIALS } from '../../test-credentials';
 
-// Use dedicated ASSISTANT role test credentials
-const ASSISTANT_CREDENTIALS = {
-  email: process.env.WS_TEST_USER_1_EMAIL || 'ws-test-user-1@example.com',
-  password: process.env.TEST_USER_PASSWORD || '',
-};
+// Use dedicated ASSISTANT role test credentials from centralized config
+// Credentials validated at import - fails fast if env vars missing
+const ASSISTANT_CREDENTIALS = WS_TEST_CREDENTIALS.USER_1;
 
 test.describe('ASSISTANT Role - Navigation', () => {
   test.beforeEach(async ({ page }) => {

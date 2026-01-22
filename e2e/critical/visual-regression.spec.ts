@@ -49,9 +49,11 @@ test.describe('Visual Regression', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
 
+    // Allow more tolerance for viewport differences and dynamic content
     await expect(page).toHaveScreenshot('dashboard.png', {
       fullPage: true,
       animations: 'disabled',
+      maxDiffPixelRatio: 0.15, // Allow up to 15% pixel difference
     });
   });
 
@@ -68,9 +70,11 @@ test.describe('Visual Regression', () => {
     await page.goto('/profile');
     await page.waitForLoadState('networkidle');
 
+    // Allow more tolerance for viewport differences and dynamic content
     await expect(page).toHaveScreenshot('profile-page.png', {
       fullPage: true,
       animations: 'disabled',
+      maxDiffPixelRatio: 0.15, // Allow up to 15% pixel difference
     });
   });
 

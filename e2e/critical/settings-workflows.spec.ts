@@ -34,7 +34,8 @@ test.describe('Settings Page Workflows', () => {
     test('should display general settings tab', async ({ page }) => {
       // Use more specific locators within the main content area
       const main = page.locator('main, [role="main"], .settings-content').first();
-      await expect(main.locator('text=/appearance/i').first()).toBeVisible();
+      // GeneralTab has h3 headings for "Appearance" and "Notifications"
+      await expect(main.getByRole('heading', { name: /appearance/i })).toBeVisible();
       await expect(main.getByRole('heading', { name: /notifications/i })).toBeVisible();
     });
 
@@ -146,8 +147,9 @@ test.describe('Settings Page Workflows', () => {
       );
       await submitButton.click();
 
-      // Should show validation error
-      await expect(page.locator('text=/at least 8 characters/i')).toBeVisible({
+      // Should show validation error (may have multiple elements matching - hint + error)
+      // Use .first() to handle strict mode
+      await expect(page.locator('text=/at least 8 characters/i').first()).toBeVisible({
         timeout: 2000,
       });
     });
