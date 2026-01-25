@@ -86,7 +86,7 @@ describe('Dashboard Page', () => {
     expect(screen.queryByText('Administrator Access')).not.toBeInTheDocument();
   });
 
-  test('displays admin users dashboard with admin actions', () => {
+  test('displays admin users dashboard without redundant admin section', () => {
     setupAuth('manager');
     render(<DashboardPage />);
 
@@ -95,17 +95,17 @@ describe('Dashboard Page', () => {
     const expectedFirstName = FRONTEND_TEST_CREDENTIALS.USER.email.split('@')[0];
     expect(userName).toHaveTextContent(expectedFirstName);
 
-    // Admin privilege notice should be visible
-    expect(screen.getByText('Administrator Access')).toBeInTheDocument();
-    expect(screen.getByText(/you have administrative privileges/i)).toBeInTheDocument();
+    // Administrator Access section REMOVED (redundant with top navigation "Admin" link)
+    // Admin functionality accessible via Navigation > Admin link
+    expect(screen.queryByText('Administrator Access')).not.toBeInTheDocument();
+    expect(screen.queryByText(/you have administrative privileges/i)).not.toBeInTheDocument();
 
-    // Manage Users link should be visible
-    const manageUsersLink = screen.getByRole('link', { name: /manage users/i });
-    expect(manageUsersLink).toBeInTheDocument();
-    expect(manageUsersLink).toHaveAttribute('href', '/admin/users');
+    // Manage Users link should NOT be on dashboard (accessible via Admin navigation)
+    const manageUsersLink = screen.queryByRole('link', { name: /manage users/i });
+    expect(manageUsersLink).not.toBeInTheDocument();
   });
 
-  test('displays superadmin users dashboard with all admin actions', () => {
+  test('displays superadmin users dashboard without redundant admin section', () => {
     setupAuth('superadmin');
     render(<DashboardPage />);
 
@@ -114,16 +114,14 @@ describe('Dashboard Page', () => {
     const expectedFirstName = FRONTEND_TEST_CREDENTIALS.USER.email.split('@')[0];
     expect(userName).toHaveTextContent(expectedFirstName);
 
-    // Admin privilege notice should be visible
-    expect(screen.getByText('Administrator Access')).toBeInTheDocument();
+    // Administrator Access section REMOVED (redundant with top navigation "Admin" link)
+    expect(screen.queryByText('Administrator Access')).not.toBeInTheDocument();
 
-    // Both admin links should be visible for superadmin
-    const manageUsersLink = screen.getByRole('link', { name: /manage users/i });
-    expect(manageUsersLink).toBeInTheDocument();
-    expect(manageUsersLink).toHaveAttribute('href', '/admin/users');
+    // Admin links should NOT be on dashboard (accessible via Admin navigation)
+    const manageUsersLink = screen.queryByRole('link', { name: /manage users/i });
+    expect(manageUsersLink).not.toBeInTheDocument();
 
-    const systemAdminLink = screen.getByRole('link', { name: /system admin/i });
-    expect(systemAdminLink).toBeInTheDocument();
-    expect(systemAdminLink).toHaveAttribute('href', '/admin');
+    const systemAdminLink = screen.queryByRole('link', { name: /system admin/i });
+    expect(systemAdminLink).not.toBeInTheDocument();
   });
 });

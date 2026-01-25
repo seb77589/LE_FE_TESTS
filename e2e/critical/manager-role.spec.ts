@@ -4,10 +4,9 @@
  * Tests role-specific UI behavior for MANAGER role users.
  *
  * Key Assertions:
- * - "Admin" navigation link SHOULD be visible
- * - "Administrator Access" section SHOULD be visible on dashboard
- * - "Manage Users" link SHOULD be present
- * - "System Admin" link should NOT be present (SUPERADMIN only)
+ * - "Admin" navigation link SHOULD be visible in top navigation
+ * - "Administrator Access" section REMOVED from dashboard (redundant)
+ * - Admin functionality accessible via Navigation > Admin link
  * - Cases page should show company-scoped data only
  *
  * @see {@link /home/duck/legalease/frontend/tests/docs/ROLE_BASED_UI_DIFFERENCES.md}
@@ -79,37 +78,63 @@ test.describe('MANAGER Role - Dashboard Page', () => {
     );
   });
 
-  test('should see Administrator Access section', async ({ page }) => {
+  test('should NOT see redundant Administrator Access section', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
-    // Administrator Access section SHOULD be present for MANAGER
+    // Administrator Access section REMOVED (redundant with top navigation "Admin" link)
+    // This section was removed because:
+    // 1. "Admin" link already exists in top navigation
+    // 2. All admin functionality accessible via that navigation link
+    // 3. Eliminates UI redundancy and clutter
     const adminAccessSection = page.locator('text=/Administrator Access/i');
-    await expect(adminAccessSection).toBeVisible();
+    await expect(adminAccessSection).not.toBeVisible();
   });
 
-  test('should see Manage Users link', async ({ page }) => {
+  test('should NOT see Manage Users link on dashboard', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
-    // Manage Users link SHOULD be present for MANAGER
-    const manageUsersLink = page.locator('a[href="/admin/users"]');
-    await expect(manageUsersLink).toBeVisible();
+    // Manage Users link removed from dashboard (accessible via Admin > Users)
+    const manageUsersLinkOnDashboard = page.locator(
+      '.bg-blue-50 a[href="/admin/users"]'
+    );
+    await expect(manageUsersLinkOnDashboard).not.toBeVisible();
 
-    // Verify link text
-    await expect(manageUsersLink).toHaveText(/Manage Users/i);
+    // But Admin link in navigation should still be present
+    const adminNavLink = page.locator('nav a[href="/admin"]');
+    await expect(adminNavLink).toBeVisible();
   });
 
-  test('should NOT see System Admin link', async ({ page }) => {
+  test('should NOT see System Admin link on dashboard', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
-    // System Admin link should NOT be visible for MANAGER (SUPERADMIN only)
-    const systemAdminLink = page.locator('a[href="/admin"]:has-text("System Admin")');
-    await expect(systemAdminLink).not.toBeVisible();
+    // System Admin link removed from dashboard (accessible via top navigation)
+    const systemAdminLinkOnDashboard = page.locator(
+      '.bg-blue-50 a[href="/admin"]:has-text("System Admin")'
+    );
+    await expect(systemAdminLinkOnDashboard).not.toBeVisible();
+  });
+
+  test('can access admin functionality via navigation', async ({ page }) => {
+    await page.goto('/dashboard');
+    await page.waitForLoadState('domcontentloaded');
+
+    // Click Admin link in navigation
+    const adminNavLink = page.locator('nav a[href="/admin"]');
+    await expect(adminNavLink).toBeVisible();
+    await adminNavLink.click();
+
+    // Should navigate to admin dashboard
+    await page.waitForURL('/admin');
+    await expect(page).toHaveURL('/admin');
+
+    // Admin dashboard should be visible
+    await expect(page.locator('h1:has-text("Admin Dashboard")')).toBeVisible();
   });
 
   test('should see standard dashboard widgets', async ({ page }) => {
@@ -132,25 +157,28 @@ test.describe('MANAGER Role - Dashboard Page', () => {
     await expect(toReviewCard).toBeVisible();
   });
 
-  test('should be able to click Manage Users link', async ({ page }) => {
+  test('can access User Management via Admin navigation', async ({ page }) => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);
 
-    // Wait for Administrator Access section to be visible
-    const adminAccessSection = page.locator('text=/Administrator Access/i');
-    await expect(adminAccessSection).toBeVisible();
-
-    // Click Manage Users link
-    const manageUsersLink = page.locator('a[href="/admin/users"]');
-    await expect(manageUsersLink).toBeVisible();
-    await manageUsersLink.click();
+    // Click Admin link in navigation
+    const adminNavLink = page.locator('nav a[href="/admin"]');
+    await expect(adminNavLink).toBeVisible();
+    await adminNavLink.click();
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
 
-    // Should navigate to /admin/users page (or stay on /admin if redirected)
-    const currentUrl = page.url();
-    expect(currentUrl.includes('/admin/users') || currentUrl.includes('/admin')).toBe(true);
+    // Should navigate to admin dashboard
+    await expect(page).toHaveURL('/admin');
+
+    // Click Users tab (use more specific selector to avoid multiple matches)
+    const usersTab = page.locator('nav a[href="/admin/users"], [data-testid="admin-tab-users"]').first();
+    await expect(usersTab).toBeVisible();
+    await usersTab.click();
+    await page.waitForLoadState('networkidle');
+
+    // Should navigate to /admin/users page
+    await expect(page).toHaveURL('/admin/users');
   });
 });
 

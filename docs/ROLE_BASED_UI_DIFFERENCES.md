@@ -31,16 +31,30 @@ This document outlines the UI differences between ASSISTANT, MANAGER, and SUPERA
 
 ### Administrator Access Section
 
-**Location:** Bottom of dashboard page (lines 274-298)
+**Location:** Previously at bottom of dashboard page (REMOVED as of 2026-01-25)
+
+**Status:** ⚠️ **REMOVED** - This section was redundant and has been permanently removed.
+
+**Rationale for Removal:**
+1. Both MANAGER and SUPERADMIN roles already have "Admin" link in top navigation bar
+2. "Manage Users" link was redundant (accessible via Admin > Users tab)
+3. "System Admin" link duplicated the navigation "Admin" link
+4. Removal improves UX by eliminating clutter and redundancy
+
+**Access Path Changes:**
+- ✅ Admin Dashboard: Navigate via "Admin" link in top navigation
+- ✅ User Management: Navigate to Admin > Users tab
+- ✅ All admin functionality remains fully accessible via navigation menu
 
 | Role | UI Behavior |
 |------|-------------|
-| **ASSISTANT** | ❌ NO "Administrator Access" section |
-| **MANAGER** (isAdmin) | ✅ Shows "Administrator Access" section with:<br>- "Manage Users" link → `/admin/users` |
-| **SUPERADMIN** (isAdmin + isSuperAdmin) | ✅ Shows "Administrator Access" section with:<br>- "Manage Users" link → `/admin/users`<br>- "System Admin" link → `/admin` |
+| **ASSISTANT** | ❌ NO admin access (no changes) |
+| **MANAGER** | ✅ Access admin features via "Admin" link in top navigation |
+| **SUPERADMIN** | ✅ Access admin features via "Admin" link in top navigation |
 
-**Implementation:**
+**Previous Implementation (deprecated):**
 ```typescript
+// REMOVED CODE (for historical reference only)
 {isAdminUser && (
   <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
     <h3 className="text-lg font-semibold text-blue-900 mb-2">
@@ -126,13 +140,13 @@ This document outlines the UI differences between ASSISTANT, MANAGER, and SUPERA
 
 ### MANAGER Role
 - **Navigation:** Dashboard, Cases, Templates, Notifications, **Admin**
-- **Dashboard:** "Administrator Access" section with "Manage Users" link
+- **Dashboard:** Clean dashboard without redundant admin section (use top navigation for admin access)
 - **Cases:** Company-scoped case data only
 - **Profile Menu:** Profile, Settings, Security, Sessions
 
 ### SUPERADMIN Role
 - **Navigation:** Dashboard, Cases, Templates, Notifications, **Admin**
-- **Dashboard:** "Administrator Access" section with "Manage Users" and "System Admin" links
+- **Dashboard:** Clean dashboard without redundant admin section (use top navigation for admin access)
 - **Cases:** **ALL cases across ALL companies**
 - **Profile Menu:** Profile, Settings, Security, Sessions
 
@@ -141,9 +155,10 @@ This document outlines the UI differences between ASSISTANT, MANAGER, and SUPERA
 ## Testing Implications
 
 ### Dashboard Tests
-- ASSISTANT: Should NOT see "Administrator Access" section
-- MANAGER: Should see "Administrator Access" with "Manage Users" link
-- SUPERADMIN: Should see "Administrator Access" with both "Manage Users" and "System Admin" links
+- ASSISTANT: Should NOT see admin features on dashboard
+- MANAGER: Should NOT see "Administrator Access" section (removed as redundant)
+- SUPERADMIN: Should NOT see "Administrator Access" section (removed as redundant)
+- ALL ROLES: Admin features accessible via "Admin" navigation link (for admin roles only)
 
 ### Navigation Tests
 - ASSISTANT: Should NOT see "Admin" navigation link
