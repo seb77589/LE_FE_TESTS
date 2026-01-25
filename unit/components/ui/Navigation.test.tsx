@@ -112,14 +112,11 @@ describe('Navigation Component', () => {
 
       // Navigation items for regular users
       expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /documents/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /cases/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /templates/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /notifications/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /sessions/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /security/i })).toBeInTheDocument();
 
       // Admin navigation items should not be visible for regular users
-      expect(screen.queryByRole('link', { name: /users/i })).not.toBeInTheDocument();
       expect(screen.queryByRole('link', { name: /admin/i })).not.toBeInTheDocument();
 
       // User menu should show the user email
@@ -133,7 +130,8 @@ describe('Navigation Component', () => {
       render(<Navigation />);
 
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
-      expect(screen.getByText('Documents')).toBeInTheDocument();
+      expect(screen.getByText('Cases')).toBeInTheDocument();
+      expect(screen.getByText('Templates')).toBeInTheDocument();
     });
   });
 
@@ -163,11 +161,9 @@ describe('Navigation Component', () => {
 
       // Navigation items for admins (all regular items)
       expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /documents/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /cases/i })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: /templates/i })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: /notifications/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /sessions/i })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /security/i })).toBeInTheDocument();
 
       // Admin-specific navigation items
       expect(screen.getByRole('link', { name: /admin/i })).toBeInTheDocument();

@@ -16,30 +16,38 @@
 import { proxyLog, proxyError } from '@/lib/proxyLogger';
 
 describe('proxyLogger', () => {
-  // Store original console.error and process.stderr.write
+  // Store original console.log and process.stdout.write
+  const originalConsoleLog = console.log;
   const originalConsoleError = console.error;
+  const originalStdoutWrite = process.stdout.write;
   const originalStderrWrite = process.stderr.write;
 
+  let consoleLogSpy: jest.SpyInstance;
   let consoleErrorSpy: jest.SpyInstance;
+  let stdoutWriteSpy: jest.SpyInstance;
   let stderrWriteSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    stdoutWriteSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
     stderrWriteSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
   });
 
   afterEach(() => {
+    console.log = originalConsoleLog;
     console.error = originalConsoleError;
+    process.stdout.write = originalStdoutWrite;
     process.stderr.write = originalStderrWrite;
   });
 
   describe('proxyLog', () => {
-    it('logs message with timestamp via console.error', () => {
+    it('logs message with timestamp via console.log', () => {
       proxyLog('Test message');
 
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      expect(consoleLogSpy).toHaveBeenCalled();
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       expect(loggedOutput).toContain('[PROXY-LOG]');
       expect(loggedOutput).toContain('Test message');
     });
@@ -47,7 +55,7 @@ describe('proxyLogger', () => {
     it('includes timestamp in log entry', () => {
       proxyLog('Test message');
 
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       const parsed = JSON.parse(loggedOutput.replace('[PROXY-LOG] ', ''));
 
       expect(parsed.timestamp).toBeDefined();
@@ -59,7 +67,7 @@ describe('proxyLogger', () => {
       const testData = { url: '/api/test', method: 'GET' };
       proxyLog('Request received', testData);
 
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       const parsed = JSON.parse(loggedOutput.replace('[PROXY-LOG] ', ''));
 
       expect(parsed.message).toBe('Request received');
@@ -69,21 +77,21 @@ describe('proxyLogger', () => {
     it('excludes data field when not provided', () => {
       proxyLog('Simple message');
 
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       const parsed = JSON.parse(loggedOutput.replace('[PROXY-LOG] ', ''));
 
       expect(parsed.message).toBe('Simple message');
       expect(parsed.data).toBeUndefined();
     });
 
-    it('writes to stderr as fallback', () => {
+    it('writes to stdout as fallback', () => {
       proxyLog('Test message');
 
-      expect(stderrWriteSpy).toHaveBeenCalled();
-      const stderrOutput = stderrWriteSpy.mock.calls[0][0];
-      expect(stderrOutput).toContain('[PROXY-LOG]');
-      expect(stderrOutput).toContain('Test message');
-      expect(stderrOutput).toMatch(/\n$/);
+      expect(stdoutWriteSpy).toHaveBeenCalled();
+      const stdoutOutput = stdoutWriteSpy.mock.calls[0][0];
+      expect(stdoutOutput).toContain('[PROXY-LOG]');
+      expect(stdoutOutput).toContain('Test message');
+      expect(stdoutOutput).toMatch(/\n$/);
     });
 
     it('handles complex data objects', () => {
@@ -95,7 +103,7 @@ describe('proxyLogger', () => {
       };
       proxyLog('Complex data', complexData);
 
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       const parsed = JSON.parse(loggedOutput.replace('[PROXY-LOG] ', ''));
 
       expect(parsed.data).toEqual(complexData);
@@ -104,7 +112,7 @@ describe('proxyLogger', () => {
     it('handles null data', () => {
       proxyLog('Null data', null);
 
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       const parsed = JSON.parse(loggedOutput.replace('[PROXY-LOG] ', ''));
 
       // null is falsy, so data should be undefined
@@ -114,7 +122,7 @@ describe('proxyLogger', () => {
     it('handles undefined data explicitly', () => {
       proxyLog('Undefined data');
 
-      const loggedOutput = consoleErrorSpy.mock.calls[0][0];
+      const loggedOutput = consoleLogSpy.mock.calls[0][0];
       const parsed = JSON.parse(loggedOutput.replace('[PROXY-LOG] ', ''));
 
       expect(parsed.data).toBeUndefined();

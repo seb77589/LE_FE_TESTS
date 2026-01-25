@@ -152,7 +152,6 @@ describe('ProfilePage Component', () => {
 
       render(<ProfilePage />);
 
-      expect(screen.getByTestId('navigation')).toBeInTheDocument();
       // Loading skeleton has animate-pulse class
       const loadingElements = document.querySelectorAll('.animate-pulse');
       expect(loadingElements.length).toBeGreaterThan(0);

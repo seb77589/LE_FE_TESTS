@@ -732,7 +732,7 @@ describe('API Client Comprehensive Tests', () => {
       });
 
       await expect(fetcher('/api/v1/notfound')).rejects.toThrow(
-        'HTTP error! status: 404',
+        'Resource not found.',
       );
     });
 
@@ -742,7 +742,7 @@ describe('API Client Comprehensive Tests', () => {
         status: 500,
       });
 
-      await expect(fetcher('/api/v1/error')).rejects.toThrow('HTTP error! status: 500');
+      await expect(fetcher('/api/v1/error')).rejects.toThrow('Request failed with status 500');
     });
 
     it('should throw error on 401 status', async () => {
@@ -752,7 +752,7 @@ describe('API Client Comprehensive Tests', () => {
       });
 
       await expect(fetcher('/api/v1/protected')).rejects.toThrow(
-        'HTTP error! status: 401',
+        'Session expired. Please log in again.',
       );
     });
 
@@ -1606,7 +1606,7 @@ describe('API Client Comprehensive Tests', () => {
         status: 404,
       });
 
-      await expect(fetcher('/api/v1/notfound')).rejects.toThrow('HTTP error');
+      await expect(fetcher('/api/v1/notfound')).rejects.toThrow('Resource not found.');
     });
 
     it('should return JSON data from response', async () => {

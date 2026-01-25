@@ -41,11 +41,8 @@ jest.mock('@/lib/errors', () => ({
 }));
 
 import { renderHook } from '@testing-library/react';
-import {
-  useGlobalCleanup,
-  cleanupAllServices,
-  cleanupOnLogout,
-} from '@/hooks/useCleanup';
+import { useGlobalCleanup } from '@/hooks/useCleanup';
+import { cleanupAllServices, cleanupOnLogout } from '@/lib/cleanup';
 import { activityTracker } from '@/lib/tracking/activityTracker';
 import { sessionManager } from '@/lib/session';
 import { errorTracking } from '@/lib/errors';
@@ -78,8 +75,8 @@ describe('useCleanup (useGlobalCleanup)', () => {
 
       unmount();
 
-      expect(logger.info).toHaveBeenCalledWith('general', 'Running global cleanup');
-      expect(logger.info).toHaveBeenCalledWith('general', 'Global cleanup completed');
+      expect(logger.info).toHaveBeenCalledWith('general', 'Manual cleanup triggered');
+      expect(logger.info).toHaveBeenCalledWith('general', 'Manual cleanup completed');
     });
   });
 
@@ -122,7 +119,8 @@ describe('useCleanup (useGlobalCleanup)', () => {
     it('logs logout cleanup', () => {
       cleanupOnLogout();
 
-      expect(logger.info).toHaveBeenCalledWith('general', 'Logout cleanup triggered');
+      expect(logger.info).toHaveBeenCalledWith('general', '🔒 Running logout cleanup');
+      expect(logger.info).toHaveBeenCalledWith('general', '✅ Logout cleanup finished');
     });
   });
 

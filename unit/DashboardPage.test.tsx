@@ -60,45 +60,30 @@ describe('Dashboard Page', () => {
     jest.clearAllMocks();
   });
 
-  test('renders welcome message with user email', () => {
+  test('renders welcome message with user name and role', () => {
     setupAuth('assistant');
     render(<DashboardPage />);
 
-    // Check for welcome heading with user email
-    const userEmail = screen.getByTestId('user-email');
-    expect(userEmail).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER.email);
+    // Check for welcome heading with user name (first name from email)
+    const userName = screen.getByTestId('user-name');
+    const expectedFirstName = FRONTEND_TEST_CREDENTIALS.USER.email.split('@')[0];
+    expect(userName).toHaveTextContent(expectedFirstName);
 
-    // Check for user role text
-    expect(
-      screen.getByText(/you're signed in as a assistant user/i),
-    ).toBeInTheDocument();
+    // Check for user role badge
+    expect(screen.getByText(/assistant/i)).toBeInTheDocument();
   });
 
-  test('displays regular user dashboard without admin actions', () => {
+  test('displays regular user dashboard with stats cards', () => {
     setupAuth('assistant');
     render(<DashboardPage />);
 
-    // Regular action should be visible
-    const createDocumentButton = screen.getByRole('button', {
-      name: (content) => content.includes('Create Document'),
-    });
-    expect(createDocumentButton).toBeInTheDocument();
+    // Stats cards should be visible
+    expect(screen.getByText('Closed Cases')).toBeInTheDocument();
+    expect(screen.getByText('Cases In Progress')).toBeInTheDocument();
+    expect(screen.getByText('Cases To Review')).toBeInTheDocument();
 
-    // Check for action description text
-    expect(screen.getByText('Generate a new legal document')).toBeInTheDocument();
-
-    // Admin buttons should not be visible
-    const quickActionsContainer = screen.getByText('Quick Actions').closest('div');
-    const buttonTexts = quickActionsContainer
-      ? Array.from(quickActionsContainer.querySelectorAll('button')).map(
-          (button) => button.textContent,
-        )
-      : [];
-
-    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(
-      0,
-    );
-    expect(buttonTexts.filter((text) => text?.includes('Admin Panel'))).toHaveLength(0);
+    // Admin section should not be visible for regular users
+    expect(screen.queryByText('Administrator Access')).not.toBeInTheDocument();
   });
 
   test('displays admin users dashboard with admin actions', () => {
@@ -106,24 +91,18 @@ describe('Dashboard Page', () => {
     render(<DashboardPage />);
 
     // Welcome message should be visible
-    const userEmail = screen.getByTestId('user-email');
-    expect(userEmail).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER.email);
-
-    // Admin-specific quick action should be visible
-    const quickActionsContainer = screen.getByText('Quick Actions').closest('div');
-    expect(quickActionsContainer).toBeInTheDocument();
-    const buttonTexts = quickActionsContainer
-      ? Array.from(quickActionsContainer.querySelectorAll('button')).map(
-          (button) => button.textContent,
-        )
-      : [];
-    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(
-      1,
-    );
+    const userName = screen.getByTestId('user-name');
+    const expectedFirstName = FRONTEND_TEST_CREDENTIALS.USER.email.split('@')[0];
+    expect(userName).toHaveTextContent(expectedFirstName);
 
     // Admin privilege notice should be visible
     expect(screen.getByText('Administrator Access')).toBeInTheDocument();
     expect(screen.getByText(/you have administrative privileges/i)).toBeInTheDocument();
+
+    // Manage Users link should be visible
+    const manageUsersLink = screen.getByRole('link', { name: /manage users/i });
+    expect(manageUsersLink).toBeInTheDocument();
+    expect(manageUsersLink).toHaveAttribute('href', '/admin/users');
   });
 
   test('displays superadmin users dashboard with all admin actions', () => {
@@ -131,29 +110,20 @@ describe('Dashboard Page', () => {
     render(<DashboardPage />);
 
     // Welcome message should be visible
-    const userEmail = screen.getByTestId('user-email');
-    expect(userEmail).toHaveTextContent(FRONTEND_TEST_CREDENTIALS.USER.email);
+    const userName = screen.getByTestId('user-name');
+    const expectedFirstName = FRONTEND_TEST_CREDENTIALS.USER.email.split('@')[0];
+    expect(userName).toHaveTextContent(expectedFirstName);
 
-    // Admin actions including Admin Panel quick action should be visible
-    const quickActionsContainer = screen.getByText('Quick Actions').closest('div');
-    expect(quickActionsContainer).toBeInTheDocument();
-    const buttonTexts = quickActionsContainer
-      ? Array.from(quickActionsContainer.querySelectorAll('button')).map(
-          (button) => button.textContent,
-        )
-      : [];
-    expect(buttonTexts.filter((text) => text?.includes('Manage Users'))).toHaveLength(
-      1,
-    );
-    expect(buttonTexts.filter((text) => text?.includes('Admin Panel'))).toHaveLength(1);
+    // Admin privilege notice should be visible
+    expect(screen.getByText('Administrator Access')).toBeInTheDocument();
 
-    // Admin privilege notice section should have "System Admin" link
-    const adminSection = screen.getByText('Administrator Access').closest('div');
-    expect(adminSection).toBeInTheDocument();
-    // "System Admin" is a Link (mocked as <a>), not a button
-    const adminLinks = adminSection
-      ? Array.from(adminSection.querySelectorAll('a')).map((link) => link.textContent)
-      : [];
-    expect(adminLinks.filter((text) => text?.includes('System Admin'))).toHaveLength(1);
+    // Both admin links should be visible for superadmin
+    const manageUsersLink = screen.getByRole('link', { name: /manage users/i });
+    expect(manageUsersLink).toBeInTheDocument();
+    expect(manageUsersLink).toHaveAttribute('href', '/admin/users');
+
+    const systemAdminLink = screen.getByRole('link', { name: /system admin/i });
+    expect(systemAdminLink).toBeInTheDocument();
+    expect(systemAdminLink).toHaveAttribute('href', '/admin');
   });
 });

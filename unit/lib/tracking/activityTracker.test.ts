@@ -114,8 +114,9 @@ describe('ActivityTracker', () => {
       expect(tracker).toBeDefined();
     });
 
-    it('should start tracking automatically on client side', () => {
+    it('should start tracking when explicitly called', () => {
       tracker = new ActivityTracker();
+      tracker.startTracking();
       expect(mockLogger.info).toHaveBeenCalledWith(
         'activity',
         'Activity tracking started',
@@ -132,6 +133,7 @@ describe('ActivityTracker', () => {
   describe('startTracking', () => {
     it('should not start tracking if already tracking', () => {
       tracker = new ActivityTracker();
+      tracker.startTracking();
       mockLogger.info.mockClear();
 
       tracker.startTracking();
@@ -152,6 +154,7 @@ describe('ActivityTracker', () => {
         trackFocus: true,
         trackFormInputs: true,
       });
+      tracker.startTracking();
 
       expect(addEventListenerSpy).toHaveBeenCalledWith('click', expect.any(Function), {
         passive: true,
@@ -207,6 +210,7 @@ describe('ActivityTracker', () => {
     it('should remove all event listeners', () => {
       const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
       tracker = new ActivityTracker();
+      tracker.startTracking();
       tracker.stopTracking();
 
       expect(removeEventListenerSpy).toHaveBeenCalledWith(
@@ -219,6 +223,7 @@ describe('ActivityTracker', () => {
 
     it('should clear timers', () => {
       tracker = new ActivityTracker();
+      tracker.startTracking();
       tracker.stopTracking();
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -233,6 +238,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 100, // High so it doesn't auto-sync
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       // Simulate some activity
       const clickEvent = new MouseEvent('click', {
@@ -266,6 +272,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 100, // High so it doesn't auto-sync
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       // Simulate some activity
       const clickEvent = new MouseEvent('click', {
@@ -342,6 +349,7 @@ describe('ActivityTracker', () => {
   describe('addActivityListener / removeActivityListener', () => {
     it('should add listener', () => {
       tracker = new ActivityTracker();
+      tracker.startTracking();
       const listener = jest.fn();
       tracker.addActivityListener(listener);
 
@@ -404,6 +412,7 @@ describe('ActivityTracker', () => {
 
     it('should include correct event count', () => {
       tracker = new ActivityTracker();
+      tracker.startTracking();
 
       // Trigger activity
       const clickEvent = new MouseEvent('click', {
@@ -425,6 +434,7 @@ describe('ActivityTracker', () => {
       it('should record click events with coordinates', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker();
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const clickEvent = new MouseEvent('click', {
@@ -453,6 +463,7 @@ describe('ActivityTracker', () => {
       it('should record scroll events', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker();
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const scrollEvent = new Event('scroll');
@@ -472,6 +483,7 @@ describe('ActivityTracker', () => {
       it('should record keypress events', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker();
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const keyEvent = new KeyboardEvent('keydown', {
@@ -514,6 +526,7 @@ describe('ActivityTracker', () => {
       it('should record mouse movement when enabled', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker({ trackMouseMovement: true });
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const moveEvent = new MouseEvent('mousemove', {
@@ -560,6 +573,7 @@ describe('ActivityTracker', () => {
       it('should record focus events', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker();
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const focusEvent = new FocusEvent('focus');
@@ -577,6 +591,7 @@ describe('ActivityTracker', () => {
       it('should record blur events', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker();
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const blurEvent = new FocusEvent('blur');
@@ -596,6 +611,7 @@ describe('ActivityTracker', () => {
       it('should record form input events for input elements', () => {
         const listener = jest.fn();
         tracker = new ActivityTracker();
+        tracker.startTracking();
         tracker.addActivityListener(listener);
 
         const input = document.createElement('input');
@@ -649,6 +665,7 @@ describe('ActivityTracker', () => {
     it('should debounce rapid events', () => {
       const listener = jest.fn();
       tracker = new ActivityTracker({ debounceMs: 500 });
+      tracker.startTracking();
       tracker.addActivityListener(listener);
 
       // Fire multiple clicks rapidly
@@ -697,6 +714,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 1,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -749,6 +767,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 1,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -773,6 +792,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 1,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -798,6 +818,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 1,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -829,6 +850,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 1,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -857,6 +879,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 1,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -890,6 +913,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 5,
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       // Fire multiple events
       for (let i = 0; i < 5; i++) {
@@ -922,6 +946,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 100, // High to prevent auto-sync on batch
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -963,6 +988,7 @@ describe('ActivityTracker', () => {
         syncBatchSize: 100, // High batch size to prevent auto-sync
         debounceMs: 10,
       });
+      tracker.startTracking();
 
       const clickEvent = new MouseEvent('click', {
         clientX: 100,
@@ -1002,6 +1028,7 @@ describe('ActivityTracker', () => {
     it('should identify element by id', () => {
       const listener = jest.fn();
       tracker = new ActivityTracker();
+      tracker.startTracking();
       tracker.addActivityListener(listener);
 
       const button = document.createElement('button');
@@ -1025,6 +1052,7 @@ describe('ActivityTracker', () => {
     it('should identify element by class', () => {
       const listener = jest.fn();
       tracker = new ActivityTracker();
+      tracker.startTracking();
       tracker.addActivityListener(listener);
 
       const button = document.createElement('button');
@@ -1048,6 +1076,7 @@ describe('ActivityTracker', () => {
     it('should identify element by tag name', () => {
       const listener = jest.fn();
       tracker = new ActivityTracker();
+      tracker.startTracking();
       tracker.addActivityListener(listener);
 
       const button = document.createElement('button');
@@ -1071,6 +1100,7 @@ describe('ActivityTracker', () => {
   describe('cleanup timer', () => {
     it('should clean up old events after 1 minute', () => {
       tracker = new ActivityTracker({ debounceMs: 10 });
+      tracker.startTracking();
 
       // Add event
       const clickEvent = new MouseEvent('click', {
@@ -1095,6 +1125,7 @@ describe('ActivityTracker', () => {
   describe('listener error handling', () => {
     it('should catch and log errors in listeners', () => {
       tracker = new ActivityTracker({ debounceMs: 10 });
+      tracker.startTracking();
 
       const errorListener = jest.fn().mockImplementation(() => {
         throw new Error('Listener error');
