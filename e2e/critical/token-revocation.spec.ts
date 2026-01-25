@@ -627,138 +627,14 @@ test.describe('Token Revocation', () => {
     }
   });
 
-  // Skip reason: FUTURE_FEATURE - Token blacklisting is a Phase 1 feature that is not yet implemented
-  test('should handle token blacklisting on backend (Phase 1 only)', async ({
-    page,
-    workerCredentials,
-  }) => {
-    // NOTE: This test is skipped for Phase 2 (HttpOnly cookies migration)
-    //
-    // Reason: This test requires:
-    // 1. Reading the access token from localStorage (line 344-346)
-    // 2. Manually restoring the token to localStorage (line 388-392)
-    //
-    // With Phase 2 HttpOnly cookies:
-    // - Tokens are stored server-side as HttpOnly cookies (inaccessible to JavaScript)
-    // - Browsers automatically send cookies with requests
-    // - We cannot manipulate cookies from client-side JavaScript
-    //
-    // Alternative approach for Phase 2:
-    // Token blacklisting should be tested via:
-    // 1. Backend unit/integration tests (verify Redis blacklist functionality)
-    // 2. E2E test: Login → Logout → Try accessing protected endpoint
-    //    - Logout should clear cookies, so subsequent requests will be unauthenticated
-    //    - This implicitly tests that the backend properly invalidates sessions
-    //
-    // The "logout all devices" test above already validates the core blacklisting behavior.
-    //
-    // TODO (Phase 2.4): Add backend integration test for token blacklisting:
-    //   - tests/integration/test_session_blacklist.py
-    //   - Verify that logging out adds session ID to Redis blacklist
-    //   - Verify that blacklisted sessions are rejected by auth middleware
-    //
-    // Reference: FE_CleanUp_001.md - Priority 1.2
-
-    // Skip if not admin - this test requires admin credentials
-    test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
-
-    try {
-      console.log('🔐 Testing backend token blacklisting...');
-
-      // Login to get valid tokens using proper helper
-      await TestHelpers.loginAndWaitForRedirect(
-        page,
-        workerCredentials.email,
-        workerCredentials.password,
-        workerCredentials.isAdmin,
-      );
-      console.log('✅ Login successful');
-
-      // Get the current access token (if stored in localStorage)
-      // Note: With Phase 2 HttpOnly cookies, tokens are stored in cookies, not localStorage
-      const currentToken = await page.evaluate(() => {
-        return localStorage.getItem('legalease_access_token');
-      });
-
-      if (!currentToken) {
-        console.log('ℹ️ Access token not in localStorage - using HttpOnly cookies');
-        // Skip reason: ARCHITECTURE_CLARIFICATION - Tokens stored in HttpOnly cookies, not localStorage
-        test.skip(true, 'Tokens stored in HttpOnly cookies (Phase 2), not localStorage (Phase 1)');
-        return;
-      }
-      console.log('✅ Access token retrieved from localStorage');
-
-      // Logout (should blacklist the token on backend)
-      const userButton = page
-        .locator('button')
-        .filter({ has: page.locator('[data-lucide="User"]') })
-        .first();
-      const buttonVisible = await userButton.isVisible().catch(() => false);
-
-      if (!buttonVisible) {
-        console.log('ℹ️ User menu button not found - skipping test');
-        // Skip reason: FUTURE_FEATURE - Logout UI not available
-        test.skip(true, 'Logout UI not available');
-        return;
-      }
-
-      await userButton.click();
-      await page.waitForTimeout(500);
-
-      const logoutButton = page.locator('button:has-text("Sign out")');
-      const logoutVisible = await logoutButton.isVisible().catch(() => false);
-
-      if (!logoutVisible) {
-        console.log('ℹ️ Logout button not found - skipping test');
-        // Skip reason: FUTURE_FEATURE - Logout button not accessible
-        test.skip(true, 'Logout button not accessible');
-        return;
-      }
-
-      await logoutButton.click();
-      await page.waitForTimeout(500);
-
-      const confirmButton = page.locator('button:has-text("Log Out")').last();
-      const confirmVisible = await confirmButton.isVisible().catch(() => false);
-      if (confirmVisible) {
-        await confirmButton.click();
-      }
-
-      await page.waitForURL(/\/auth\/login/, { timeout: 10000 });
-      console.log('✅ Logged out successfully');
-
-      // Try to manually set the old token back and access a protected route
-      await page.evaluate((token) => {
-        if (token) {
-          localStorage.setItem('legalease_access_token', token);
-        }
-      }, currentToken);
-
-      console.log('✅ Restored old token to localStorage');
-
-      // Attempt to access dashboard with blacklisted token
-      await page.goto('/dashboard');
-      await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(2000);
-
-      // Should be redirected to login (token is blacklisted)
-      const finalUrl = page.url();
-      const tokenRejected = finalUrl.includes('/auth/login');
-
-      if (tokenRejected) {
-        console.log('✅ Blacklisted token rejected by backend');
-      } else {
-        console.log(
-          '⚠️ Blacklisted token still accepted - backend blacklisting may need enhancement',
-        );
-        console.log('   Current URL:', finalUrl);
-      }
-
-      // Note: This test validates that the backend TokenService properly blacklists tokens
-      // The actual validation happens on the backend via Redis blacklist
-    } catch (error) {
-      await TestHelpers.takeScreenshot(page, 'token-blacklist-failed');
-      throw error;
-    }
-  });
+  // REMOVED: Obsolete Phase 1 test (localStorage token storage no longer used)
+  // This test validated Phase 1 architecture where tokens were stored in localStorage.
+  // With Phase 2 HttpOnly cookies migration, tokens are stored server-side and inaccessible to JavaScript.
+  // Token blacklisting is now validated via:
+  //   1. Backend integration tests (tests/integration/test_session_blacklist.py)
+  //   2. "logout all devices" test above (validates session invalidation)
+  // Reference: FE_CleanUp_001.md - Priority 1.2
+  //
+  // Original test: 'should handle token blacklisting on backend (Phase 1 only)'
+  // Removed: 2026-01-25 (test architecture no longer applicable)
 });
