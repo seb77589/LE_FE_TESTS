@@ -281,7 +281,10 @@ test.describe('Password Reset - Reset Form', () => {
     if (hasEmailRequestForm) {
       // Feature not yet implemented: set new password form with token
       // Currently shows email request form regardless of token
-      test.skip(true, 'Set new password form not yet implemented - shows request form instead');
+      test.skip(
+        true,
+        'Set new password form not yet implemented - shows request form instead',
+      );
       return;
     }
 
@@ -317,7 +320,10 @@ test.describe('Password Reset - Reset Form', () => {
     if (!hasError && hasRequestForm) {
       // Feature not yet implemented: token validation error handling
       // Currently redirects to request form instead of showing error
-      test.skip(true, 'Token validation error UI not yet implemented - shows request form instead');
+      test.skip(
+        true,
+        'Token validation error UI not yet implemented - shows request form instead',
+      );
       return;
     }
 
@@ -344,7 +350,10 @@ test.describe('Password Reset - Reset Form', () => {
     if (!hasExpiredMessage && hasRequestForm) {
       // Feature not yet implemented: token validation/expiry error handling
       // Currently shows request form regardless of token validity
-      test.skip(true, 'Token expiry validation UI not yet implemented - shows request form instead');
+      test.skip(
+        true,
+        'Token expiry validation UI not yet implemented - shows request form instead',
+      );
       return;
     }
 

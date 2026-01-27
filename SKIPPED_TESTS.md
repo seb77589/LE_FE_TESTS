@@ -27,48 +27,56 @@ Comprehensive E2E test suite validation and fixes. Tests now run against the rea
 ### Key Fixes
 
 #### 1. Registration Tests - Company Access Policy
+
 **Files Modified**: `register.spec.ts`
 **Status**: ✅ Tests now skip gracefully when backend requires company access
 
 The backend is configured to require company access for @example.com domain. Tests now detect this error and skip gracefully with clear messaging.
 
 **Changes**:
+
 - Added polling mechanism to detect company access error
 - Tests skip with informative message when domain restriction is in place
 - Prevents false failures due to backend configuration
 
 #### 2. Password Reset Tests - CSRF Token and Timeouts
+
 **Files Modified**: `password-reset-workflow.spec.ts`, `PasswordResetForm.tsx`
 **Status**: ✅ 10 passing, 4 skipped (features not yet implemented)
 
 **Changes**:
+
 - Added CSRF token fetching to PasswordResetForm component
 - Increased timeouts from 5s/15s to 10s/30s for slow SMTP operations
 - Added runtime skips for "set new password with token" form (not yet implemented)
 
 #### 3. Login Tests - Registration Timeout
+
 **Files Modified**: `test-helpers.ts`
 **Status**: ✅ 4 passing
 
 **Changes**:
+
 - Increased registration timeout from 15s to 60s
 - Backend takes 20-40 seconds for registration due to SMTP email sending with retries
 
 #### 4. Visual Regression Tests - Snapshot Updates
+
 **Files Modified**: Visual regression snapshots
 **Status**: ✅ 6 passing
 
 **Changes**:
+
 - Updated all visual regression snapshots to match current UI
 - Dashboard, profile page, login, register, admin dashboard, 404 page
 
 ### E2E Skip Categories (Current State)
 
-| Category | Count | Reason |
-|----------|-------|--------|
-| Role-based conditional | ~36 | Run conditionally based on user role (Admin vs User) |
-| Features not implemented | ~100+ | Password reset form, notification preferences, etc. |
-| Environment limitations | ~10 | Company access policy, SMTP delays |
+| Category                 | Count | Reason                                               |
+| ------------------------ | ----- | ---------------------------------------------------- |
+| Role-based conditional   | ~36   | Run conditionally based on user role (Admin vs User) |
+| Features not implemented | ~100+ | Password reset form, notification preferences, etc.  |
+| Environment limitations  | ~10   | Company access policy, SMTP delays                   |
 
 ### Test Execution Results (Sample Run)
 

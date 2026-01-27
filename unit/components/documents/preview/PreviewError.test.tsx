@@ -32,7 +32,8 @@ jest.mock('lucide-react', () => ({
 }));
 
 // Placeholder for tests
-const PreviewError = ({ error, onRetry }: { error: string; onRetry: () => void }) => null;
+const PreviewError = ({ error, onRetry }: { error: string; onRetry: () => void }) =>
+  null;
 
 describe.skip('PreviewError (component removed)', () => {
   const mockOnRetry = jest.fn();

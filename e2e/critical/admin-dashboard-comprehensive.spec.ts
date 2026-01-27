@@ -55,7 +55,10 @@ test.describe('Admin Dashboard - Overview', () => {
       console.log('🔍 Dashboard container not found. Checking page state...');
       console.log('Body contains "Loading":', bodyText?.includes('Loading'));
       console.log('Body contains "Redirecting":', bodyText?.includes('Redirecting'));
-      console.log('Body contains "Access denied":', bodyText?.includes('Access denied'));
+      console.log(
+        'Body contains "Access denied":',
+        bodyText?.includes('Access denied'),
+      );
 
       // If loading, wait longer
       if (bodyText?.includes('Loading')) {
@@ -75,7 +78,9 @@ test.describe('Admin Dashboard - Overview', () => {
 
     // Dashboard container is visible - now verify the heading
     const headingLocator = dashboardContainer.locator('h1:has-text("Admin Dashboard")');
-    const headingVisible = await headingLocator.isVisible({ timeout: 5000 }).catch(() => false);
+    const headingVisible = await headingLocator
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
     console.log('✅ Admin Dashboard container found, heading visible:', headingVisible);
 
     // Check for statistics cards
@@ -210,7 +215,7 @@ test.describe('Admin Dashboard - User Management', () => {
       await page.waitForTimeout(1000);
     } else {
       // Try navigating to dedicated users page
-        await page.goto('/admin/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
       await page.waitForTimeout(1000);
     }
@@ -286,7 +291,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-        await page.goto('/admin/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load');
     }
 
@@ -311,7 +316,9 @@ test.describe('Admin Dashboard - User Management', () => {
     }
 
     // Enter search term using data-testid selector
-    const searchLocator = page.locator('[data-testid="user-search"], input[type="search"]').first();
+    const searchLocator = page
+      .locator('[data-testid="user-search"], input[type="search"]')
+      .first();
     await searchLocator.fill('test');
     await page.waitForTimeout(1000);
 
@@ -337,7 +344,10 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-      await page.goto('/admin/users', { waitUntil: 'domcontentloaded', timeout: 90000 });
+      await page.goto('/admin/users', {
+        waitUntil: 'domcontentloaded',
+        timeout: 90000,
+      });
       await page.waitForTimeout(2000);
     }
 
@@ -372,7 +382,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-        await page.goto('/admin/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -424,7 +434,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-        await page.goto('/admin/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -478,7 +488,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-        await page.goto('/admin/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -532,7 +542,7 @@ test.describe('Admin Dashboard - User Management', () => {
         .click();
       await page.waitForTimeout(1000);
     } else {
-        await page.goto('/admin/users');
+      await page.goto('/admin/users');
       await page.waitForLoadState('load'); // Changed from networkidle due to continuous analytics/error reporting
     }
 
@@ -712,8 +722,12 @@ test.describe('Admin Dashboard - Bulk Operations', () => {
     }
 
     // Select first user checkbox (skip the select-all header checkbox by targeting tbody)
-    const userCheckbox = page.locator('[data-testid="user-row"] input[type="checkbox"]').first();
-    const checkboxExists = await userCheckbox.isVisible({ timeout: 5000 }).catch(() => false);
+    const userCheckbox = page
+      .locator('[data-testid="user-row"] input[type="checkbox"]')
+      .first();
+    const checkboxExists = await userCheckbox
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
 
     if (checkboxExists) {
       await userCheckbox.check();

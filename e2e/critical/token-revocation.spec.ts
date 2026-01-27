@@ -432,12 +432,16 @@ test.describe('Token Revocation', () => {
     // Force Session 2 to validate its token by making an authenticated API request
     // This will trigger the token age validation in get_current_user()
     console.log('🔍 Testing Session 2 token validity with API request...');
-    const apiResponse = await page2.request.get('http://localhost:8000/api/v1/auth/session/status');
+    const apiResponse = await page2.request.get(
+      'http://localhost:8000/api/v1/auth/session/status',
+    );
     console.log(`📡 Session 2 API response status: ${apiResponse.status()}`);
 
     // Session 2's token should be rejected (401 Unauthorized) because it was issued before password change
     expect(apiResponse.status()).toBe(401);
-    console.log('✅ Session 2 token rejected by backend (issued before password change)');
+    console.log(
+      '✅ Session 2 token rejected by backend (issued before password change)',
+    );
 
     // Verify session 2 is logged out when trying to access protected page
     // Navigate to the user's appropriate dashboard
@@ -517,7 +521,10 @@ test.describe('Token Revocation', () => {
       if (companyAccessRequired) {
         console.log('⚠️ Company access is required for this account - skipping test');
         // Skip reason: TEST_INFRASTRUCTURE - Backend requires company access for dynamically registered users
-        test.skip(true, 'Backend requires company access for dynamically registered users');
+        test.skip(
+          true,
+          'Backend requires company access for dynamically registered users',
+        );
         return;
       }
 
@@ -531,7 +538,10 @@ test.describe('Token Revocation', () => {
           .isVisible()
           .catch(() => false);
         if (companyError) {
-          test.skip(true, 'Backend requires company access for dynamically registered users');
+          test.skip(
+            true,
+            'Backend requires company access for dynamically registered users',
+          );
           return;
         }
         throw new Error('Registration did not redirect to expected page');

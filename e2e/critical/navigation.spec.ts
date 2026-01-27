@@ -148,7 +148,9 @@ test.describe('Navigation Component', () => {
       await page.waitForLoadState('domcontentloaded');
 
       // Users tab is in admin tabs and routes to /admin/users
-      const usersTab = page.locator('[data-testid="admin-tab-users"], a[href="/admin/users"]').first();
+      const usersTab = page
+        .locator('[data-testid="admin-tab-users"], a[href="/admin/users"]')
+        .first();
       await usersTab.click();
       await page.waitForURL(/\/admin\/users/);
 

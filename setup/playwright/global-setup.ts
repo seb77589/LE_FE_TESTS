@@ -195,7 +195,9 @@ async function globalSetup(config: FullConfig) {
     );
     console.log('✅ [Playwright Global Setup] Test templates seeded successfully');
   } catch (error: any) {
-    console.warn('\n⚠️  [Playwright Global Setup] Warning: Failed to seed test templates');
+    console.warn(
+      '\n⚠️  [Playwright Global Setup] Warning: Failed to seed test templates',
+    );
     console.warn(`   Error: ${error.message}`);
     console.warn('   Tests may skip if no template data exists');
     // Don't throw - allow tests to run even if template seeding fails
@@ -214,7 +216,9 @@ async function globalSetup(config: FullConfig) {
     );
     console.log('✅ [Playwright Global Setup] Test notifications seeded successfully');
   } catch (error: any) {
-    console.warn('\n⚠️  [Playwright Global Setup] Warning: Failed to seed test notifications');
+    console.warn(
+      '\n⚠️  [Playwright Global Setup] Warning: Failed to seed test notifications',
+    );
     console.warn(`   Error: ${error.message}`);
     console.warn('   Tests may skip if no notification data exists');
     // Don't throw - allow tests to run even if notification seeding fails

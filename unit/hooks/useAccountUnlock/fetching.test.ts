@@ -75,9 +75,7 @@ describe('useAccountUnlock - Data fetching', () => {
   });
 
   it('should fetch locked accounts when canUnlock is true', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -95,9 +93,7 @@ describe('useAccountUnlock - Data fetching', () => {
   });
 
   it('should populate lockedAccounts on successful fetch', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.lockedAccounts).toHaveLength(2);
@@ -117,9 +113,7 @@ describe('useAccountUnlock - Data fetching', () => {
     mockApi.get.mockReset();
     mockApi.get.mockRejectedValue(new Error('Network error'));
 
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.error).not.toBeNull();
@@ -132,9 +126,7 @@ describe('useAccountUnlock - Data fetching', () => {
     mockApi.get.mockReset();
     mockApi.get.mockRejectedValue(new Error('Network error'));
 
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.error).not.toBeNull();

@@ -20,7 +20,7 @@ test.describe('Template Visibility E2E Tests', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
 
     // Navigate to dashboard after authentication
@@ -70,9 +70,11 @@ test.describe('Template Visibility E2E Tests', () => {
       const navTexts = await navItems.allTextContents();
 
       // Find positions
-      const casesIndex = navTexts.findIndex(text => text.includes('Cases'));
-      const templatesIndex = navTexts.findIndex(text => text.includes('Templates'));
-      const notificationsIndex = navTexts.findIndex(text => text.includes('Notifications'));
+      const casesIndex = navTexts.findIndex((text) => text.includes('Cases'));
+      const templatesIndex = navTexts.findIndex((text) => text.includes('Templates'));
+      const notificationsIndex = navTexts.findIndex((text) =>
+        text.includes('Notifications'),
+      );
 
       // Verify Templates is between Cases and Notifications
       expect(templatesIndex).toBeGreaterThan(casesIndex);
@@ -97,7 +99,8 @@ test.describe('Template Visibility E2E Tests', () => {
 
     test('should show most-used badge on popular templates', async ({ page }) => {
       // Check if templates exist
-      const hasTemplates = await page.locator('h2:has-text("Popular Templates")').count() > 0;
+      const hasTemplates =
+        (await page.locator('h2:has-text("Popular Templates")').count()) > 0;
 
       if (!hasTemplates) {
         console.log('ℹ️ No templates available - badge only shows with templates');
@@ -111,7 +114,9 @@ test.describe('Template Visibility E2E Tests', () => {
       console.log('✅ Most Used badge displayed');
     });
 
-    test('should navigate to templates page from widget "Browse All"', async ({ page }) => {
+    test('should navigate to templates page from widget "Browse All"', async ({
+      page,
+    }) => {
       // Find Browse All button
       const browseAllButton = page.locator('button:has-text("Browse All")').first();
       await browseAllButton.click();
@@ -128,7 +133,8 @@ test.describe('Template Visibility E2E Tests', () => {
 
     test('should show template cards with names and descriptions', async ({ page }) => {
       // Check if templates exist
-      const hasTemplates = await page.locator('h2:has-text("Popular Templates")').count() > 0;
+      const hasTemplates =
+        (await page.locator('h2:has-text("Popular Templates")').count()) > 0;
 
       if (!hasTemplates) {
         console.log('ℹ️ No templates available (empty state)');
@@ -136,7 +142,10 @@ test.describe('Template Visibility E2E Tests', () => {
       }
 
       // Find template cards within widget
-      const templateCards = page.locator('h2:has-text("Popular Templates")').locator('..').locator('[class*="Card"]');
+      const templateCards = page
+        .locator('h2:has-text("Popular Templates")')
+        .locator('..')
+        .locator('[class*="Card"]');
       const cardCount = await templateCards.count();
 
       if (cardCount > 0) {
@@ -148,7 +157,9 @@ test.describe('Template Visibility E2E Tests', () => {
         await expect(templateName).toBeVisible();
 
         // Check for description
-        const description = firstCard.locator('[class*="text-muted-foreground"]').first();
+        const description = firstCard
+          .locator('[class*="text-muted-foreground"]')
+          .first();
         await expect(description).toBeVisible();
 
         console.log('✅ Template cards show names and descriptions');
@@ -159,7 +170,8 @@ test.describe('Template Visibility E2E Tests', () => {
 
     test('should allow using template from dashboard widget', async ({ page }) => {
       // Check if templates exist
-      const hasTemplates = await page.locator('h2:has-text("Popular Templates")').count() > 0;
+      const hasTemplates =
+        (await page.locator('h2:has-text("Popular Templates")').count()) > 0;
 
       if (!hasTemplates) {
         console.log('ℹ️ No templates available to use');
@@ -167,7 +179,10 @@ test.describe('Template Visibility E2E Tests', () => {
       }
 
       // Find "Use" buttons
-      const useButtons = page.locator('h2:has-text("Popular Templates")').locator('..').locator('button:has-text("Use")');
+      const useButtons = page
+        .locator('h2:has-text("Popular Templates")')
+        .locator('..')
+        .locator('button:has-text("Use")');
       const buttonCount = await useButtons.count();
 
       if (buttonCount > 0) {
@@ -242,7 +257,11 @@ test.describe('Template Visibility E2E Tests', () => {
 
       if (initialCount > 0) {
         // Get first template name
-        const firstTemplateName = await allTemplates.first().locator('[class*="font-semibold"]').first().textContent();
+        const firstTemplateName = await allTemplates
+          .first()
+          .locator('[class*="font-semibold"]')
+          .first()
+          .textContent();
 
         if (firstTemplateName) {
           // Search for first word of template name
@@ -260,7 +279,9 @@ test.describe('Template Visibility E2E Tests', () => {
           // Filtered count should be <= initial count
           expect(filteredCount).toBeLessThanOrEqual(initialCount);
 
-          console.log(`✅ Search filtering works (${initialCount} → ${filteredCount} templates)`);
+          console.log(
+            `✅ Search filtering works (${initialCount} → ${filteredCount} templates)`,
+          );
         }
       } else {
         console.log('ℹ️ No templates available to search');
@@ -297,7 +318,7 @@ test.describe('Template Visibility E2E Tests', () => {
       // Wait for templates to load first (info panel only shows when templates exist)
       const templateCards = page.locator('[role="article"]');
       const templateCount = await templateCards.count();
-      
+
       if (templateCount === 0) {
         console.log('ℹ️ No templates available - skipping info panel test');
         return;
@@ -384,7 +405,11 @@ test.describe('Template Visibility E2E Tests', () => {
         await page.waitForSelector('[role="dialog"]', { timeout: 3000 });
 
         // Find close button (X button or Cancel/Close button)
-        const closeButton = page.locator('[role="dialog"] button[aria-label*="lose"], [role="dialog"] button:has-text("Close")').first();
+        const closeButton = page
+          .locator(
+            '[role="dialog"] button[aria-label*="lose"], [role="dialog"] button:has-text("Close")',
+          )
+          .first();
 
         if (await closeButton.isVisible()) {
           await closeButton.click();

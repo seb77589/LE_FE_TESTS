@@ -231,7 +231,12 @@ test.describe('SuperAdmin Navigation - Navigation Bar Presence', () => {
   test('should not duplicate navigation during loading on admin routes', async ({
     page,
   }) => {
-    const adminRoutes = ['/admin', '/admin/security', '/admin/cases', '/admin/documents'];
+    const adminRoutes = [
+      '/admin',
+      '/admin/security',
+      '/admin/cases',
+      '/admin/documents',
+    ];
 
     for (const route of adminRoutes) {
       // Check as early as possible to catch loading-state regressions.

@@ -23,7 +23,7 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
         page,
         workerCredentials.email,
         workerCredentials.password,
-        workerCredentials.isAdmin
+        workerCredentials.isAdmin,
       );
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
@@ -33,13 +33,13 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
       // The skip link exists but may not be the first focusable element
       // Let's verify it exists and can receive focus
       const skipLink = page.locator('a[href="#main"]');
-      
+
       // Verify skip link exists
       await expect(skipLink).toHaveCount(1);
-      
+
       // Focus it directly
       await skipLink.focus();
-      
+
       // Now it should be focused
       await expect(skipLink).toBeFocused();
 
@@ -63,7 +63,7 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
       // Verify h2 elements come after h1
       const allHeadings = page.locator('h1, h2, h3, h4, h5, h6');
       const firstHeading = allHeadings.first();
-      const firstTag = await firstHeading.evaluate(el => el.tagName);
+      const firstTag = await firstHeading.evaluate((el) => el.tagName);
       expect(firstTag).toBe('H1');
 
       console.log(`✅ Heading hierarchy valid: 1 h1, ${h2Count} h2 elements`);
@@ -90,7 +90,9 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
 
     test('should have keyboard navigable buttons', async ({ page }) => {
       // Get all buttons
-      const buttons = page.locator('button').filter({ hasNotText: 'Open Next.js Dev Tools' });
+      const buttons = page
+        .locator('button')
+        .filter({ hasNotText: 'Open Next.js Dev Tools' });
       const buttonCount = await buttons.count();
 
       // Tab through first 5 buttons
@@ -158,7 +160,9 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
 
     test('should have descriptive button labels', async ({ page }) => {
       // Check Quick Actions buttons
-      const quickActionButtons = page.locator('button').filter({ hasText: /Create|View|Manage|Admin/ });
+      const quickActionButtons = page
+        .locator('button')
+        .filter({ hasText: /Create|View|Manage|Admin/ });
       const buttonCount = await quickActionButtons.count();
 
       for (let i = 0; i < buttonCount; i++) {
@@ -186,7 +190,9 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
 
     test('should have accessible form labels', async ({ page }) => {
       // Check email input
-      const emailInput = page.locator('input[type="text"], input[type="email"]').first();
+      const emailInput = page
+        .locator('input[type="text"], input[type="email"]')
+        .first();
       const emailLabel = page.locator('label, div:has-text("Email")').first();
 
       await expect(emailInput).toBeVisible();
@@ -209,9 +215,11 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
       // Should focus on email input
       const emailFocused = await page.evaluate(() => {
         const activeElement = document.activeElement;
-        return activeElement?.getAttribute('type') === 'text' ||
-               activeElement?.getAttribute('type') === 'email' ||
-               activeElement?.getAttribute('placeholder')?.toLowerCase().includes('email');
+        return (
+          activeElement?.getAttribute('type') === 'text' ||
+          activeElement?.getAttribute('type') === 'email' ||
+          activeElement?.getAttribute('placeholder')?.toLowerCase().includes('email')
+        );
       });
 
       expect(emailFocused).toBe(true);
@@ -229,7 +237,9 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
       console.log('✅ Keyboard navigation works for login form');
     });
 
-    test('should show validation errors with proper ARIA attributes', async ({ page }) => {
+    test('should show validation errors with proper ARIA attributes', async ({
+      page,
+    }) => {
       // Submit empty form to trigger validation
       const submitButton = page.locator('button[type="submit"]');
       await submitButton.click();
@@ -237,9 +247,11 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
       await page.waitForTimeout(500);
 
       // Check for error messages
-      const errorMessages = page.locator('[role="alert"], [aria-live="polite"], .text-red-600, .text-destructive');
+      const errorMessages = page.locator(
+        '[role="alert"], [aria-live="polite"], .text-red-600, .text-destructive',
+      );
 
-      if (await errorMessages.count() > 0) {
+      if ((await errorMessages.count()) > 0) {
         const firstError = errorMessages.first();
         const isVisible = await firstError.isVisible();
         expect(isVisible).toBe(true);
@@ -257,7 +269,7 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
         page,
         workerCredentials.email,
         workerCredentials.password,
-        workerCredentials.isAdmin
+        workerCredentials.isAdmin,
       );
     });
 
@@ -322,13 +334,15 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
         page,
         workerCredentials.email,
         workerCredentials.password,
-        workerCredentials.isAdmin
+        workerCredentials.isAdmin,
       );
     });
 
     test('should have sufficient color contrast for text', async ({ page }) => {
       // Sample text elements and check contrast
-      const textElements = page.locator('p, h1, h2, h3, span, div').filter({ hasText: /.+/ });
+      const textElements = page
+        .locator('p, h1, h2, h3, span, div')
+        .filter({ hasText: /.+/ });
       const sampleSize = Math.min(await textElements.count(), 20);
 
       let passCount = 0;
@@ -354,7 +368,9 @@ test.describe('WCAG 2.1 Accessibility Compliance', () => {
         }
       }
 
-      console.log(`✅ Color contrast check: ${passCount}/${sampleSize} elements have visible text`);
+      console.log(
+        `✅ Color contrast check: ${passCount}/${sampleSize} elements have visible text`,
+      );
       expect(passCount).toBeGreaterThan(0);
     });
   });

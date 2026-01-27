@@ -48,9 +48,7 @@ const renderWithAuth = (component: React.ReactElement, userRole: string = 'WORKE
   };
 
   return render(
-    <AuthContextProvider value={mockAuthContext}>
-      {component}
-    </AuthContextProvider>
+    <AuthContextProvider value={mockAuthContext}>{component}</AuthContextProvider>,
   );
 };
 

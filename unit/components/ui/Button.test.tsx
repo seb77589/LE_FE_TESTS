@@ -35,22 +35,35 @@ describe('Button', () => {
 
     it('applies secondary variant styles', () => {
       const { container } = render(<Button variant="secondary">Button</Button>);
-      expect(container.firstChild).toHaveClass('bg-secondary', 'text-secondary-foreground');
+      expect(container.firstChild).toHaveClass(
+        'bg-secondary',
+        'text-secondary-foreground',
+      );
     });
 
     it('applies outline variant styles', () => {
       const { container } = render(<Button variant="outline">Button</Button>);
-      expect(container.firstChild).toHaveClass('border', 'border-input', 'bg-background');
+      expect(container.firstChild).toHaveClass(
+        'border',
+        'border-input',
+        'bg-background',
+      );
     });
 
     it('applies ghost variant styles', () => {
       const { container } = render(<Button variant="ghost">Button</Button>);
-      expect(container.firstChild).toHaveClass('hover:bg-accent', 'hover:text-accent-foreground');
+      expect(container.firstChild).toHaveClass(
+        'hover:bg-accent',
+        'hover:text-accent-foreground',
+      );
     });
 
     it('applies destructive variant styles', () => {
       const { container } = render(<Button variant="destructive">Button</Button>);
-      expect(container.firstChild).toHaveClass('bg-destructive', 'text-destructive-foreground');
+      expect(container.firstChild).toHaveClass(
+        'bg-destructive',
+        'text-destructive-foreground',
+      );
     });
   });
 

@@ -21,7 +21,7 @@ test.describe('Activity Log E2E Tests', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
 
     // Navigate to activity page
@@ -56,7 +56,9 @@ test.describe('Activity Log E2E Tests', () => {
 
       if (cardsVisible) {
         // Check for at least one card with numeric content
-        const cardWithValue = page.locator('.bg-card h3.text-2xl, .bg-card .text-2xl').first();
+        const cardWithValue = page
+          .locator('.bg-card h3.text-2xl, .bg-card .text-2xl')
+          .first();
         if (await cardWithValue.isVisible().catch(() => false)) {
           console.log('✅ Summary cards with values visible');
         } else {
@@ -118,7 +120,9 @@ test.describe('Activity Log E2E Tests', () => {
         await page.waitForTimeout(500);
 
         // Now look for the type filter select
-        const typeFilter = page.locator('select#activity-type-filter, label:has-text("Activity Type")');
+        const typeFilter = page.locator(
+          'select#activity-type-filter, label:has-text("Activity Type")',
+        );
 
         if (await typeFilter.isVisible().catch(() => false)) {
           console.log('✅ Activity type filter visible after expanding filters');
@@ -132,7 +136,10 @@ test.describe('Activity Log E2E Tests', () => {
 
     test('should show search input', async ({ page }) => {
       // Find search input
-      const searchInput = page.locator('input[type="text"], input[type="search"]').filter({ hasText: '' }).first();
+      const searchInput = page
+        .locator('input[type="text"], input[type="search"]')
+        .filter({ hasText: '' })
+        .first();
 
       if (await searchInput.isVisible()) {
         const placeholder = await searchInput.getAttribute('placeholder');
@@ -151,7 +158,9 @@ test.describe('Activity Log E2E Tests', () => {
       const initialCount = await activityRows.count();
 
       // Change date range - actual options are: "Last 7 days", "Last 30 days", "Last 90 days", "Last year"
-      const dateRangeSelect = page.locator('select#activity-date-range, select').first();
+      const dateRangeSelect = page
+        .locator('select#activity-date-range, select')
+        .first();
 
       if (await dateRangeSelect.isVisible()) {
         // Select "Last 7 days" using the value attribute
@@ -164,7 +173,9 @@ test.describe('Activity Log E2E Tests', () => {
         // Filtered count should be <= initial count (or same if all within 7 days)
         expect(filteredCount).toBeLessThanOrEqual(initialCount + 5); // Allow small variance
 
-        console.log(`✅ Date range filter: ${initialCount} → ${filteredCount} activities`);
+        console.log(
+          `✅ Date range filter: ${initialCount} → ${filteredCount} activities`,
+        );
       } else {
         console.log('ℹ️ Date range selector not available');
       }
@@ -185,7 +196,7 @@ test.describe('Activity Log E2E Tests', () => {
         const options = await typeFilter.locator('option').allTextContents();
 
         // Select first non-"All" option
-        const specificType = options.find(opt => !opt.includes('All'));
+        const specificType = options.find((opt) => !opt.includes('All'));
 
         if (specificType) {
           await typeFilter.selectOption({ label: specificType });
@@ -194,7 +205,9 @@ test.describe('Activity Log E2E Tests', () => {
           // Get filtered count
           const filteredCount = await activityRows.count();
 
-          console.log(`✅ Type filter "${specificType}": ${initialCount} → ${filteredCount} activities`);
+          console.log(
+            `✅ Type filter "${specificType}": ${initialCount} → ${filteredCount} activities`,
+          );
         }
       } else {
         console.log('ℹ️ Type filter not available');
@@ -205,7 +218,9 @@ test.describe('Activity Log E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Find search input
-      const searchInput = page.locator('input[type="text"], input[type="search"]').first();
+      const searchInput = page
+        .locator('input[type="text"], input[type="search"]')
+        .first();
 
       if (await searchInput.isVisible()) {
         // Get initial count
@@ -232,7 +247,9 @@ test.describe('Activity Log E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Apply a filter
-      const searchInput = page.locator('input[type="text"], input[type="search"]').first();
+      const searchInput = page
+        .locator('input[type="text"], input[type="search"]')
+        .first();
 
       if (await searchInput.isVisible()) {
         await searchInput.fill('test');
@@ -261,9 +278,11 @@ test.describe('Activity Log E2E Tests', () => {
       const headers = ['Action', 'Details', 'Timestamp', 'IP Address'];
 
       for (const header of headers) {
-        const headerElement = page.locator(`th:has-text("${header}"), [role="columnheader"]:has-text("${header}")`);
+        const headerElement = page.locator(
+          `th:has-text("${header}"), [role="columnheader"]:has-text("${header}")`,
+        );
 
-        if (await headerElement.count() > 0) {
+        if ((await headerElement.count()) > 0) {
           await expect(headerElement.first()).toBeVisible();
           console.log(`✅ Header "${header}" visible`);
         }
@@ -290,7 +309,9 @@ test.describe('Activity Log E2E Tests', () => {
         console.log(`✅ First row content: ${rowText!.substring(0, 50)}...`);
       } else {
         // Empty state - actual text is "No activities found"
-        const emptyState = page.locator('text=/No activities found|No activities|No results/i');
+        const emptyState = page.locator(
+          'text=/No activities found|No activities|No results/i',
+        );
 
         if (await emptyState.isVisible().catch(() => false)) {
           console.log('ℹ️ No activities (empty state displayed)');
@@ -310,9 +331,13 @@ test.describe('Activity Log E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Find login activities
-      const loginBadge = page.locator('text=Login, span:has-text("Login"), [class*="badge"]:has-text("Login")').first();
+      const loginBadge = page
+        .locator(
+          'text=Login, span:has-text("Login"), [class*="badge"]:has-text("Login")',
+        )
+        .first();
 
-      if (await loginBadge.count() > 0 && await loginBadge.isVisible()) {
+      if ((await loginBadge.count()) > 0 && (await loginBadge.isVisible())) {
         await expect(loginBadge).toBeVisible();
         console.log('✅ Login badge displayed');
       } else {
@@ -333,7 +358,9 @@ test.describe('Activity Log E2E Tests', () => {
         const rowText = await firstRow.textContent();
 
         // Should contain date/time indicators
-        const hasTimestamp = /\d{1,2}:\d{2}|\d{4}-\d{2}-\d{2}|ago|AM|PM/.test(rowText || '');
+        const hasTimestamp = /\d{1,2}:\d{2}|\d{4}-\d{2}-\d{2}|ago|AM|PM/.test(
+          rowText || '',
+        );
 
         expect(hasTimestamp).toBe(true);
 
@@ -345,7 +372,9 @@ test.describe('Activity Log E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Find IP address column
-      const ipAddresses = page.locator('td, [role="cell"]').filter({ hasText: /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/ });
+      const ipAddresses = page
+        .locator('td, [role="cell"]')
+        .filter({ hasText: /\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/ });
 
       const ipCount = await ipAddresses.count();
 
@@ -361,7 +390,9 @@ test.describe('Activity Log E2E Tests', () => {
   test.describe('CSV Export', () => {
     test('should show export button', async ({ page }) => {
       // Find export button
-      const exportButton = page.locator('button:has-text("Export"), button:has-text("CSV")').first();
+      const exportButton = page
+        .locator('button:has-text("Export"), button:has-text("CSV")')
+        .first();
 
       await expect(exportButton).toBeVisible();
 
@@ -370,7 +401,9 @@ test.describe('Activity Log E2E Tests', () => {
 
     test('should trigger CSV download on export', async ({ page }) => {
       // Find export button
-      const exportButton = page.locator('button:has-text("Export CSV"), button:has-text("Export")').first();
+      const exportButton = page
+        .locator('button:has-text("Export CSV"), button:has-text("Export")')
+        .first();
 
       await expect(exportButton).toBeVisible();
 
@@ -384,7 +417,9 @@ test.describe('Activity Log E2E Tests', () => {
       }
 
       // Set up download handler
-      const downloadPromise = page.waitForEvent('download', { timeout: 10000 }).catch(() => null);
+      const downloadPromise = page
+        .waitForEvent('download', { timeout: 10000 })
+        .catch(() => null);
 
       // Click export button
       await exportButton.click();
@@ -410,9 +445,11 @@ test.describe('Activity Log E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Find results count text
-      const resultsCount = page.locator('text=/Showing \\d+ results|\\d+ activities|\\d+ total/').first();
+      const resultsCount = page
+        .locator('text=/Showing \\d+ results|\\d+ activities|\\d+ total/')
+        .first();
 
-      if (await resultsCount.count() > 0 && await resultsCount.isVisible()) {
+      if ((await resultsCount.count()) > 0 && (await resultsCount.isVisible())) {
         const countText = await resultsCount.textContent();
         console.log(`✅ Results count displayed: ${countText}`);
       } else {
@@ -424,7 +461,9 @@ test.describe('Activity Log E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Apply a filter
-      const searchInput = page.locator('input[type="text"], input[type="search"]').first();
+      const searchInput = page
+        .locator('input[type="text"], input[type="search"]')
+        .first();
 
       if (await searchInput.isVisible()) {
         // Initial state
@@ -444,20 +483,26 @@ test.describe('Activity Log E2E Tests', () => {
   });
 
   test.describe('Empty State', () => {
-    test('should show empty state when no activities match filters', async ({ page }) => {
+    test('should show empty state when no activities match filters', async ({
+      page,
+    }) => {
       await page.waitForTimeout(1000);
 
       // Search for something unlikely to exist
-      const searchInput = page.locator('input[type="text"], input[type="search"]').first();
+      const searchInput = page
+        .locator('input[type="text"], input[type="search"]')
+        .first();
 
       if (await searchInput.isVisible()) {
         await searchInput.fill('zzzznonexistentactivityzzz');
         await page.waitForTimeout(500);
 
         // Should show empty state
-        const emptyState = page.locator('text=/No activities found|No results|Try adjusting/');
+        const emptyState = page.locator(
+          'text=/No activities found|No results|Try adjusting/',
+        );
 
-        if (await emptyState.count() > 0) {
+        if ((await emptyState.count()) > 0) {
           await expect(emptyState.first()).toBeVisible();
           console.log('✅ Empty state displayed for no results');
         } else {
@@ -478,9 +523,11 @@ test.describe('Activity Log E2E Tests', () => {
       await expect(heading).toBeVisible();
 
       // Summary cards should stack vertically
-      const summaryCards = page.locator('[class*="grid"] > div').filter({ hasText: /Total Activities/ });
+      const summaryCards = page
+        .locator('[class*="grid"] > div')
+        .filter({ hasText: /Total Activities/ });
 
-      if (await summaryCards.count() > 0) {
+      if ((await summaryCards.count()) > 0) {
         await expect(summaryCards.first()).toBeVisible();
         console.log('✅ Mobile layout displays summary cards');
       }

@@ -14,12 +14,7 @@ jest.mock('@/components/ui/Button', () => ({
 
 jest.mock('@/components/ui/Input', () => ({
   Input: ({ value, onChange, placeholder, ...props }: any) => (
-    <input
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      {...props}
-    />
+    <input value={value} onChange={onChange} placeholder={placeholder} {...props} />
   ),
 }));
 
@@ -197,7 +192,7 @@ describe('ActivityPage', () => {
       expect(screen.getByText('Cases')).toBeInTheDocument();
       expect(screen.getByText('Tasks Completed')).toBeInTheDocument();
       expect(screen.getByText('Last Login')).toBeInTheDocument();
-      
+
       // Verify stat values exist (may appear multiple times in badges and headings)
       expect(screen.getAllByText('25').length).toBeGreaterThan(0);
       expect(screen.getAllByText('10').length).toBeGreaterThan(0);
@@ -308,10 +303,10 @@ describe('ActivityPage', () => {
       const rows = screen.getAllByRole('row');
       // Header row + 1 data row = 2 rows
       expect(rows).toHaveLength(2);
-      
+
       // Check table body doesn't contain filtered out activities
       const rowElements = screen.getAllByRole('row');
-      const tableContent = rowElements.map(row => row.textContent).join(' ');
+      const tableContent = rowElements.map((row) => row.textContent).join(' ');
       expect(tableContent).not.toContain('Created case');
       expect(tableContent).not.toContain('logged in');
     });
@@ -420,12 +415,14 @@ describe('ActivityPage', () => {
         style: {},
       };
       const originalCreateElement = document.createElement.bind(document);
-      const createElementSpy = jest.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
-        if (tagName === 'a') {
-          return mockLink as any;
-        }
-        return originalCreateElement(tagName);
-      });
+      const createElementSpy = jest
+        .spyOn(document, 'createElement')
+        .mockImplementation((tagName: string) => {
+          if (tagName === 'a') {
+            return mockLink as any;
+          }
+          return originalCreateElement(tagName);
+        });
 
       render(<ActivityPage />);
 
@@ -434,7 +431,7 @@ describe('ActivityPage', () => {
 
       expect(mockClick).toHaveBeenCalled();
       expect(mockLink.download).toMatch(/activity_log_.*\.csv/);
-      
+
       // Clean up
       createElementSpy.mockRestore();
     });
@@ -444,14 +441,22 @@ describe('ActivityPage', () => {
 
       global.URL.createObjectURL = jest.fn(() => 'blob:mock-url');
       const mockClick = jest.fn();
-      const mockLink = { click: mockClick, href: '', download: '', setAttribute: jest.fn(), style: {} };
+      const mockLink = {
+        click: mockClick,
+        href: '',
+        download: '',
+        setAttribute: jest.fn(),
+        style: {},
+      };
       const originalCreateElement = document.createElement.bind(document);
-      const createElementSpy = jest.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
-        if (tagName === 'a') {
-          return mockLink as any;
-        }
-        return originalCreateElement(tagName);
-      });
+      const createElementSpy = jest
+        .spyOn(document, 'createElement')
+        .mockImplementation((tagName: string) => {
+          if (tagName === 'a') {
+            return mockLink as any;
+          }
+          return originalCreateElement(tagName);
+        });
 
       render(<ActivityPage />);
 
@@ -469,7 +474,7 @@ describe('ActivityPage', () => {
 
       // Should export only filtered activities
       expect(mockClick).toHaveBeenCalled();
-      
+
       // Clean up
       createElementSpy.mockRestore();
     });
@@ -479,14 +484,22 @@ describe('ActivityPage', () => {
 
       global.URL.createObjectURL = jest.fn(() => 'blob:mock-url');
       const mockClick = jest.fn();
-      const mockLink = { click: mockClick, href: '', download: '', setAttribute: jest.fn(), style: {} };
+      const mockLink = {
+        click: mockClick,
+        href: '',
+        download: '',
+        setAttribute: jest.fn(),
+        style: {},
+      };
       const originalCreateElement = document.createElement.bind(document);
-      const createElementSpy = jest.spyOn(document, 'createElement').mockImplementation((tagName: string) => {
-        if (tagName === 'a') {
-          return mockLink as any;
-        }
-        return originalCreateElement(tagName);
-      });
+      const createElementSpy = jest
+        .spyOn(document, 'createElement')
+        .mockImplementation((tagName: string) => {
+          if (tagName === 'a') {
+            return mockLink as any;
+          }
+          return originalCreateElement(tagName);
+        });
 
       render(<ActivityPage />);
 
@@ -495,7 +508,7 @@ describe('ActivityPage', () => {
 
       // CSV should properly escape quotes and commas
       expect(mockClick).toHaveBeenCalled();
-      
+
       // Clean up
       createElementSpy.mockRestore();
     });
@@ -548,13 +561,17 @@ describe('ActivityPage', () => {
     it('should show loading state while fetching data', () => {
       const useSWR = require('swr').default;
       const originalMock = useSWR.getMockImplementation();
-      
-      useSWR.mockImplementation(() => ({ data: undefined, error: undefined, isLoading: true }));
+
+      useSWR.mockImplementation(() => ({
+        data: undefined,
+        error: undefined,
+        isLoading: true,
+      }));
 
       render(<ActivityPage />);
 
       expect(screen.getByText(/loading/i)).toBeInTheDocument();
-      
+
       // Restore original mock
       useSWR.mockImplementation(originalMock);
     });
@@ -562,7 +579,7 @@ describe('ActivityPage', () => {
     it('should show error message on fetch failure', () => {
       const useSWR = require('swr').default;
       const originalMock = useSWR.getMockImplementation();
-      
+
       useSWR.mockImplementation(() => ({
         data: undefined,
         error: new Error('Failed to fetch'),
@@ -575,9 +592,11 @@ describe('ActivityPage', () => {
       const alerts = screen.getAllByRole('alert');
       expect(alerts.length).toBeGreaterThan(0);
       // Our mock Alert component renders variant as data-variant attribute
-      const errorAlert = alerts.find(alert => alert.getAttribute('data-variant') === 'error');
+      const errorAlert = alerts.find(
+        (alert) => alert.getAttribute('data-variant') === 'error',
+      );
       expect(errorAlert).toBeInTheDocument();
-      
+
       // Restore original mock
       useSWR.mockImplementation(originalMock);
     });
@@ -585,7 +604,7 @@ describe('ActivityPage', () => {
     it('should handle empty activities list', () => {
       const useSWR = require('swr').default;
       const originalMock = useSWR.getMockImplementation();
-      
+
       useSWR.mockImplementation((key: string) => {
         if (key.includes('/api/v1/users/me/activity')) {
           return { data: { activities: [], total: 0, login_count: 0 }, error: null };
@@ -601,7 +620,7 @@ describe('ActivityPage', () => {
       // Should show EmptyState
       const emptyStates = screen.getAllByText(/no activities found/i);
       expect(emptyStates.length).toBeGreaterThan(0);
-      
+
       // Restore original mock
       useSWR.mockImplementation(originalMock);
     });
@@ -611,7 +630,7 @@ describe('ActivityPage', () => {
     it('should handle missing stats data', () => {
       const useSWR = require('swr').default;
       const originalMock = useSWR.getMockImplementation();
-      
+
       useSWR.mockImplementation((key: string) => {
         if (key.includes('/api/v1/users/me/activity')) {
           return { data: mockActivityData, error: null };
@@ -624,7 +643,7 @@ describe('ActivityPage', () => {
 
       // Should still render the page - just verify main heading is present
       expect(screen.getByText('Activity Log')).toBeInTheDocument();
-      
+
       // Restore original mock
       useSWR.mockImplementation(originalMock);
     });
@@ -632,7 +651,7 @@ describe('ActivityPage', () => {
     it('should format large numbers correctly', () => {
       const useSWR = require('swr').default;
       const originalMock = useSWR.getMockImplementation();
-      
+
       useSWR.mockImplementation((key: string) => {
         if (key.includes('/api/v1/users/me/activity')) {
           return { data: mockActivityData, error: null };
@@ -662,7 +681,7 @@ describe('ActivityPage', () => {
       expect(screen.getAllByText('1234').length).toBeGreaterThan(0);
       expect(screen.getAllByText('567').length).toBeGreaterThan(0);
       expect(screen.getAllByText('890').length).toBeGreaterThan(0);
-      
+
       // Restore original mock
       useSWR.mockImplementation(originalMock);
     });
@@ -686,7 +705,7 @@ describe('ActivityPage', () => {
   describe('Authentication', () => {
     it('should not render if user is not authenticated', () => {
       const useAuth = require('@/lib/context/ConsolidatedAuthContext').useAuth;
-      
+
       // Override auth mock for this test only
       useAuth.mockReturnValueOnce({
         user: null,

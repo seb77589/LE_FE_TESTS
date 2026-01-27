@@ -21,7 +21,7 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
 
     // Navigate to dashboard
@@ -53,8 +53,8 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Find all stat cards by looking for links to case status pages
-      const statCards = page.locator('a[href*="/cases/"]').filter({ 
-        has: page.locator('.text-3xl') 
+      const statCards = page.locator('a[href*="/cases/"]').filter({
+        has: page.locator('.text-3xl'),
       });
 
       const cardCount = await statCards.count();
@@ -132,15 +132,24 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       await page.waitForTimeout(1000);
 
       // Check for CheckCircle icon (Closed Cases)
-      const closedCasesIcon = page.locator('[aria-label*="Closed Cases"]').locator('svg').first();
+      const closedCasesIcon = page
+        .locator('[aria-label*="Closed Cases"]')
+        .locator('svg')
+        .first();
       await expect(closedCasesIcon).toBeVisible();
 
       // Check for Clock icon (Cases In Progress)
-      const inProgressIcon = page.locator('[aria-label*="Cases In Progress"]').locator('svg').first();
+      const inProgressIcon = page
+        .locator('[aria-label*="Cases In Progress"]')
+        .locator('svg')
+        .first();
       await expect(inProgressIcon).toBeVisible();
 
       // Check for AlertCircle icon (Cases To Review)
-      const toReviewIcon = page.locator('[aria-label*="Cases To Review"]').locator('svg').first();
+      const toReviewIcon = page
+        .locator('[aria-label*="Cases To Review"]')
+        .locator('svg')
+        .first();
       await expect(toReviewIcon).toBeVisible();
 
       console.log('✅ All stat cards have icons');
@@ -152,7 +161,9 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       await page.waitForTimeout(500);
 
       // Find stats grid
-      const statsGrid = page.locator('[class*="grid"]').filter({ hasText: /Closed Cases/ });
+      const statsGrid = page
+        .locator('[class*="grid"]')
+        .filter({ hasText: /Closed Cases/ });
 
       // Grid should have 3 columns class (md:grid-cols-3)
       const gridClass = await statsGrid.getAttribute('class');
@@ -222,9 +233,18 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       await page.waitForTimeout(2000);
 
       // In development with no real cases, should show mock data: 12/8/5
-      const closedCasesValue = page.locator('text=Closed Cases').locator('..').locator('[class*="text-3xl"]');
-      const inProgressValue = page.locator('text=Cases In Progress').locator('..').locator('[class*="text-3xl"]');
-      const toReviewValue = page.locator('text=Cases To Review').locator('..').locator('[class*="text-3xl"]');
+      const closedCasesValue = page
+        .locator('text=Closed Cases')
+        .locator('..')
+        .locator('[class*="text-3xl"]');
+      const inProgressValue = page
+        .locator('text=Cases In Progress')
+        .locator('..')
+        .locator('[class*="text-3xl"]');
+      const toReviewValue = page
+        .locator('text=Cases To Review')
+        .locator('..')
+        .locator('[class*="text-3xl"]');
 
       const closedText = await closedCasesValue.textContent();
       const inProgressText = await inProgressValue.textContent();
@@ -235,7 +255,9 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       expect(inProgressText).toMatch(/^\d+$|^--$/);
       expect(toReviewText).toMatch(/^\d+$|^--$/);
 
-      console.log(`✅ Stats show: Closed=${closedText}, InProgress=${inProgressText}, ToReview=${toReviewText}`);
+      console.log(
+        `✅ Stats show: Closed=${closedText}, InProgress=${inProgressText}, ToReview=${toReviewText}`,
+      );
     });
   });
 
@@ -266,7 +288,9 @@ test.describe('Dashboard Statistics E2E Tests', () => {
         expect(ariaLabel).toContain('Closed Cases');
         console.log(`✅ Aria-label: ${ariaLabel}`);
       } else {
-        console.log('ℹ️ No aria-label (accessibility may be handled via semantic HTML)');
+        console.log(
+          'ℹ️ No aria-label (accessibility may be handled via semantic HTML)',
+        );
       }
     });
   });
@@ -280,7 +304,9 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       await expect(stats).toBeVisible();
 
       // Template heading can be "Templates" (empty) or "Popular Templates" (with data)
-      const templates = page.locator('h2').filter({ hasText: /Templates|Popular Templates/ });
+      const templates = page
+        .locator('h2')
+        .filter({ hasText: /Templates|Popular Templates/ });
       await expect(templates).toBeVisible();
 
       console.log('✅ Dashboard sections visible (case stats + templates)');
@@ -292,7 +318,10 @@ test.describe('Dashboard Statistics E2E Tests', () => {
       // Get initial values
       await page.waitForTimeout(1000);
 
-      const closedCasesValue = page.locator('text=Closed Cases').locator('..').locator('[class*="text-3xl"]');
+      const closedCasesValue = page
+        .locator('text=Closed Cases')
+        .locator('..')
+        .locator('[class*="text-3xl"]');
       const initialValue = await closedCasesValue.textContent();
 
       console.log(`Initial Closed Cases: ${initialValue}`);

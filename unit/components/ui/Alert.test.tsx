@@ -44,7 +44,11 @@ describe('Alert', () => {
     it('applies destructive variant styles', () => {
       const { container } = render(<Alert variant="destructive">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-destructive/10', 'border-destructive/30', 'text-destructive');
+      expect(alert).toHaveClass(
+        'bg-destructive/10',
+        'border-destructive/30',
+        'text-destructive',
+      );
     });
 
     it('applies warning variant styles', () => {
@@ -56,7 +60,11 @@ describe('Alert', () => {
     it('applies error variant styles', () => {
       const { container } = render(<Alert variant="error">Alert</Alert>);
       const alert = container.querySelector('[role="alert"]');
-      expect(alert).toHaveClass('bg-destructive/10', 'border-destructive/30', 'text-destructive');
+      expect(alert).toHaveClass(
+        'bg-destructive/10',
+        'border-destructive/30',
+        'text-destructive',
+      );
     });
 
     it('applies success variant styles', () => {

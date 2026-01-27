@@ -99,7 +99,7 @@ describe('UserTable', () => {
     // DataTable uses table rows, find them by role
     const rows = screen.getAllByRole('row');
     // First row is header, click on second row (first data row)
-    const dataRows = rows.filter(row => row.classList.contains('cursor-pointer'));
+    const dataRows = rows.filter((row) => row.classList.contains('cursor-pointer'));
     if (dataRows.length > 0) {
       fireEvent.click(dataRows[0]);
       expect(mockOnRowClick).toHaveBeenCalledWith(mockUsers[0]);
@@ -127,7 +127,13 @@ describe('UserTable', () => {
 
   it('should handle select all checkbox', () => {
     const mockOnSelectAll = jest.fn();
-    render(<UserTable users={mockUsers} onSelectAll={mockOnSelectAll} onSelectUser={jest.fn()} />);
+    render(
+      <UserTable
+        users={mockUsers}
+        onSelectAll={mockOnSelectAll}
+        onSelectUser={jest.fn()}
+      />,
+    );
 
     // DataTable uses 'Select all rows' aria-label
     const selectAllCheckbox = screen.getByLabelText('Select all rows');

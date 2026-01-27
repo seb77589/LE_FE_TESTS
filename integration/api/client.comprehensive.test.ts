@@ -731,9 +731,7 @@ describe('API Client Comprehensive Tests', () => {
         status: 404,
       });
 
-      await expect(fetcher('/api/v1/notfound')).rejects.toThrow(
-        'Resource not found.',
-      );
+      await expect(fetcher('/api/v1/notfound')).rejects.toThrow('Resource not found.');
     });
 
     it('should throw error on 500 status', async () => {
@@ -742,7 +740,9 @@ describe('API Client Comprehensive Tests', () => {
         status: 500,
       });
 
-      await expect(fetcher('/api/v1/error')).rejects.toThrow('Request failed with status 500');
+      await expect(fetcher('/api/v1/error')).rejects.toThrow(
+        'Request failed with status 500',
+      );
     });
 
     it('should throw error on 401 status', async () => {

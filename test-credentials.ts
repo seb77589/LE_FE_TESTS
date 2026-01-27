@@ -64,7 +64,7 @@ export function validateNotManualAccount(email: string): void {
     throw new Error(
       `FORBIDDEN: ${email} is a MANUAL TEST ACCOUNT and cannot be used in E2E tests. ` +
         `Use TEST_CREDENTIALS, WS_TEST_CREDENTIALS, or PROFILE_TEST_CREDENTIALS instead. ` +
-        `See CLAUDE.md 'Protected Manual Test Accounts' section.`
+        `See CLAUDE.md 'Protected Manual Test Accounts' section.`,
     );
   }
 }

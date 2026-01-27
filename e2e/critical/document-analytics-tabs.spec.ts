@@ -7,7 +7,10 @@ test.describe('Document Analytics Tab Navigation', () => {
     await TestHelpers.clearApplicationData(page);
   });
 
-  test('should switch between Documents and Analytics tabs', async ({ page, workerCredentials }) => {
+  test('should switch between Documents and Analytics tabs', async ({
+    page,
+    workerCredentials,
+  }) => {
     try {
       // Login using worker credentials (more reliable than registration)
       await TestHelpers.loginAndWaitForRedirect(
@@ -90,7 +93,10 @@ test.describe('Document Analytics Tab Navigation', () => {
     }
   });
 
-  test('should load analytics data when Analytics tab is opened', async ({ page, workerCredentials }) => {
+  test('should load analytics data when Analytics tab is opened', async ({
+    page,
+    workerCredentials,
+  }) => {
     try {
       // Login using worker credentials (more reliable than registration)
       await TestHelpers.loginAndWaitForRedirect(
@@ -141,7 +147,10 @@ test.describe('Document Analytics Tab Navigation', () => {
     }
   });
 
-  test('should handle analytics loading errors gracefully', async ({ page, workerCredentials }) => {
+  test('should handle analytics loading errors gracefully', async ({
+    page,
+    workerCredentials,
+  }) => {
     try {
       // Login using worker credentials (more reliable than registration)
       await TestHelpers.loginAndWaitForRedirect(

@@ -126,7 +126,11 @@ test.describe('Register Page', () => {
     const startTime = Date.now();
     const maxWaitTime = 60000;
 
-    while (!firstRegistrationComplete && !companyAccessError && Date.now() - startTime < maxWaitTime) {
+    while (
+      !firstRegistrationComplete &&
+      !companyAccessError &&
+      Date.now() - startTime < maxWaitTime
+    ) {
       // Check if we've been redirected to success page
       const currentUrl = page.url();
       if (currentUrl.includes('dashboard') || currentUrl.includes('verify-email')) {
@@ -175,7 +179,9 @@ test.describe('Register Page', () => {
     await page.waitForFunction(
       () => {
         const btn = document.querySelector('button[type="submit"]');
-        const hasError = document.querySelector('[role="alert"], .text-red-600, .text-destructive');
+        const hasError = document.querySelector(
+          '[role="alert"], .text-red-600, .text-destructive',
+        );
         return (btn && !btn.textContent?.includes('Creating')) || hasError;
       },
       { timeout: 30000 },

@@ -76,9 +76,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
   });
 
   it('should call API with correct data when confirmUnlock is called', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -103,9 +101,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
   });
 
   it('should set success message on successful unlock', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -124,9 +120,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
   });
 
   it('should close dialog after successful unlock', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -145,9 +139,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
   });
 
   it('should clear selectedAccount after successful unlock', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -166,9 +158,7 @@ describe('useAccountUnlock - Unlock operation success', () => {
   });
 
   it('should refetch locked accounts after successful unlock', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

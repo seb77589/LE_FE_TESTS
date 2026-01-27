@@ -31,7 +31,8 @@ jest.mock('@/lib/utils', () => ({
 }));
 
 // Placeholder for tests
-const AnalyticsError = ({ error, onRetry }: { error: string; onRetry?: () => void }) => null;
+const AnalyticsError = ({ error, onRetry }: { error: string; onRetry?: () => void }) =>
+  null;
 
 describe.skip('AnalyticsError (component removed)', () => {
   const mockOnRetry = jest.fn();

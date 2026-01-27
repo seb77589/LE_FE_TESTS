@@ -65,7 +65,7 @@ export function validateNotManualAccount(email: string): void {
     throw new Error(
       `FORBIDDEN: ${email} is a MANUAL TEST ACCOUNT and cannot be used in Jest tests. ` +
         `Use FRONTEND_TEST_CREDENTIALS or FRONTEND_TEST_DATA instead. ` +
-        `See CLAUDE.md 'Protected Manual Test Accounts' section.`
+        `See CLAUDE.md 'Protected Manual Test Accounts' section.`,
     );
   }
 }

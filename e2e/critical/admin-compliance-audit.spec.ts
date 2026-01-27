@@ -20,7 +20,9 @@ async function waitForComplianceConsole(page: Page): Promise<boolean> {
   await page.waitForLoadState('networkidle');
 
   const pageHeading = page.locator('h1:has-text("Compliance Console")');
-  let headingVisible = await pageHeading.isVisible({ timeout: 25000 }).catch(() => false);
+  let headingVisible = await pageHeading
+    .isVisible({ timeout: 25000 })
+    .catch(() => false);
 
   if (!headingVisible) {
     await page.waitForTimeout(3000);
@@ -38,7 +40,9 @@ async function waitForAuditExplorer(page: Page): Promise<boolean> {
   await page.waitForLoadState('networkidle');
 
   const pageHeading = page.locator('h1:has-text("Audit Explorer")');
-  let headingVisible = await pageHeading.isVisible({ timeout: 25000 }).catch(() => false);
+  let headingVisible = await pageHeading
+    .isVisible({ timeout: 25000 })
+    .catch(() => false);
 
   if (!headingVisible) {
     await page.waitForTimeout(3000);
@@ -56,7 +60,9 @@ async function waitForSecurityDashboard(page: Page): Promise<boolean> {
   await page.waitForLoadState('networkidle');
 
   const pageHeading = page.locator('h1:has-text("Security Dashboard")');
-  let headingVisible = await pageHeading.isVisible({ timeout: 25000 }).catch(() => false);
+  let headingVisible = await pageHeading
+    .isVisible({ timeout: 25000 })
+    .catch(() => false);
 
   if (!headingVisible) {
     await page.waitForTimeout(3000);

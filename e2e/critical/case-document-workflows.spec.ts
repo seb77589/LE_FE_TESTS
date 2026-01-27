@@ -151,29 +151,42 @@ test.describe('Case-Document Workflows - Bulk Upload', () => {
       );
 
       if (!createButton) {
-        test.skip(true, 'No cases found and cannot create case - feature not implemented');
+        test.skip(
+          true,
+          'No cases found and cannot create case - feature not implemented',
+        );
         return;
       }
 
       await page
-        .locator('button:has-text("New Case"), button:has-text("Create Case"), a:has-text("New Case")')
+        .locator(
+          'button:has-text("New Case"), button:has-text("Create Case"), a:has-text("New Case")',
+        )
         .first()
         .click();
       await page.waitForTimeout(1000);
 
       // Fill case form
-      const titleInput = page.locator('input[name="title"], input[id="title"], input[placeholder*="title" i]');
+      const titleInput = page.locator(
+        'input[name="title"], input[id="title"], input[placeholder*="title" i]',
+      );
       if (await titleInput.isVisible()) {
         await titleInput.fill('Test Case for Bulk Upload');
       }
 
-      const descriptionInput = page.locator('textarea[name="description"], textarea[id="description"]');
+      const descriptionInput = page.locator(
+        'textarea[name="description"], textarea[id="description"]',
+      );
       if (await descriptionInput.isVisible()) {
         await descriptionInput.fill('Testing bulk document upload workflow');
       }
 
       // Submit form
-      await page.locator('button[type="submit"], button:has-text("Create"), button:has-text("Save")').click();
+      await page
+        .locator(
+          'button[type="submit"], button:has-text("Create"), button:has-text("Save")',
+        )
+        .click();
       await page.waitForTimeout(2000);
 
       // Extract case ID from URL
@@ -194,7 +207,9 @@ test.describe('Case-Document Workflows - Bulk Upload', () => {
 
     if (documentsTab) {
       await page
-        .locator('button:has-text("Documents"), a:has-text("Documents"), [data-tab="documents"]')
+        .locator(
+          'button:has-text("Documents"), a:has-text("Documents"), [data-tab="documents"]',
+        )
         .first()
         .click();
       await page.waitForTimeout(1000);
@@ -216,7 +231,7 @@ test.describe('Case-Document Workflows - Bulk Upload', () => {
     const fileInput = page.locator('input[type="file"]');
 
     // Make file input visible if hidden
-    await fileInput.evaluate(node => {
+    await fileInput.evaluate((node) => {
       (node as HTMLElement).style.display = 'block';
       (node as HTMLElement).style.visibility = 'visible';
       (node as HTMLElement).style.opacity = '1';
@@ -304,7 +319,9 @@ test.describe('Case-Document Workflows - Document Tagging', () => {
 
     if (documentsTab) {
       await page
-        .locator('button:has-text("Documents"), a:has-text("Documents"), [data-tab="documents"]')
+        .locator(
+          'button:has-text("Documents"), a:has-text("Documents"), [data-tab="documents"]',
+        )
         .first()
         .click();
       await page.waitForTimeout(1000);
@@ -336,7 +353,9 @@ test.describe('Case-Document Workflows - Document Tagging', () => {
 
     // Click tag button
     await page
-      .locator('button:has-text("Tag"), button:has-text("Add Tag"), [data-action="tag"]')
+      .locator(
+        'button:has-text("Tag"), button:has-text("Add Tag"), [data-action="tag"]',
+      )
       .first()
       .click();
     await page.waitForTimeout(1000);
@@ -417,7 +436,10 @@ test.describe('Case-Document Workflows - Document Tagging', () => {
     );
 
     if (documentsTab) {
-      await page.locator('button:has-text("Documents"), a:has-text("Documents")').first().click();
+      await page
+        .locator('button:has-text("Documents"), a:has-text("Documents")')
+        .first()
+        .click();
       await page.waitForTimeout(1000);
     }
 
@@ -485,7 +507,9 @@ test.describe('Case-Document Workflows - Case Locking', () => {
       console.log('✅ Case lock indicator found - auto-lock working');
       expect(lockIndicator).toBe(true);
     } else {
-      console.log('⚠️  Lock indicator not found - feature may not be visible or not implemented');
+      console.log(
+        '⚠️  Lock indicator not found - feature may not be visible or not implemented',
+      );
     }
 
     // Check if lock status is shown with user name
@@ -534,7 +558,9 @@ test.describe('Case-Document Workflows - Case Locking', () => {
     }
   });
 
-  test('should prevent document updates when Case locked by another user', async ({ page }) => {
+  test('should prevent document updates when Case locked by another user', async ({
+    page,
+  }) => {
     // This test would require two separate user sessions to fully test
     // For now, verify that lock status is checked before operations
     await page.goto('/cases');
@@ -570,7 +596,9 @@ test.describe('Case-Document Workflows - Navigation Flows', () => {
     );
   });
 
-  test('should navigate: Dashboard → Cases → Case Details → Documents Tab', async ({ page }) => {
+  test('should navigate: Dashboard → Cases → Case Details → Documents Tab', async ({
+    page,
+  }) => {
     // Step 1: Start at Dashboard
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
@@ -587,7 +615,9 @@ test.describe('Case-Document Workflows - Navigation Flows', () => {
     console.log('✅ Step 1: Dashboard loaded');
 
     // Step 2: Navigate to Cases page
-    const casesLink = page.locator('a:has-text("Cases"), nav >> a[href="/cases"]').first();
+    const casesLink = page
+      .locator('a:has-text("Cases"), nav >> a[href="/cases"]')
+      .first();
 
     if (await casesLink.isVisible()) {
       await casesLink.click();
@@ -638,14 +668,18 @@ test.describe('Case-Document Workflows - Navigation Flows', () => {
 
     if (documentsTab) {
       await page
-        .locator('button:has-text("Documents"), a:has-text("Documents"), [data-tab="documents"]')
+        .locator(
+          'button:has-text("Documents"), a:has-text("Documents"), [data-tab="documents"]',
+        )
         .first()
         .click();
       await page.waitForTimeout(1000);
 
       console.log('✅ Step 4: Documents tab activated');
     } else {
-      console.log('⚠️  Documents tab not found - may already be active or UI different');
+      console.log(
+        '⚠️  Documents tab not found - may already be active or UI different',
+      );
     }
 
     // Verify Documents section is visible

@@ -32,7 +32,7 @@ if (process.env.PLAYWRIGHT_MOCK === 'true') {
 // Worker credential pool for parallel test execution
 // All credentials are validated from environment at import time
 const WORKER_CREDENTIAL_POOL = [
-  TEST_CREDENTIALS.USER,           // Worker 0
+  TEST_CREDENTIALS.USER, // Worker 0
   PROFILE_TEST_CREDENTIALS.USER_1, // Worker 1
   PROFILE_TEST_CREDENTIALS.USER_2, // Worker 2
   PROFILE_TEST_CREDENTIALS.USER_3, // Worker 3

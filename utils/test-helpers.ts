@@ -1286,9 +1286,9 @@ export class TestHelpers {
       );
     }
 
-    const csrfData = (await csrfResponse.json().catch(() => null)) as
-      | { csrf_token?: string }
-      | null;
+    const csrfData = (await csrfResponse.json().catch(() => null)) as {
+      csrf_token?: string;
+    } | null;
     const csrfToken = csrfData?.csrf_token;
     if (!csrfToken) {
       throw new Error('Failed to fetch CSRF token: missing csrf_token in body');

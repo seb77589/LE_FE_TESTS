@@ -98,7 +98,9 @@ describe('Dashboard Page', () => {
     // Administrator Access section REMOVED (redundant with top navigation "Admin" link)
     // Admin functionality accessible via Navigation > Admin link
     expect(screen.queryByText('Administrator Access')).not.toBeInTheDocument();
-    expect(screen.queryByText(/you have administrative privileges/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/you have administrative privileges/i),
+    ).not.toBeInTheDocument();
 
     // Manage Users link should NOT be on dashboard (accessible via Admin navigation)
     const manageUsersLink = screen.queryByRole('link', { name: /manage users/i });

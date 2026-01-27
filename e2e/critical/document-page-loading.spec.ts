@@ -46,7 +46,9 @@ test.describe('Documents Page Loading', () => {
       const casesHeading = page.locator('h1:has-text("Cases")');
       await expect(casesHeading).toBeVisible({ timeout: 10000 });
 
-      console.log('Documents page correctly redirects to Cases page (v0.2.0 architecture)');
+      console.log(
+        'Documents page correctly redirects to Cases page (v0.2.0 architecture)',
+      );
     } catch (error) {
       await TestHelpers.takeScreenshot(page, 'document-redirect-failed');
       throw error;
@@ -61,10 +63,7 @@ test.describe('Documents Page Loading', () => {
 
       // Check if redirected to login
       if (page.url().includes('/auth/login')) {
-        test.skip(
-          true,
-          'Route requires authentication - protected route active',
-        );
+        test.skip(true, 'Route requires authentication - protected route active');
         return;
       }
 
@@ -102,10 +101,7 @@ test.describe('Documents Page Loading', () => {
 
       // Check if redirected to login
       if (page.url().includes('/auth/login')) {
-        test.skip(
-          true,
-          'Route requires authentication - protected route active',
-        );
+        test.skip(true, 'Route requires authentication - protected route active');
         return;
       }
 
@@ -135,7 +131,9 @@ test.describe('Documents Page Loading', () => {
       const errorMessage = page.locator('text=/Failed|Error|Cannot load/i');
       await expect(errorMessage).not.toBeVisible({ timeout: 3000 });
 
-      console.log(hasTable ? 'Case list displayed' : 'Empty state displayed gracefully');
+      console.log(
+        hasTable ? 'Case list displayed' : 'Empty state displayed gracefully',
+      );
     } catch (error) {
       await TestHelpers.takeScreenshot(page, 'cases-list-failed');
       throw error;

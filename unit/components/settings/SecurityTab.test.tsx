@@ -447,7 +447,13 @@ describe('SecurityTab', () => {
       warnings: ['Password contains common word'],
       strength_score: 75,
       strength_level: 'good',
-      passed_rules: ['min_length', 'uppercase', 'lowercase', 'numbers', 'special_chars'],
+      passed_rules: [
+        'min_length',
+        'uppercase',
+        'lowercase',
+        'numbers',
+        'special_chars',
+      ],
       failed_rules: [],
       suggestions: ['Consider adding more special characters'],
       estimated_crack_time: '3 days',
@@ -495,14 +501,17 @@ describe('SecurityTab', () => {
 
     it('should fetch password policy on mount', () => {
       render(<SecurityTab />);
-      expect(mockUseSWR).toHaveBeenCalledWith('/api/v1/auth/password-policy', expect.any(Function));
+      expect(mockUseSWR).toHaveBeenCalledWith(
+        '/api/v1/auth/password-policy',
+        expect.any(Function),
+      );
     });
 
     it('should fetch password strength levels on mount', () => {
       render(<SecurityTab />);
       expect(mockUseSWR).toHaveBeenCalledWith(
         '/api/v1/auth/password-strength-levels',
-        expect.any(Function)
+        expect.any(Function),
       );
     });
 
@@ -512,7 +521,9 @@ describe('SecurityTab', () => {
     });
 
     it('should show password requirements checklist when new password is entered', async () => {
-      (api.post as jest.Mock) = jest.fn().mockResolvedValue({ data: mockPasswordValidation });
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue({ data: mockPasswordValidation });
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -524,12 +535,14 @@ describe('SecurityTab', () => {
         () => {
           expect(screen.getByText('Password Requirements')).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
     it('should display all 5 password requirements', async () => {
-      (api.post as jest.Mock) = jest.fn().mockResolvedValue({ data: mockPasswordValidation });
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue({ data: mockPasswordValidation });
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -544,12 +557,14 @@ describe('SecurityTab', () => {
           expect(screen.getByText(/contains number/i)).toBeInTheDocument();
           expect(screen.getByText(/contains special character/i)).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
     it('should show strength meter after validation', async () => {
-      (api.post as jest.Mock) = jest.fn().mockResolvedValue({ data: mockPasswordValidation });
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue({ data: mockPasswordValidation });
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -561,12 +576,14 @@ describe('SecurityTab', () => {
           expect(screen.getByText('Password Strength')).toBeInTheDocument();
           expect(screen.getByText('GOOD')).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
     it('should display estimated crack time', async () => {
-      (api.post as jest.Mock) = jest.fn().mockResolvedValue({ data: mockPasswordValidation });
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue({ data: mockPasswordValidation });
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -577,7 +594,7 @@ describe('SecurityTab', () => {
         () => {
           expect(screen.getByText(/estimated crack time: 3 days/i)).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
@@ -596,7 +613,7 @@ describe('SecurityTab', () => {
           expect(screen.getByText('Warnings')).toBeInTheDocument();
           expect(screen.getByText('Password contains common word')).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
@@ -613,9 +630,11 @@ describe('SecurityTab', () => {
       await waitFor(
         () => {
           expect(screen.getByText('Suggestions')).toBeInTheDocument();
-          expect(screen.getByText('Consider adding more special characters')).toBeInTheDocument();
+          expect(
+            screen.getByText('Consider adding more special characters'),
+          ).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
@@ -625,7 +644,7 @@ describe('SecurityTab', () => {
         () =>
           new Promise((resolve) => {
             setTimeout(() => resolve({ data: mockPasswordValidation }), 200);
-          })
+          }),
       );
 
       render(<SecurityTab />);
@@ -638,12 +657,14 @@ describe('SecurityTab', () => {
         () => {
           expect(screen.getByText(/validating password/i)).toBeInTheDocument();
         },
-        { timeout: 400 }
+        { timeout: 400 },
       );
     });
 
     it('should debounce password validation (300ms)', async () => {
-      (api.post as jest.Mock) = jest.fn().mockResolvedValue({ data: mockPasswordValidation });
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue({ data: mockPasswordValidation });
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -662,12 +683,14 @@ describe('SecurityTab', () => {
         () => {
           expect(api.post).toHaveBeenCalledTimes(1);
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
     it('should handle validation API error gracefully', async () => {
-      (api.post as jest.Mock) = jest.fn().mockRejectedValue(new Error('Validation failed'));
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockRejectedValue(new Error('Validation failed'));
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -679,12 +702,14 @@ describe('SecurityTab', () => {
           // Should not crash, validation section should not appear
           expect(screen.queryByText('Password Strength')).not.toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
     });
 
     it('should clear validation when password is cleared', async () => {
-      (api.post as jest.Mock) = jest.fn().mockResolvedValue({ data: mockPasswordValidation });
+      (api.post as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue({ data: mockPasswordValidation });
 
       render(<SecurityTab />);
       const newPasswordInput = screen.getByLabelText(/^new password$/i);
@@ -696,7 +721,7 @@ describe('SecurityTab', () => {
         () => {
           expect(screen.getByText('Password Strength')).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
 
       // Clear password
@@ -724,7 +749,7 @@ describe('SecurityTab', () => {
         () => {
           expect(screen.getByText('Password Strength')).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
 
       expect(screen.queryByText('Warnings')).not.toBeInTheDocument();
@@ -748,7 +773,7 @@ describe('SecurityTab', () => {
         () => {
           expect(screen.getByText('Password Strength')).toBeInTheDocument();
         },
-        { timeout: 500 }
+        { timeout: 500 },
       );
 
       expect(screen.queryByText('Suggestions')).not.toBeInTheDocument();

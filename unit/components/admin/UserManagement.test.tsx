@@ -145,9 +145,7 @@ jest.mock('@/components/admin/UserImport', () => ({
 
 // UserManagementError component does not exist - error states use ErrorBanner inline
 jest.mock('@/components/ui/ErrorDisplay', () => ({
-  ErrorBanner: ({ message }: any) => (
-    <div data-testid="error-banner">{message}</div>
-  ),
+  ErrorBanner: ({ message }: any) => <div data-testid="error-banner">{message}</div>,
 }));
 
 jest.mock('@/components/admin/UserManagementLoading', () => ({

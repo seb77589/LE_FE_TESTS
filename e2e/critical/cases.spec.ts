@@ -64,7 +64,10 @@ test.describe('Cases Module', () => {
       // In the new architecture, search/filter controls are only on filtered pages
       // (/cases/closed, /cases/in-progress, /cases/to-review), not on main page
       // Main page focuses on analytics and stat cards for navigation
-      test.skip(true, 'Search filtering only available on filtered case pages, not main cases page');
+      test.skip(
+        true,
+        'Search filtering only available on filtered case pages, not main cases page',
+      );
     });
 
     test('should allow status filtering', async ({ page }) => {
@@ -82,8 +85,12 @@ test.describe('Cases Module', () => {
 
       // Verify each stat card title indicates different case statuses
       const closedCasesCard = page.locator('button, a', { hasText: /closed/i }).first();
-      const inProgressCard = page.locator('button, a', { hasText: /in progress|in-progress/i }).first();
-      const toReviewCard = page.locator('button, a', { hasText: /review|pending/i }).first();
+      const inProgressCard = page
+        .locator('button, a', { hasText: /in progress|in-progress/i })
+        .first();
+      const toReviewCard = page
+        .locator('button, a', { hasText: /review|pending/i })
+        .first();
 
       // These stat cards should be visible for filtering by status
       const hasClosedCard = await closedCasesCard.isVisible().catch(() => false);
@@ -140,14 +147,20 @@ test.describe('Cases Module', () => {
       // - Stat cards for filtering by status
       // - Admin users get all cases by default
 
-      test.skip(true, 'Admin view mode toggle removed in new architecture - admin users see all cases by default');
+      test.skip(
+        true,
+        'Admin view mode toggle removed in new architecture - admin users see all cases by default',
+      );
     });
 
     test('should allow switching between my cases and all cases', async ({ page }) => {
       // In the new architecture, view mode toggle (My Cases/All Cases) has been removed
       // Admin users see all cases by default; no switching between views needed
 
-      test.skip(true, 'View mode toggle removed in new architecture - admin users see all cases by default');
+      test.skip(
+        true,
+        'View mode toggle removed in new architecture - admin users see all cases by default',
+      );
     });
   });
 

@@ -69,7 +69,6 @@ jest.mock('@/lib/logging', () => ({
   },
 }));
 
-
 jest.mock('@/components/admin/charts/UsersOverTimeChart', () => ({
   UsersOverTimeChart: () => <div data-testid="users-chart">Users Chart</div>,
 }));
@@ -341,7 +340,11 @@ describe('OverviewTab', () => {
             mutate: jest.fn(),
           } as any;
         }
-        if (keyStr && typeof keyStr === 'string' && keyStr.includes('/admin/system/status')) {
+        if (
+          keyStr &&
+          typeof keyStr === 'string' &&
+          keyStr.includes('/admin/system/status')
+        ) {
           return {
             data: undefined,
             error: new Error('Failed to fetch system status'),

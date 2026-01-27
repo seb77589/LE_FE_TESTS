@@ -51,7 +51,9 @@ test.describe('ASSISTANT Role - Navigation', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Count visible navigation links
-    const navLinks = page.locator('nav a[href^="/"]').filter({ hasText: /Dashboard|Cases|Templates|Notifications/ });
+    const navLinks = page
+      .locator('nav a[href^="/"]')
+      .filter({ hasText: /Dashboard|Cases|Templates|Notifications/ });
     const count = await navLinks.count();
 
     // ASSISTANT should see exactly 4 standard nav items (Dashboard, Cases, Templates, Notifications)
@@ -63,7 +65,9 @@ test.describe('ASSISTANT Role - Navigation', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Role badge should show "ASSISTANT" or "Assistant"
-    const roleBadge = page.locator('span.text-xs, span.text-sm').filter({ hasText: /assistant/i });
+    const roleBadge = page
+      .locator('span.text-xs, span.text-sm')
+      .filter({ hasText: /assistant/i });
     await expect(roleBadge.first()).toBeVisible();
   });
 });

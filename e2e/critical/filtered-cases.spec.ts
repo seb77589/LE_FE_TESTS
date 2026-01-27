@@ -29,7 +29,9 @@ test.describe('Filtered Cases Pages', () => {
       await expect(page.locator('h1')).toContainText('Closed Cases');
 
       // Check description
-      const description = page.locator('text=Cases that have been successfully completed and closed.');
+      const description = page.locator(
+        'text=Cases that have been successfully completed and closed.',
+      );
       await expect(description).toBeVisible();
     });
 
@@ -39,7 +41,10 @@ test.describe('Filtered Cases Pages', () => {
       await page.waitForTimeout(2000);
 
       // Check for either table or empty state
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
       const hasEmptyState = await page
         .locator('text=No closed cases yet')
         .isVisible()
@@ -85,7 +90,10 @@ test.describe('Filtered Cases Pages', () => {
       await page.waitForTimeout(3000); // Increased timeout for data loading
 
       // Check for either table, empty state, or error state
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
       const hasEmptyState = await page
         .locator('text=No cases in progress')
         .isVisible()
@@ -153,7 +161,10 @@ test.describe('Filtered Cases Pages', () => {
       await page.waitForTimeout(3000); // Increased timeout for data loading
 
       // Check for either table, empty state, or error state
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
       const hasEmptyState = await page
         .locator('text=No cases to review')
         .isVisible()
@@ -176,7 +187,9 @@ test.describe('Filtered Cases Pages', () => {
   });
 
   test.describe('Navigation Between Filtered Pages', () => {
-    test('should navigate from main cases to filtered pages via stat cards', async ({ page }) => {
+    test('should navigate from main cases to filtered pages via stat cards', async ({
+      page,
+    }) => {
       // Start on main cases page
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');

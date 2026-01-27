@@ -219,7 +219,9 @@ test.describe('Email Verification Workflow', () => {
       await route.fulfill({
         status: 400,
         contentType: 'application/json',
-        body: JSON.stringify({ detail: 'Verification failed. The link may be invalid or expired.' }),
+        body: JSON.stringify({
+          detail: 'Verification failed. The link may be invalid or expired.',
+        }),
       });
     });
 

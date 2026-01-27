@@ -53,7 +53,11 @@ jest.mock('@/components/ui/Alert', () => ({
     onClose?: () => void;
   }) {
     return (
-      <div role="alert" data-testid={`alert-${variant || 'default'}`} className={`alert alert-${variant || 'default'}`}>
+      <div
+        role="alert"
+        data-testid={`alert-${variant || 'default'}`}
+        className={`alert alert-${variant || 'default'}`}
+      >
         {title && <h4 className="alert-title">{title}</h4>}
         {onClose && (
           <button onClick={onClose} aria-label="Close alert">
@@ -148,7 +152,9 @@ describe('ReplaceDocumentModal', () => {
       render(<ReplaceDocumentModal {...defaultProps} />);
 
       expect(screen.getByTestId('dialog')).toBeInTheDocument();
-      expect(screen.getByTestId('dialog-title')).toHaveTextContent('Replace Document File');
+      expect(screen.getByTestId('dialog-title')).toHaveTextContent(
+        'Replace Document File',
+      );
     });
 
     it('should not render when closed', () => {
@@ -176,14 +182,18 @@ describe('ReplaceDocumentModal', () => {
     it('should show drag and drop area', () => {
       render(<ReplaceDocumentModal {...defaultProps} />);
 
-      expect(screen.getByText(/Drop file here or click to browse/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Drop file here or click to browse/i),
+      ).toBeInTheDocument();
     });
 
     it('should show pre-replacement checklist', () => {
       render(<ReplaceDocumentModal {...defaultProps} />);
 
       expect(screen.getByText(/Before Replacing, Verify:/i)).toBeInTheDocument();
-      expect(screen.getByText(/The new file is the correct version/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/The new file is the correct version/i),
+      ).toBeInTheDocument();
     });
   });
 
@@ -191,7 +201,9 @@ describe('ReplaceDocumentModal', () => {
     it('should handle file input change', () => {
       render(<ReplaceDocumentModal {...defaultProps} />);
 
-      const file = new File(['test content'], 'new-file.pdf', { type: 'application/pdf' });
+      const file = new File(['test content'], 'new-file.pdf', {
+        type: 'application/pdf',
+      });
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
 
       fireEvent.change(input, { target: { files: [file] } });
@@ -202,7 +214,9 @@ describe('ReplaceDocumentModal', () => {
     it('should display file size in KB', () => {
       render(<ReplaceDocumentModal {...defaultProps} />);
 
-      const file = new File(['x'.repeat(2048)], 'test.pdf', { type: 'application/pdf' });
+      const file = new File(['x'.repeat(2048)], 'test.pdf', {
+        type: 'application/pdf',
+      });
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
 
       fireEvent.change(input, { target: { files: [file] } });
@@ -213,7 +227,9 @@ describe('ReplaceDocumentModal', () => {
     it('should display file size in MB for large files', () => {
       render(<ReplaceDocumentModal {...defaultProps} />);
 
-      const file = new File(['x'.repeat(2 * 1024 * 1024)], 'large.pdf', { type: 'application/pdf' });
+      const file = new File(['x'.repeat(2 * 1024 * 1024)], 'large.pdf', {
+        type: 'application/pdf',
+      });
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
 
       fireEvent.change(input, { target: { files: [file] } });
@@ -260,7 +276,7 @@ describe('ReplaceDocumentModal', () => {
       const dropZone = screen.getByLabelText('Select file to upload');
 
       fireEvent.dragEnter(dropZone);
-      
+
       expect(dropZone).toHaveClass('border-primary');
     });
 
@@ -275,7 +291,7 @@ describe('ReplaceDocumentModal', () => {
 
       // Leave state
       fireEvent.dragLeave(dropZone);
-      
+
       // Should revert to default (not have border-primary, but have border-border or similar)
       expect(dropZone).not.toHaveClass('border-primary');
     });
@@ -313,7 +329,7 @@ describe('ReplaceDocumentModal', () => {
           expect.objectContaining({
             headers: { 'Content-Type': 'multipart/form-data' },
             onUploadProgress: expect.any(Function),
-          })
+          }),
         );
       });
 
@@ -344,13 +360,13 @@ describe('ReplaceDocumentModal', () => {
     it('should show upload progress', async () => {
       const user = userEvent.setup();
       let resolvePromise: (value: any) => void;
-      
+
       // Control the promise resolution
       mockApi.post.mockImplementation((_url, _data, config) => {
         // Immediately trigger progress
         if (config?.onUploadProgress) {
           act(() => {
-             config.onUploadProgress({ loaded: 50, total: 100 });
+            config.onUploadProgress({ loaded: 50, total: 100 });
           });
         }
         return new Promise((resolve) => {
@@ -404,12 +420,12 @@ describe('ReplaceDocumentModal', () => {
     it('should disable buttons during upload', async () => {
       const user = userEvent.setup();
       let resolvePromise: (value: any) => void;
-      
+
       mockApi.post.mockImplementation(
         () =>
           new Promise((resolve) => {
-             resolvePromise = resolve;
-          })
+            resolvePromise = resolve;
+          }),
       );
 
       render(<ReplaceDocumentModal {...defaultProps} />);
@@ -425,7 +441,7 @@ describe('ReplaceDocumentModal', () => {
       expect(screen.getByRole('button', { name: /cancel/i })).toBeDisabled();
 
       await act(async () => {
-         if (resolvePromise) resolvePromise({ data: { success: true } });
+        if (resolvePromise) resolvePromise({ data: { success: true } });
       });
     });
   });
@@ -459,7 +475,7 @@ describe('ReplaceDocumentModal', () => {
         () =>
           new Promise((resolve) => {
             resolvePromise = resolve;
-          })
+          }),
       );
 
       render(<ReplaceDocumentModal {...defaultProps} />);
@@ -475,7 +491,7 @@ describe('ReplaceDocumentModal', () => {
       expect(cancelButton).toBeDisabled();
 
       await act(async () => {
-         if (resolvePromise) resolvePromise({ data: { success: true } });
+        if (resolvePromise) resolvePromise({ data: { success: true } });
       });
     });
   });
@@ -516,11 +532,11 @@ describe('ReplaceDocumentModal', () => {
       const file1 = new File(['test'], 'new.pdf', { type: 'application/pdf' });
       const input = document.querySelector('input[type="file"]') as HTMLInputElement;
       fireEvent.change(input, { target: { files: [file1] } });
-      
+
       // Submit to force error
       const replaceButton = screen.getByRole('button', { name: /replace document/i });
       await user.click(replaceButton);
-      
+
       await waitFor(() => {
         expect(screen.getByText(errorMessage)).toBeInTheDocument();
       });

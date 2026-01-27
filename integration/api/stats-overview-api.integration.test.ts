@@ -131,7 +131,9 @@ describe('Stats Overview API Integration', () => {
       };
       mockedApi.get.mockRejectedValueOnce(unauthorizedError);
 
-      await expect(api.get('/api/v1/stats/overview')).rejects.toEqual(unauthorizedError);
+      await expect(api.get('/api/v1/stats/overview')).rejects.toEqual(
+        unauthorizedError,
+      );
     });
 
     it('should handle 500 Server Error', async () => {
@@ -198,9 +200,7 @@ describe('Stats Overview API Integration', () => {
       const response = await api.get('/api/v1/stats/overview');
 
       // Legacy field should match new field
-      expect(response.data.data.open_cases).toBe(
-        response.data.data.cases_in_progress
-      );
+      expect(response.data.data.open_cases).toBe(response.data.data.cases_in_progress);
     });
 
     it('should handle large case counts', async () => {

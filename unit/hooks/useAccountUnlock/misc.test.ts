@@ -63,9 +63,7 @@ describe('useAccountUnlock - Manual refetch', () => {
   });
 
   it('should allow manual refetch of locked accounts', async () => {
-    const { result, unmount } = renderHook(() =>
-      useAccountUnlock({ canUnlock: true }),
-    );
+    const { result, unmount } = renderHook(() => useAccountUnlock({ canUnlock: true }));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

@@ -17,10 +17,10 @@ import { TestHelpers } from '../../utils/test-helpers';
 
 // Performance thresholds (in milliseconds)
 const PERF_THRESHOLDS = {
-  PAGE_LOAD: 3000,         // Max page load time
+  PAGE_LOAD: 3000, // Max page load time
   TIME_TO_INTERACTIVE: 5000, // Max TTI
-  API_RESPONSE: 2000,      // Max API response time
-  NAVIGATION: 1000,        // Max navigation time
+  API_RESPONSE: 2000, // Max API response time
+  NAVIGATION: 1000, // Max navigation time
 };
 
 test.describe('Page Performance Tests', () => {
@@ -30,7 +30,7 @@ test.describe('Page Performance Tests', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
   });
 
@@ -45,7 +45,9 @@ test.describe('Page Performance Tests', () => {
     // Check page loaded within threshold
     expect(loadTime).toBeLessThan(PERF_THRESHOLDS.PAGE_LOAD);
 
-    console.log(`✅ Dashboard loaded in ${loadTime}ms (threshold: ${PERF_THRESHOLDS.PAGE_LOAD}ms)`);
+    console.log(
+      `✅ Dashboard loaded in ${loadTime}ms (threshold: ${PERF_THRESHOLDS.PAGE_LOAD}ms)`,
+    );
   });
 
   test('Cases page should load efficiently', async ({ page }) => {
@@ -74,7 +76,9 @@ test.describe('Page Performance Tests', () => {
 
     expect(navTime).toBeLessThan(PERF_THRESHOLDS.NAVIGATION);
 
-    console.log(`✅ Navigation completed in ${navTime}ms (threshold: ${PERF_THRESHOLDS.NAVIGATION}ms)`);
+    console.log(
+      `✅ Navigation completed in ${navTime}ms (threshold: ${PERF_THRESHOLDS.NAVIGATION}ms)`,
+    );
   });
 
   test('Stats API should respond quickly', async ({ page }) => {
@@ -94,7 +98,9 @@ test.describe('Page Performance Tests', () => {
     // Dashboard with stats should load within reasonable time
     expect(loadTime).toBeLessThan(PERF_THRESHOLDS.TIME_TO_INTERACTIVE);
 
-    console.log(`✅ Dashboard with stats loaded in ${loadTime}ms (API responded successfully)`);
+    console.log(
+      `✅ Dashboard with stats loaded in ${loadTime}ms (API responded successfully)`,
+    );
   });
 
   test('Multiple simultaneous API calls should not block UI', async ({ page }) => {
@@ -117,7 +123,10 @@ test.describe('Page Performance Tests', () => {
 
     // Check if template widget loads
     const widgetLoadStart = Date.now();
-    await page.locator('h2').filter({ hasText: /Templates|Popular Templates/ }).waitFor({ timeout: 5000 });
+    await page
+      .locator('h2')
+      .filter({ hasText: /Templates|Popular Templates/ })
+      .waitFor({ timeout: 5000 });
     const widgetLoadTime = Date.now() - widgetLoadStart;
 
     expect(widgetLoadTime).toBeLessThan(2000); // Widget should load quickly
@@ -143,9 +152,11 @@ test.describe('Page Performance Tests', () => {
     await page.goto('/dashboard');
 
     // Find search input
-    const searchInput = page.locator('input[type="text"], input[type="search"]').first();
+    const searchInput = page
+      .locator('input[type="text"], input[type="search"]')
+      .first();
 
-    if (await searchInput.count() > 0 && await searchInput.isVisible()) {
+    if ((await searchInput.count()) > 0 && (await searchInput.isVisible())) {
       // Type quickly
       const startTime = Date.now();
       await searchInput.fill('test');
@@ -167,7 +178,7 @@ test.describe('Data-Heavy Scenarios', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
   });
 
@@ -191,7 +202,10 @@ test.describe('Data-Heavy Scenarios', () => {
     await page.goto('/dashboard');
 
     // Check template widget load time
-    await page.locator('h2').filter({ hasText: /Templates/ }).waitFor({ timeout: 5000 });
+    await page
+      .locator('h2')
+      .filter({ hasText: /Templates/ })
+      .waitFor({ timeout: 5000 });
 
     const loadTime = Date.now() - startTime;
 
@@ -218,7 +232,7 @@ test.describe('Data-Heavy Scenarios', () => {
     expect(avgLoadTime).toBeLessThan(PERF_THRESHOLDS.PAGE_LOAD);
 
     console.log(`✅ Average load time over 3 loads: ${avgLoadTime.toFixed(0)}ms`);
-    console.log(`   Load times: ${loadTimes.map(t => `${t}ms`).join(', ')}`);
+    console.log(`   Load times: ${loadTimes.map((t) => `${t}ms`).join(', ')}`);
   });
 });
 
@@ -228,7 +242,7 @@ test.describe('Interaction Performance', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await page.goto('/dashboard');
     await page.waitForLoadState('networkidle');
@@ -236,9 +250,12 @@ test.describe('Interaction Performance', () => {
 
   test('Button clicks should respond immediately', async ({ page }) => {
     // Find a button
-    const button = page.locator('button').filter({ hasText: /Create|View|Manage/ }).first();
+    const button = page
+      .locator('button')
+      .filter({ hasText: /Create|View|Manage/ })
+      .first();
 
-    if (await button.count() > 0) {
+    if ((await button.count()) > 0) {
       const startTime = Date.now();
       await button.click();
       const clickTime = Date.now() - startTime;
@@ -273,7 +290,7 @@ test.describe('Interaction Performance', () => {
     // Find any text input on the page (search box, filters, etc.)
     const textInput = page.locator('input[type="text"], input[type="search"]').first();
 
-    if (await textInput.count() > 0 && await textInput.isVisible()) {
+    if ((await textInput.count()) > 0 && (await textInput.isVisible())) {
       const startTime = Date.now();
       await textInput.fill('performance test input');
       const fillTime = Date.now() - startTime;
@@ -287,9 +304,11 @@ test.describe('Interaction Performance', () => {
       await page.goto('/cases');
       await page.waitForLoadState('networkidle');
 
-      const casesInput = page.locator('input[type="text"], input[type="search"]').first();
+      const casesInput = page
+        .locator('input[type="text"], input[type="search"]')
+        .first();
 
-      if (await casesInput.count() > 0) {
+      if ((await casesInput.count()) > 0) {
         const startTime = Date.now();
         await casesInput.fill('test');
         const fillTime = Date.now() - startTime;
@@ -309,7 +328,7 @@ test.describe('Memory and Resource Usage', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
   });
 

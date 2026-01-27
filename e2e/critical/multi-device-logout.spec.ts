@@ -5,7 +5,11 @@ import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
 
 test.describe('Multi-Device Logout', () => {
-  test('should log out from all other devices', async ({ page, context, workerCredentials }) => {
+  test('should log out from all other devices', async ({
+    page,
+    context,
+    workerCredentials,
+  }) => {
     try {
       // Step 1: Login using worker credentials on first device
       console.log('🔐 Logging in on first device...');
@@ -137,7 +141,10 @@ test.describe('Multi-Device Logout', () => {
     }
   });
 
-  test('should show confirmation before logging out all devices', async ({ page, workerCredentials }) => {
+  test('should show confirmation before logging out all devices', async ({
+    page,
+    workerCredentials,
+  }) => {
     try {
       // Login using worker credentials
       console.log('🔐 Logging in...');

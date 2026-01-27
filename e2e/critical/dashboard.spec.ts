@@ -127,11 +127,18 @@ test.describe('Dashboard Module', () => {
       await page.waitForLoadState('networkidle');
 
       // Wait for either the sessions page heading or an error state
-      const sessionsHeading = page.getByRole('heading', { name: 'Active Sessions', exact: true });
-      const errorState = page.locator('text=/Something went wrong|Error loading sessions/i');
+      const sessionsHeading = page.getByRole('heading', {
+        name: 'Active Sessions',
+        exact: true,
+      });
+      const errorState = page.locator(
+        'text=/Something went wrong|Error loading sessions/i',
+      );
 
       // Check for sessions heading first (expected)
-      const headingVisible = await sessionsHeading.isVisible({ timeout: 10000 }).catch(() => false);
+      const headingVisible = await sessionsHeading
+        .isVisible({ timeout: 10000 })
+        .catch(() => false);
       if (headingVisible) {
         await expect(sessionsHeading).toBeVisible();
         return;
@@ -162,7 +169,9 @@ test.describe('Dashboard Module', () => {
   });
 
   test.describe('Case Card Navigation', () => {
-    test('should navigate to closed cases when clicking Closed Cases card', async ({ page }) => {
+    test('should navigate to closed cases when clicking Closed Cases card', async ({
+      page,
+    }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
@@ -176,7 +185,9 @@ test.describe('Dashboard Module', () => {
       await page.waitForURL(/\/cases\/closed/);
     });
 
-    test('should navigate to in-progress cases when clicking Cases In Progress card', async ({ page }) => {
+    test('should navigate to in-progress cases when clicking Cases In Progress card', async ({
+      page,
+    }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
@@ -190,7 +201,9 @@ test.describe('Dashboard Module', () => {
       await page.waitForURL(/\/cases\/in-progress/);
     });
 
-    test('should navigate to cases to review when clicking Cases To Review card', async ({ page }) => {
+    test('should navigate to cases to review when clicking Cases To Review card', async ({
+      page,
+    }) => {
       await page.goto('/dashboard');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
@@ -213,7 +226,9 @@ test.describe('Dashboard Module', () => {
 
       // Template widget should be visible (either with templates or empty state)
       // Widget component renders regardless of whether templates exist
-      const templateSection = page.locator('text=/Templates|Popular Templates|No templates available/i').first();
+      const templateSection = page
+        .locator('text=/Templates|Popular Templates|No templates available/i')
+        .first();
       await expect(templateSection).toBeVisible();
     });
   });

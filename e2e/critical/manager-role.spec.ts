@@ -63,7 +63,9 @@ test.describe('MANAGER Role - Navigation', () => {
     await page.waitForLoadState('domcontentloaded');
 
     // Role badge should show "MANAGER" or "Manager"
-    const roleBadge = page.locator('span.text-xs, span.text-sm').filter({ hasText: /manager/i });
+    const roleBadge = page
+      .locator('span.text-xs, span.text-sm')
+      .filter({ hasText: /manager/i });
     await expect(roleBadge.first()).toBeVisible();
   });
 });
@@ -99,7 +101,7 @@ test.describe('MANAGER Role - Dashboard Page', () => {
 
     // Manage Users link removed from dashboard (accessible via Admin > Users)
     const manageUsersLinkOnDashboard = page.locator(
-      '.bg-blue-50 a[href="/admin/users"]'
+      '.bg-blue-50 a[href="/admin/users"]',
     );
     await expect(manageUsersLinkOnDashboard).not.toBeVisible();
 
@@ -115,7 +117,7 @@ test.describe('MANAGER Role - Dashboard Page', () => {
 
     // System Admin link removed from dashboard (accessible via top navigation)
     const systemAdminLinkOnDashboard = page.locator(
-      '.bg-blue-50 a[href="/admin"]:has-text("System Admin")'
+      '.bg-blue-50 a[href="/admin"]:has-text("System Admin")',
     );
     await expect(systemAdminLinkOnDashboard).not.toBeVisible();
   });
@@ -172,7 +174,9 @@ test.describe('MANAGER Role - Dashboard Page', () => {
     await expect(page).toHaveURL('/admin');
 
     // Click Users tab (use more specific selector to avoid multiple matches)
-    const usersTab = page.locator('nav a[href="/admin/users"], [data-testid="admin-tab-users"]').first();
+    const usersTab = page
+      .locator('nav a[href="/admin/users"], [data-testid="admin-tab-users"]')
+      .first();
     await expect(usersTab).toBeVisible();
     await usersTab.click();
     await page.waitForLoadState('networkidle');
@@ -268,7 +272,9 @@ test.describe('MANAGER Role - Admin Access', () => {
     );
   });
 
-  test('should NOT have direct access to /admin page (SUPERADMIN only)', async ({ page }) => {
+  test('should NOT have direct access to /admin page (SUPERADMIN only)', async ({
+    page,
+  }) => {
     await page.goto('/admin');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(1000);

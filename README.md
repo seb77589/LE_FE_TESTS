@@ -85,12 +85,14 @@ All test credentials are loaded from `config/.env` with fail-fast validation. Th
 ### Credential Pools
 
 **E2E Tests (Playwright):**
+
 - 12-worker pool for parallel execution
 - Credentials: SuperAdmin → Profile User 4
 - Worker isolation prevents session conflicts
 - Role-aware fixtures (isAdmin, isSuperAdmin metadata)
 
 **Unit/Integration Tests (Jest):**
+
 - 6-worker pool for parallel execution
 - Credentials: Regular User → Current User
 - Automatic worker assignment via `JEST_WORKER_ID`
@@ -101,6 +103,7 @@ All test credentials are loaded from `config/.env` with fail-fast validation. Th
 It's important to distinguish between test data and real credentials:
 
 **Test Data** (form validation payloads - NOT login credentials):
+
 ```typescript
 // ✅ SAFE - Used in form field validation tests
 fireEvent.change(passwordInput, { target: { value: 'password123' } });
@@ -108,6 +111,7 @@ expect(validatePassword('NewPassword123!')).toEqual({ isValid: false });
 ```
 
 **Real Credentials** (from environment - used for actual login):
+
 ```typescript
 // ✅ CORRECT - Uses environment variable
 import { TEST_CREDENTIALS } from './test-credentials';
@@ -115,6 +119,7 @@ await login(TEST_CREDENTIALS.USER.email, TEST_CREDENTIALS.USER.password);
 ```
 
 **Never do this:**
+
 ```typescript
 // ❌ WRONG - Hardcoded credentials
 await login('test@example.com', 'password123');
@@ -158,6 +163,7 @@ All E2E and integration tests run against the real Docker backend:
 - **Mock Mode:** Removed - all tests require real backend for production parity
 
 **Service Validation:**
+
 - Playwright global setup checks backend availability
 - Jest global setup starts Docker services if needed
 - Tests fail fast if backend unavailable
@@ -165,6 +171,7 @@ All E2E and integration tests run against the real Docker backend:
 ### Troubleshooting
 
 **Missing Credentials Error:**
+
 ```
 ERROR: Missing required test credentials in config/.env:
   - TEST_USER_EMAIL
@@ -172,6 +179,7 @@ ERROR: Missing required test credentials in config/.env:
 ```
 
 **Solution:**
+
 ```bash
 # Verify credentials exist
 grep "TEST_USER_EMAIL\|TEST_ADMIN_EMAIL" config/.env
@@ -184,6 +192,7 @@ grep "TEST_USER_EMAIL\|TEST_ADMIN_EMAIL" config/.env
 ```
 
 **See Also:**
+
 - [Backend Credential Management](../../CLAUDE.md#test-credential-management-critical)
 - [E2E Testing Guide](../../docs/testing/FRONTEND_TESTING_GUIDE.md)
 - [Credential Validation Script](../../scripts/validate-credentials.sh)

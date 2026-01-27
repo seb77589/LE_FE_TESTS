@@ -121,7 +121,7 @@ describe('Template API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(new Error(errorMessage));
 
       await expect(
-        api.get('/api/v1/templates/', { params: { is_active: true } })
+        api.get('/api/v1/templates/', { params: { is_active: true } }),
       ).rejects.toThrow(errorMessage);
     });
 
@@ -135,7 +135,7 @@ describe('Template API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(forbiddenError);
 
       await expect(
-        api.get('/api/v1/templates/', { params: { is_active: true } })
+        api.get('/api/v1/templates/', { params: { is_active: true } }),
       ).rejects.toEqual(forbiddenError);
     });
 
@@ -149,7 +149,7 @@ describe('Template API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(serverError);
 
       await expect(
-        api.get('/api/v1/templates/', { params: { is_active: true } })
+        api.get('/api/v1/templates/', { params: { is_active: true } }),
       ).rejects.toEqual(serverError);
     });
   });
@@ -223,7 +223,7 @@ describe('Template API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(errorResponse);
 
       await expect(api.get(`/api/v1/templates/${templateId}/download`)).rejects.toEqual(
-        errorResponse
+        errorResponse,
       );
     });
   });
@@ -331,7 +331,7 @@ describe('Template API Integration', () => {
     it('should filter by template name', () => {
       const query = 'employment';
       const filtered = allTemplates.filter((t) =>
-        t.name.toLowerCase().includes(query.toLowerCase())
+        t.name.toLowerCase().includes(query.toLowerCase()),
       );
 
       expect(filtered).toHaveLength(1);
@@ -341,7 +341,7 @@ describe('Template API Integration', () => {
     it('should filter by description', () => {
       const query = 'disclosure';
       const filtered = allTemplates.filter((t) =>
-        t.description.toLowerCase().includes(query.toLowerCase())
+        t.description.toLowerCase().includes(query.toLowerCase()),
       );
 
       expect(filtered).toHaveLength(1);
@@ -351,7 +351,7 @@ describe('Template API Integration', () => {
     it('should filter by variables', () => {
       const query = 'employee_name';
       const filtered = allTemplates.filter((t) =>
-        t.variables.some((v) => v.toLowerCase().includes(query.toLowerCase()))
+        t.variables.some((v) => v.toLowerCase().includes(query.toLowerCase())),
       );
 
       expect(filtered).toHaveLength(1);
@@ -361,7 +361,7 @@ describe('Template API Integration', () => {
     it('should be case-insensitive', () => {
       const query = 'EMPLOYMENT';
       const filtered = allTemplates.filter((t) =>
-        t.name.toLowerCase().includes(query.toLowerCase())
+        t.name.toLowerCase().includes(query.toLowerCase()),
       );
 
       expect(filtered).toHaveLength(1);
@@ -373,7 +373,7 @@ describe('Template API Integration', () => {
       const filtered = allTemplates.filter(
         (t) =>
           t.name.toLowerCase().includes(query.toLowerCase()) ||
-          t.description.toLowerCase().includes(query.toLowerCase())
+          t.description.toLowerCase().includes(query.toLowerCase()),
       );
 
       expect(filtered).toHaveLength(0);

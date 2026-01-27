@@ -19,7 +19,10 @@ const BACKEND_HEALTH = process.env.NEXT_PUBLIC_API_URL
 const FRONTEND_URL = process.env.FRONTEND_URL ?? 'http://localhost:3000';
 
 test.describe('Frontend Error Reporting (real backend)', () => {
-  test('should report single error format with 204 response', async ({ page, request }) => {
+  test('should report single error format with 204 response', async ({
+    page,
+    request,
+  }) => {
     // Verify backend is available
     const health = await request.get(BACKEND_HEALTH).catch(() => null);
     if (!health || health.status() !== 200) {
@@ -42,7 +45,10 @@ test.describe('Frontend Error Reporting (real backend)', () => {
           const postData = req.postData();
           if (postData) {
             lastRequestBody = JSON.parse(postData);
-            console.log(`[E2E] Request body:`, JSON.stringify(lastRequestBody, null, 2));
+            console.log(
+              `[E2E] Request body:`,
+              JSON.stringify(lastRequestBody, null, 2),
+            );
           }
         } catch (e) {
           console.warn('[E2E] Failed to parse request body:', e);
@@ -96,7 +102,8 @@ test.describe('Frontend Error Reporting (real backend)', () => {
     // Wait for the error report response
     try {
       const errorResponse = await page.waitForResponse(
-        (r) => r.url().includes(ERROR_REPORT_ENDPOINT) && r.request().method() === 'POST',
+        (r) =>
+          r.url().includes(ERROR_REPORT_ENDPOINT) && r.request().method() === 'POST',
         { timeout: 10000 },
       );
 
@@ -119,7 +126,10 @@ test.describe('Frontend Error Reporting (real backend)', () => {
     }
   });
 
-  test('should report batch error format with 204 response', async ({ page, request }) => {
+  test('should report batch error format with 204 response', async ({
+    page,
+    request,
+  }) => {
     // Verify backend is available
     const health = await request.get(BACKEND_HEALTH).catch(() => null);
     if (!health || health.status() !== 200) {
@@ -141,7 +151,10 @@ test.describe('Frontend Error Reporting (real backend)', () => {
           const postData = req.postData();
           if (postData) {
             lastRequestBody = JSON.parse(postData);
-            console.log(`[E2E] Batch request body:`, JSON.stringify(lastRequestBody, null, 2));
+            console.log(
+              `[E2E] Batch request body:`,
+              JSON.stringify(lastRequestBody, null, 2),
+            );
           }
         } catch (e) {
           console.warn('[E2E] Failed to parse request body:', e);
@@ -210,7 +223,8 @@ test.describe('Frontend Error Reporting (real backend)', () => {
     // Wait for the error report response
     try {
       const errorResponse = await page.waitForResponse(
-        (r) => r.url().includes(ERROR_REPORT_ENDPOINT) && r.request().method() === 'POST',
+        (r) =>
+          r.url().includes(ERROR_REPORT_ENDPOINT) && r.request().method() === 'POST',
         { timeout: 10000 },
       );
 

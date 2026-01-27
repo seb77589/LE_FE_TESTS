@@ -46,7 +46,8 @@ describe('Document Version API Integration', () => {
       version_number: 1,
       file_name: 'contract_v1.docx',
       file_size: 51200,
-      content_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      content_type:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       created_by: {
         id: 1,
         full_name: 'John Doe',
@@ -61,7 +62,8 @@ describe('Document Version API Integration', () => {
       version_number: 2,
       file_name: 'contract_v2.docx',
       file_size: 52300,
-      content_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      content_type:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       created_by: {
         id: 1,
         full_name: 'John Doe',
@@ -76,7 +78,8 @@ describe('Document Version API Integration', () => {
       version_number: 3,
       file_name: 'contract_v3.docx',
       file_size: 53100,
-      content_type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      content_type:
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       created_by: {
         id: 2,
         full_name: 'Jane Smith',
@@ -127,7 +130,7 @@ describe('Document Version API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(notFoundError);
 
       await expect(api.get('/api/v1/documents/999/versions')).rejects.toEqual(
-        notFoundError
+        notFoundError,
       );
     });
 
@@ -178,7 +181,7 @@ describe('Document Version API Integration', () => {
       expect(response.data.new_version.version_number).toBe(4);
       expect(mockedApi.post).toHaveBeenCalledWith(
         '/api/v1/documents/100/versions/1/restore',
-        { notes: 'Restored version 1' }
+        { notes: 'Restored version 1' },
       );
     });
 
@@ -192,7 +195,7 @@ describe('Document Version API Integration', () => {
       mockedApi.post.mockRejectedValueOnce(conflictError);
 
       await expect(
-        api.post('/api/v1/documents/100/versions/1/restore', {})
+        api.post('/api/v1/documents/100/versions/1/restore', {}),
       ).rejects.toEqual(conflictError);
     });
 
@@ -206,7 +209,7 @@ describe('Document Version API Integration', () => {
       mockedApi.post.mockRejectedValueOnce(forbiddenError);
 
       await expect(
-        api.post('/api/v1/documents/100/versions/1/restore', {})
+        api.post('/api/v1/documents/100/versions/1/restore', {}),
       ).rejects.toEqual(forbiddenError);
     });
   });
@@ -235,7 +238,7 @@ describe('Document Version API Integration', () => {
       mockedApi.delete.mockRejectedValueOnce(notFoundError);
 
       await expect(api.delete('/api/v1/documents/100/versions/999')).rejects.toEqual(
-        notFoundError
+        notFoundError,
       );
     });
 
@@ -249,7 +252,7 @@ describe('Document Version API Integration', () => {
       mockedApi.delete.mockRejectedValueOnce(badRequestError);
 
       await expect(api.delete('/api/v1/documents/100/versions/1')).rejects.toEqual(
-        badRequestError
+        badRequestError,
       );
     });
   });
@@ -299,7 +302,7 @@ describe('Document Version API Integration', () => {
       await expect(
         api.get('/api/v1/documents/100/versions/compare', {
           params: { version1: 1 },
-        })
+        }),
       ).rejects.toEqual(badRequestError);
     });
   });
@@ -330,7 +333,7 @@ describe('Document Version API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(notFoundError);
 
       await expect(
-        api.get('/api/v1/documents/100/versions/999/download')
+        api.get('/api/v1/documents/100/versions/999/download'),
       ).rejects.toEqual(notFoundError);
     });
   });
@@ -382,7 +385,7 @@ describe('Document Version API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(serverError);
 
       await expect(api.get('/api/v1/documents/100/versions')).rejects.toEqual(
-        serverError
+        serverError,
       );
     });
 
@@ -391,7 +394,7 @@ describe('Document Version API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(networkError);
 
       await expect(api.get('/api/v1/documents/100/versions')).rejects.toThrow(
-        'Network error'
+        'Network error',
       );
     });
 
@@ -403,7 +406,7 @@ describe('Document Version API Integration', () => {
       mockedApi.get.mockRejectedValueOnce(timeoutError);
 
       await expect(api.get('/api/v1/documents/100/versions')).rejects.toEqual(
-        timeoutError
+        timeoutError,
       );
     });
   });

@@ -793,7 +793,11 @@ test.describe('CSRF Protection Tests', () => {
 
           // Should require authentication (401 Unauthorized or 403 Forbidden)
           // 404 also acceptable if route doesn't exist
-          return response.status === 401 || response.status === 403 || response.status === 404;
+          return (
+            response.status === 401 ||
+            response.status === 403 ||
+            response.status === 404
+          );
         } catch (error) {
           // Network error or CORS error indicates protection is in place
           return true;
@@ -805,7 +809,10 @@ test.describe('CSRF Protection Tests', () => {
       if (!apiProtected) {
         console.log('ℹ️ API route protection may be handled differently');
         // Skip reason: ARCHITECTURE_CLARIFICATION - Backend uses JWT-based authentication, not traditional CSRF middleware
-        test.skip(true, 'Backend uses JWT-based authentication, not traditional CSRF middleware');
+        test.skip(
+          true,
+          'Backend uses JWT-based authentication, not traditional CSRF middleware',
+        );
         return;
       }
 
