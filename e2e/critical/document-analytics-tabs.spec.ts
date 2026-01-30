@@ -1,7 +1,13 @@
 import { test, expect } from '../../fixtures/auth-fixture';
 import { TestHelpers } from '../../utils/test-helpers';
 
-test.describe('Document Analytics Tab Navigation', () => {
+/**
+ * SKIP: Documents are now case-centric (v0.2.0)
+ * The /dashboard/documents page now redirects to /cases
+ * Documents are accessed within the Case context, not independently
+ * These tests are obsolete and need to be rewritten for Case → Documents workflow
+ */
+test.describe.skip('Document Analytics Tab Navigation', () => {
   test.beforeEach(async ({ page }) => {
     // Clear any existing session data
     await TestHelpers.clearApplicationData(page);

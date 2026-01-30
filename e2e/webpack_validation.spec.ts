@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load environment variables
+dotenv.config({ path: path.join(process.cwd(), '../../config/.env') });
 
 /**
  * Webpack Module Resolution Validation Test
@@ -17,12 +22,21 @@ const pages = [
 
 test.describe('Webpack Module Resolution', () => {
   test.beforeEach(async ({ page }) => {
+    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com';
+    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9';
+    
     // Login first
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', 'manual-manager@legalease.com');
-    await page.fill('[data-testid="password"]', 'TestPassword123!');
-    await page.click('[data-testid="submit"]');
-    await page.waitForURL('/dashboard', { timeout: 30000 });
+    await page.goto('/auth/login');
+    
+    const emailInput = page.locator('input[type="email"], input[name="email"]').first();
+    const passwordInput = page.locator('input[type="password"], input[name="password"]').first();
+    const submitButton = page.locator('button[type="submit"]');
+    
+    await emailInput.fill(email);
+    await passwordInput.fill(password);
+    await submitButton.click();
+    
+    await page.waitForURL('**/dashboard**', { timeout: 30000 });
   });
 
   for (const pageInfo of pages) {

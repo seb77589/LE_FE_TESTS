@@ -233,34 +233,17 @@ test.describe.serial('User Login', () => {
       // Wait for modal to fully render
       await page.waitForTimeout(1000);
 
-      // Find the confirm button - it's a Button with text "Log Out" (not "Cancel")
-      // The button is in the modal and should be visible
-      const confirmButton = page
-        .locator('button:has-text("Log Out"):not(:has-text("Cancel"))')
-        .filter({ hasNotText: 'Cancel' })
-        .first();
+      // Find the confirm button using data-testid for reliable selection
+      const confirmButton = page.locator('[data-testid="logout-confirm"]');
 
       // Wait for button to be visible and enabled
       await confirmButton.waitFor({ state: 'visible', timeout: 5000 });
       await expect(confirmButton).toBeEnabled({ timeout: 3000 });
+      console.log('✅ Logout confirm button visible and enabled');
 
       // Wait for logout API call and redirect simultaneously
-      const [logoutResponse] = await Promise.all([
-        page
-          .waitForResponse(
-            (response) =>
-              response.url().includes('/api/v1/auth/logout') &&
-              (response.status() === 200 || response.status() === 204),
-            { timeout: 10000 },
-          )
-          .catch(() => null),
-        page.waitForURL('**/auth/login', { timeout: 10000 }).catch(() => null),
-        confirmButton.click(),
-      ]);
-
-      if (logoutResponse) {
-        console.log('✅ Logout API call completed');
-      }
+      // Click and wait for logout actions
+      await confirmButton.click();
       console.log('✅ Logout confirmed - waiting for redirect');
 
       // Ensure we're redirected to login page

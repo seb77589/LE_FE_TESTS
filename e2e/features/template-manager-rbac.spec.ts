@@ -25,7 +25,7 @@ const ASSISTANT_PASSWORD = process.env.TEST_ASSISTANT_PASSWORD || 'Assistant@123
  * Helper: Login as a specific user
  */
 async function login(page: Page, email: string, password: string) {
-  await page.goto('/login');
+  await page.goto('/auth/login');
   await page.fill('input[name="email"]', email);
   await page.fill('input[name="password"]', password);
   await page.click('button[type="submit"]');
