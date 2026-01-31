@@ -22,8 +22,9 @@ const pages = [
 
 test.describe('Webpack Module Resolution', () => {
   test.beforeEach(async ({ page }) => {
-    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com';
-    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9';
+    // Use automated test credentials (NOT manual testing accounts which are protected)
+    const email = process.env.TEST_ADMIN_EMAIL || 'test-admin@example.com';
+    const password = process.env.TEST_ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD || 'TestB!2b@5fU7';
     
     // Login first
     await page.goto('/auth/login');

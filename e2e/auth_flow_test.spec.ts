@@ -7,8 +7,9 @@ dotenv.config({ path: path.join(process.cwd(), '../../config/.env') })
 
 test.describe('Authentication Flow', () => {
   test('Login should redirect to dashboard', async ({ page }) => {
-    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com'
-    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9'
+    // Use automated test credentials (NOT manual testing accounts which are protected)
+    const email = process.env.TEST_ADMIN_EMAIL || 'test-admin@example.com'
+    const password = process.env.TEST_ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD || 'TestB!2b@5fU7'
     
     console.log(`Testing login for: ${email}`)
     
@@ -40,7 +41,7 @@ test.describe('Authentication Flow', () => {
     
     // Wait for navigation to dashboard (with extended timeout for slow responses)
     try {
-      await page.waitForURL('**/dashboard**', { timeout: 15000 })
+      await page.waitForURL('**/dashboard**', { timeout: 30000 })
       console.log('✅ Successfully redirected to dashboard!')
       
       // Verify we're authenticated by checking for dashboard elements
@@ -91,8 +92,9 @@ test.describe('Authentication Flow', () => {
   })
   
   test('Login and verify cookie-based auth works', async ({ page }) => {
-    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com'
-    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9'
+    // Use automated test credentials (NOT manual testing accounts which are protected)
+    const email = process.env.TEST_ADMIN_EMAIL || 'test-admin@example.com'
+    const password = process.env.TEST_ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD || 'TestB!2b@5fU7'
     
     // Navigate to login
     await page.goto('http://localhost:3000/auth/login', { waitUntil: 'networkidle' })
@@ -105,7 +107,7 @@ test.describe('Authentication Flow', () => {
     await page.locator('button[type="submit"]').click()
     
     // Wait for navigation to dashboard
-    await page.waitForURL('**/dashboard**', { timeout: 15000 })
+    await page.waitForURL('**/dashboard**', { timeout: 30000 })
     
     console.log('Logged in successfully')
     

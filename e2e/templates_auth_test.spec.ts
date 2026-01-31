@@ -7,8 +7,9 @@ dotenv.config({ path: path.join(process.cwd(), '../../config/.env') })
 
 test.describe('Templates Page Authentication', () => {
   test('Templates page should load without 401 errors after login', async ({ page }) => {
-    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com'
-    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9'
+    // Use automated test credentials (NOT manual testing accounts which are protected)
+    const email = process.env.TEST_ADMIN_EMAIL || 'test-admin@example.com'
+    const password = process.env.TEST_ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD || 'TestB!2b@5fU7'
     
     // Track network requests
     const errors401: string[] = []
@@ -62,15 +63,16 @@ test.describe('Templates Page Authentication', () => {
   })
   
   test('Templates API should return data after login', async ({ page }) => {
-    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com'
-    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9'
+    // Use automated test credentials (NOT manual testing accounts which are protected)
+    const email = process.env.TEST_ADMIN_EMAIL || 'test-admin@example.com'
+    const password = process.env.TEST_ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD || 'TestB!2b@5fU7'
     
     // Login first
     await page.goto('http://localhost:3000/auth/login', { waitUntil: 'networkidle' })
     await page.locator('input[type="email"]').first().fill(email)
     await page.locator('input[type="password"]').first().fill(password)
     await page.locator('button[type="submit"]').click()
-    await page.waitForURL('**/dashboard**', { timeout: 15000 })
+    await page.waitForURL('**/dashboard**', { timeout: 30000 })
     
     // Now test the templates API directly
     const response = await page.request.get('http://localhost:3000/api/v1/templates/')

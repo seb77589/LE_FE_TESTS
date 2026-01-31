@@ -310,9 +310,9 @@ test.describe('LegalEase Application Manual Testing', () => {
   test('Comprehensive Application Test', async ({ page }) => {
     tester = new ApplicationTester(page)
     
-    // Get credentials from environment
-    const email = process.env.MANUAL_MANAGER_EMAIL || 'manual-manager@legalease.com'
-    const password = process.env.MANUAL_MANAGER_PASSWORD || 'M@nager!Qw3rty$9'
+    // Get credentials from environment - use automated test credentials
+    const email = process.env.TEST_ADMIN_EMAIL || 'test-admin@example.com'
+    const password = process.env.TEST_ADMIN_PASSWORD || process.env.TEST_USER_PASSWORD || 'TestB!2b@5fU7'
     
     console.log('🚀 Starting comprehensive application test...')
     console.log(`📧 Using email: ${email}`)
