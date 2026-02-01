@@ -192,7 +192,7 @@ describe('API Client Integration Tests', () => {
 
     it('should handle 429 Rate Limit errors with retry logic', async () => {
       const logger = require('@/lib/logging').default;
-      let retryCount = 0;
+      const retryCount = 0;
 
       const mockError = {
         response: {

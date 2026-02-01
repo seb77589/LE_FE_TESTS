@@ -882,7 +882,7 @@ export class PerformanceTestingValidationSystem {
       'resource',
     ) as PerformanceResourceTiming[];
 
-    let totalRequests = resourceEntries.length;
+    const totalRequests = resourceEntries.length;
     let totalBytes = 0;
     let totalTime = 0;
     let slowestRequest = 0;
