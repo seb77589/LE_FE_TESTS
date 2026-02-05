@@ -187,54 +187,27 @@ test.describe('Filtered Cases Pages', () => {
   });
 
   test.describe('Navigation Between Filtered Pages', () => {
-    test('should navigate from main cases to filtered pages via stat cards', async ({
-      page,
-    }) => {
-      // Start on main cases page
-      await page.goto('/cases');
+    test('should navigate directly to filtered pages via URL', async ({ page }) => {
+      // Stat cards were removed from the Cases page - test direct URL navigation instead
+      // Users can access filtered pages via Dashboard stat cards or direct URLs
+
+      // Test direct navigation to /cases/closed
+      await page.goto('/cases/closed');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1500);
+      await expect(page.locator('h1')).toContainText('Closed Cases');
 
-      // Find and click "Closed Cases" stat card
-      const closedCard = page.locator('[href="/cases/closed"]').first();
-      const hasClosedCard = await closedCard.isVisible().catch(() => false);
-
-      if (hasClosedCard) {
-        await closedCard.click();
-        await page.waitForURL(/\/cases\/closed/);
-        await expect(page.locator('h1')).toContainText('Closed Cases');
-      }
-
-      // Go back to main cases page
-      await page.goto('/cases');
+      // Test direct navigation to /cases/in-progress
+      await page.goto('/cases/in-progress');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1500);
+      await expect(page.locator('h1')).toContainText('In Progress');
 
-      // Find and click "In Progress" stat card
-      const inProgressCard = page.locator('[href="/cases/in-progress"]').first();
-      const hasProgressCard = await inProgressCard.isVisible().catch(() => false);
-
-      if (hasProgressCard) {
-        await inProgressCard.click();
-        await page.waitForURL(/\/cases\/in-progress/);
-        await expect(page.locator('h1')).toContainText('In Progress');
-      }
-
-      // Go back to main cases page
-      await page.goto('/cases');
+      // Test direct navigation to /cases/to-review
+      await page.goto('/cases/to-review');
+      await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1500);
-
-      // Find and click "To Review" stat card
-      const toReviewCard = page.locator('[href="/cases/to-review"]').first();
-      const hasReviewCard = await toReviewCard.isVisible().catch(() => false);
-
-      if (hasReviewCard) {
-        await toReviewCard.click();
-        await page.waitForURL(/\/cases\/to-review/);
-        await expect(page.locator('h1')).toContainText('To Review');
-      }
-
-      // At least one navigation should have worked
-      expect(hasClosedCard || hasProgressCard || hasReviewCard).toBeTruthy();
+      await expect(page.locator('h1')).toContainText('To Review');
     });
   });
 });

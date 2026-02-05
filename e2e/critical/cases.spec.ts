@@ -32,32 +32,17 @@ test.describe('Cases Module', () => {
       await expect(casesPage).toBeVisible();
     });
 
-    test('should display search and filter controls', async ({ page }) => {
+    test('should display page header and content', async ({ page }) => {
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');
 
-      // In the new architecture, search/filter controls don't exist on main page
-      // Instead, verify stat cards are visible for filtering
-      // Main page now uses stat cards for navigation to filtered views
+      // Verify main page elements are visible
+      await expect(page.locator('h1')).toContainText('Cases');
+      await expect(page.locator('text=Manage and track legal cases')).toBeVisible();
 
-      // Wait for stats to load
-      await page.waitForTimeout(1000);
-
-      // Check for stat cards (these replace search/filter on main page)
-      const statsCards = page.locator('.text-3xl.font-semibold');
-      await expect(statsCards.first()).toBeVisible();
-    });
-
-    test('should display stats cards', async ({ page }) => {
-      await page.goto('/cases');
-      await page.waitForLoadState('domcontentloaded');
-
-      // Wait for stats to load (they should be visible even if 0)
-      await page.waitForTimeout(1000);
-
-      // Check for stat cards - should show Closed Cases, Cases In Progress, Cases To Review
-      const statsCards = page.locator('.text-3xl.font-semibold');
-      await expect(statsCards.first()).toBeVisible();
+      // Page should have the cases-page test id
+      const casesPage = page.locator('[data-testid="cases-page"]');
+      await expect(casesPage).toBeVisible();
     });
 
     test('should allow search filtering', async ({ page }) => {
@@ -71,34 +56,13 @@ test.describe('Cases Module', () => {
     });
 
     test('should allow status filtering', async ({ page }) => {
-      await page.goto('/cases');
-      await page.waitForLoadState('domcontentloaded');
-
-      // In the new architecture, status filtering is done via stat cards that navigate
-      // to pre-filtered case views (/cases/closed, /cases/in-progress, /cases/to-review)
-      // instead of a dropdown filter on the main page
-
-      // Verify stat cards exist for navigation
-      await page.waitForTimeout(1000);
-      const statsCards = page.locator('.text-3xl.font-semibold');
-      await expect(statsCards.first()).toBeVisible();
-
-      // Verify each stat card title indicates different case statuses
-      const closedCasesCard = page.locator('button, a', { hasText: /closed/i }).first();
-      const inProgressCard = page
-        .locator('button, a', { hasText: /in progress|in-progress/i })
-        .first();
-      const toReviewCard = page
-        .locator('button, a', { hasText: /review|pending/i })
-        .first();
-
-      // These stat cards should be visible for filtering by status
-      const hasClosedCard = await closedCasesCard.isVisible().catch(() => false);
-      const hasProgressCard = await inProgressCard.isVisible().catch(() => false);
-      const hasReviewCard = await toReviewCard.isVisible().catch(() => false);
-
-      // At least some stat cards should exist
-      expect(hasClosedCard || hasProgressCard || hasReviewCard).toBeTruthy();
+      // Status filtering is available via the Dashboard stat cards or by navigating
+      // directly to filtered pages (/cases/closed, /cases/in-progress, /cases/to-review)
+      // The main Cases page shows all cases without status filter cards
+      test.skip(
+        true,
+        'Status filtering via stat cards moved to Dashboard only - use direct URLs for filtered views',
+      );
     });
 
     test('should show empty state when no cases', async ({ page }) => {
@@ -106,10 +70,8 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(2000);
 
-      // In the new architecture:
-      // - When no cases exist, the table simply doesn't render (conditional rendering)
-      // - The empty state message "No cases found" was removed
-      // - Instead, page shows: Header + Stat Cards + Case Trends + (No Table)
+      // When no cases exist, the table simply doesn't render (conditional rendering)
+      // Page shows: Header + Bulk Actions (if applicable) + Table (if cases exist)
 
       // Check for either table or absence of it (both are valid states)
       const hasTable = await page
@@ -117,8 +79,7 @@ test.describe('Cases Module', () => {
         .isVisible()
         .catch(() => false);
 
-      // In the new architecture, empty state message was removed entirely
-      // So we just verify the page loaded successfully
+      // Verify the page loaded successfully
       // Either a table exists (cases present) or it doesn't (no cases)
       // Both are acceptable outcomes
       expect(true).toBeTruthy();
@@ -141,15 +102,12 @@ test.describe('Cases Module', () => {
     });
 
     test('should show view mode toggle for admin users', async ({ page }) => {
-      // In the new architecture, the admin view mode toggle (My Cases/All Cases)
-      // has been removed or moved. The main cases page now focuses on:
-      // - Analytics-first interface with Case Trends
-      // - Stat cards for filtering by status
-      // - Admin users get all cases by default
+      // Admin view mode toggle (My Cases/All Cases) has been removed
+      // Admin users see all cases by default
 
       test.skip(
         true,
-        'Admin view mode toggle removed in new architecture - admin users see all cases by default',
+        'Admin view mode toggle removed - admin users see all cases by default',
       );
     });
 
