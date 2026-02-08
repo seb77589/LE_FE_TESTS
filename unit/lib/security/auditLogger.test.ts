@@ -110,40 +110,46 @@ describe('Audit Logger', () => {
       );
     });
 
-    it('should send audit log to backend API', async () => {
+    it('should log audit entry with severity and timestamp', async () => {
+      // Note: Audit logs are created on backend automatically - frontend only logs locally
       await logAdminAction({
         action: 'user.delete',
         user_id: adminUser.id,
         success: true,
       });
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.delete',
         expect.objectContaining({
-          action: 'user.delete',
-          severity: 'high',
-          user_id: adminUser.id,
-          timestamp: expect.any(String),
+          auditEntry: expect.objectContaining({
+            action: 'user.delete',
+            severity: 'high',
+            user_id: adminUser.id,
+            timestamp: expect.any(String),
+          }),
         }),
       );
     });
 
-    it('should handle API failure with fallback logging', async () => {
-      const apiError = new Error('Network error');
-      mockApi.post.mockRejectedValueOnce(apiError);
-
+    it('should log all admin action entries locally', async () => {
+      // Note: Frontend logging is for local debugging only
+      // Backend handles audit trail persistence via create_audit_log()
       await logAdminAction({
         action: 'user.update',
         user_id: adminUser.id,
         success: true,
       });
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
+      expect(mockLogger.info).toHaveBeenCalledWith(
         'audit',
-        'Failed to send audit log to backend',
+        'Admin action: user.update',
         expect.objectContaining({
-          error: apiError,
-          audit_entry: expect.any(Object),
+          auditEntry: expect.objectContaining({
+            action: 'user.update',
+            user_id: adminUser.id,
+            success: true,
+          }),
         }),
       );
     });
@@ -211,18 +217,21 @@ describe('Audit Logger', () => {
     it('should log user creation', async () => {
       await logUserAction('user.create', adminUser, targetUser, undefined, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.create',
         expect.objectContaining({
-          action: 'user.create',
-          user_id: adminUser.id,
-          user_email: adminUser.email,
-          user_role: adminUser.role,
-          target_user_id: targetUser.id,
-          target_user_email: targetUser.email,
-          resource_type: 'assistant',
-          resource_id: targetUser.id,
-          success: true,
+          auditEntry: expect.objectContaining({
+            action: 'user.create',
+            user_id: adminUser.id,
+            user_email: adminUser.email,
+            user_role: adminUser.role,
+            target_user_id: targetUser.id,
+            target_user_email: targetUser.email,
+            resource_type: 'assistant',
+            resource_id: targetUser.id,
+            success: true,
+          }),
         }),
       );
     });
@@ -235,11 +244,14 @@ describe('Audit Logger', () => {
 
       await logUserAction('user.update', adminUser, targetUser, changes, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.update',
         expect.objectContaining({
-          action: 'user.update',
-          changes,
+          auditEntry: expect.objectContaining({
+            action: 'user.update',
+            changes,
+          }),
         }),
       );
     });
@@ -247,11 +259,14 @@ describe('Audit Logger', () => {
     it('should log user deletion', async () => {
       await logUserAction('user.delete', adminUser, targetUser, undefined, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.delete',
         expect.objectContaining({
-          action: 'user.delete',
-          severity: 'high',
+          auditEntry: expect.objectContaining({
+            action: 'user.delete',
+            severity: 'high',
+          }),
         }),
       );
     });
@@ -263,12 +278,15 @@ describe('Audit Logger', () => {
 
       await logUserAction('user.role_change', adminUser, targetUser, changes, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.role_change',
         expect.objectContaining({
-          action: 'user.role_change',
-          severity: 'high',
-          changes,
+          auditEntry: expect.objectContaining({
+            action: 'user.role_change',
+            severity: 'high',
+            changes,
+          }),
         }),
       );
     });
@@ -285,11 +303,14 @@ describe('Audit Logger', () => {
         errorMsg,
       );
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.update',
         expect.objectContaining({
-          success: false,
-          error_message: errorMsg,
+          auditEntry: expect.objectContaining({
+            success: false,
+            error_message: errorMsg,
+          }),
         }),
       );
     });
@@ -301,15 +322,18 @@ describe('Audit Logger', () => {
 
       await logBulkOperation('user.bulk_update', adminUser, 5, affectedUserIds, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.bulk_update',
         expect.objectContaining({
-          action: 'user.bulk_update',
-          severity: 'high',
-          metadata: {
-            affected_count: 5,
-            affected_user_ids: affectedUserIds,
-          },
+          auditEntry: expect.objectContaining({
+            action: 'user.bulk_update',
+            severity: 'high',
+            metadata: {
+              affected_count: 5,
+              affected_user_ids: affectedUserIds,
+            },
+          }),
         }),
       );
     });
@@ -319,11 +343,14 @@ describe('Audit Logger', () => {
 
       await logBulkOperation('user.bulk_delete', adminUser, 3, affectedUserIds, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.bulk_delete',
         expect.objectContaining({
-          action: 'user.bulk_delete',
-          severity: 'critical',
+          auditEntry: expect.objectContaining({
+            action: 'user.bulk_delete',
+            severity: 'critical',
+          }),
         }),
       );
     });
@@ -333,11 +360,14 @@ describe('Audit Logger', () => {
 
       await logBulkOperation('user.bulk_update', adminUser, 0, [], false, errorMsg);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.bulk_update',
         expect.objectContaining({
-          success: false,
-          error_message: errorMsg,
+          auditEntry: expect.objectContaining({
+            success: false,
+            error_message: errorMsg,
+          }),
         }),
       );
     });
@@ -347,16 +377,19 @@ describe('Audit Logger', () => {
     it('should log user data export', async () => {
       await logDataExport('assistant', adminUser, 100, 'csv');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.export',
         expect.objectContaining({
-          action: 'user.export',
-          severity: 'medium',
-          metadata: {
-            export_type: 'assistant',
-            record_count: 100,
-            format: 'csv',
-          },
+          auditEntry: expect.objectContaining({
+            action: 'user.export',
+            severity: 'medium',
+            metadata: {
+              export_type: 'assistant',
+              record_count: 100,
+              format: 'csv',
+            },
+          }),
         }),
       );
     });
@@ -364,15 +397,18 @@ describe('Audit Logger', () => {
     it('should log activity export', async () => {
       await logDataExport('activity', adminUser, 500, 'json');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: data.export',
         expect.objectContaining({
-          action: 'data.export',
-          metadata: {
-            export_type: 'activity',
-            record_count: 500,
-            format: 'json',
-          },
+          auditEntry: expect.objectContaining({
+            action: 'data.export',
+            metadata: {
+              export_type: 'activity',
+              record_count: 500,
+              format: 'json',
+            },
+          }),
         }),
       );
     });
@@ -380,11 +416,14 @@ describe('Audit Logger', () => {
     it('should log PDF export', async () => {
       await logDataExport('health', adminUser, 50, 'pdf');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        expect.any(String),
         expect.objectContaining({
-          metadata: expect.objectContaining({
-            format: 'pdf',
+          auditEntry: expect.objectContaining({
+            metadata: expect.objectContaining({
+              format: 'pdf',
+            }),
           }),
         }),
       );
@@ -401,12 +440,15 @@ describe('Audit Logger', () => {
 
       await logSystemAction('system.config_change', adminUser, metadata, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: system.config_change',
         expect.objectContaining({
-          action: 'system.config_change',
-          severity: 'critical',
-          metadata,
+          auditEntry: expect.objectContaining({
+            action: 'system.config_change',
+            severity: 'critical',
+            metadata,
+          }),
         }),
       );
     });
@@ -414,11 +456,14 @@ describe('Audit Logger', () => {
     it('should log system restart', async () => {
       await logSystemAction('system.restart', adminUser, undefined, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: system.restart',
         expect.objectContaining({
-          action: 'system.restart',
-          severity: 'critical',
+          auditEntry: expect.objectContaining({
+            action: 'system.restart',
+            severity: 'critical',
+          }),
         }),
       );
     });
@@ -426,11 +471,14 @@ describe('Audit Logger', () => {
     it('should log health check', async () => {
       await logSystemAction('health.check', adminUser, undefined, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: health.check',
         expect.objectContaining({
-          action: 'health.check',
-          severity: 'low',
+          auditEntry: expect.objectContaining({
+            action: 'health.check',
+            severity: 'low',
+          }),
         }),
       );
     });
@@ -446,11 +494,14 @@ describe('Audit Logger', () => {
         errorMsg,
       );
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: system.maintenance',
         expect.objectContaining({
-          success: false,
-          error_message: errorMsg,
+          auditEntry: expect.objectContaining({
+            success: false,
+            error_message: errorMsg,
+          }),
         }),
       );
     });
@@ -460,19 +511,22 @@ describe('Audit Logger', () => {
     it('should log unauthorized access with user details', async () => {
       await logUnauthorizedAccess('delete_user', adminUser, 'user:123');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: auth.unauthorized_access',
         expect.objectContaining({
-          action: 'auth.unauthorized_access',
-          severity: 'critical',
-          user_id: adminUser.id,
-          user_email: adminUser.email,
-          user_role: adminUser.role,
-          metadata: expect.objectContaining({
-            attempted_action: 'delete_user',
-            resource: 'user:123',
+          auditEntry: expect.objectContaining({
+            action: 'auth.unauthorized_access',
+            severity: 'critical',
+            user_id: adminUser.id,
+            user_email: adminUser.email,
+            user_role: adminUser.role,
+            metadata: expect.objectContaining({
+              attempted_action: 'delete_user',
+              resource: 'user:123',
+            }),
+            success: false,
           }),
-          success: false,
         }),
       );
     });
@@ -480,16 +534,19 @@ describe('Audit Logger', () => {
     it('should log unauthorized access from null user', async () => {
       await logUnauthorizedAccess('view_admin_panel', null, 'manager');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: auth.unauthorized_access',
         expect.objectContaining({
-          action: 'auth.unauthorized_access',
-          user_id: undefined,
-          user_email: undefined,
-          user_role: undefined,
-          metadata: expect.objectContaining({
-            attempted_action: 'view_admin_panel',
-            resource: 'manager',
+          auditEntry: expect.objectContaining({
+            action: 'auth.unauthorized_access',
+            user_id: undefined,
+            user_email: undefined,
+            user_role: undefined,
+            metadata: expect.objectContaining({
+              attempted_action: 'view_admin_panel',
+              resource: 'manager',
+            }),
           }),
         }),
       );
@@ -503,13 +560,16 @@ describe('Audit Logger', () => {
 
       await logUnauthorizedAccess('export_data', adminUser, undefined, metadata);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: auth.unauthorized_access',
         expect.objectContaining({
-          metadata: expect.objectContaining({
-            attempted_action: 'export_data',
-            ip_address: '192.168.1.100',
-            user_agent: 'Mozilla/5.0',
+          auditEntry: expect.objectContaining({
+            metadata: expect.objectContaining({
+              attempted_action: 'export_data',
+              ip_address: '192.168.1.100',
+              user_agent: 'Mozilla/5.0',
+            }),
           }),
         }),
       );
@@ -520,15 +580,18 @@ describe('Audit Logger', () => {
     it('should log successful admin login', async () => {
       await logAdminLogin(adminUser, true);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: auth.login_admin',
         expect.objectContaining({
-          action: 'auth.login_admin',
-          severity: 'medium',
-          user_id: adminUser.id,
-          user_email: adminUser.email,
-          user_role: adminUser.role,
-          success: true,
+          auditEntry: expect.objectContaining({
+            action: 'auth.login_admin',
+            severity: 'medium',
+            user_id: adminUser.id,
+            user_email: adminUser.email,
+            user_role: adminUser.role,
+            success: true,
+          }),
         }),
       );
     });
@@ -538,11 +601,14 @@ describe('Audit Logger', () => {
 
       await logAdminLogin(adminUser, false, errorMsg);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: auth.login_admin',
         expect.objectContaining({
-          success: false,
-          error_message: errorMsg,
+          auditEntry: expect.objectContaining({
+            success: false,
+            error_message: errorMsg,
+          }),
         }),
       );
     });
@@ -552,15 +618,18 @@ describe('Audit Logger', () => {
     it('should log admin logout', async () => {
       await logAdminLogout(adminUser);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: auth.logout_admin',
         expect.objectContaining({
-          action: 'auth.logout_admin',
-          severity: 'low',
-          user_id: adminUser.id,
-          user_email: adminUser.email,
-          user_role: adminUser.role,
-          success: true,
+          auditEntry: expect.objectContaining({
+            action: 'auth.logout_admin',
+            severity: 'low',
+            user_id: adminUser.id,
+            user_email: adminUser.email,
+            user_role: adminUser.role,
+            success: true,
+          }),
         }),
       );
     });
@@ -719,11 +788,13 @@ describe('Audit Logger', () => {
     });
 
     it('should flush batch when size limit reached', async () => {
+      // Note: AuditLogBatcher no longer sends to API - backend handles audit logging
       const entries = new Array(10).fill(null).map((_, i) => ({
         action: 'user.create' as AuditAction,
         severity: 'medium' as AuditSeverity,
         user_id: i,
         success: true,
+        timestamp: new Date().toISOString(),
       }));
 
       // Add 9 entries (below batch size)
@@ -732,7 +803,6 @@ describe('Audit Logger', () => {
       }
 
       expect((auditBatcher as any).batch).toHaveLength(9);
-      expect(mockApi.post).not.toHaveBeenCalledWith('/api/v1/audit-trail/batch');
 
       // Add 10th entry (triggers flush)
       auditBatcher.add(entries[9]);
@@ -740,10 +810,8 @@ describe('Audit Logger', () => {
       // Wait for async flush
       await new Promise((resolve) => setTimeout(resolve, 100));
 
+      // Batch should be cleared after flush
       expect((auditBatcher as any).batch).toHaveLength(0);
-      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/audit-trail/batch', {
-        entries: expect.arrayContaining(entries),
-      });
     });
 
     it('should flush on timer expiration', async () => {
@@ -754,12 +822,12 @@ describe('Audit Logger', () => {
         severity: 'medium',
         user_id: 1,
         success: true,
+        timestamp: new Date().toISOString(),
       };
 
       auditBatcher.add(entry);
 
       expect((auditBatcher as any).batch).toHaveLength(1);
-      expect(mockApi.post).not.toHaveBeenCalled();
 
       // Fast-forward time to trigger flush
       jest.advanceTimersByTime(5000);
@@ -767,41 +835,33 @@ describe('Audit Logger', () => {
       // Wait for async flush
       await Promise.resolve();
 
+      // Batch should be cleared after timer flush
       expect((auditBatcher as any).batch).toHaveLength(0);
-      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/audit-trail/batch', {
-        entries: [entry],
-      });
 
       jest.useRealTimers();
     });
 
-    it('should handle flush errors gracefully', async () => {
-      const apiError = new Error('Network error');
-      mockApi.post.mockRejectedValueOnce(apiError);
-
-      // Add entries to batch
+    it('should handle flush correctly', async () => {
+      // Note: The batcher no longer sends to API, just clears the batch
       const entries = new Array(5).fill(null).map((_, i) => ({
         action: 'user.create' as AuditAction,
         severity: 'medium' as AuditSeverity,
         user_id: i,
         success: true,
+        timestamp: new Date().toISOString(),
       }));
 
       for (const entry of entries) {
         auditBatcher.add(entry);
       }
 
+      expect((auditBatcher as any).batch).toHaveLength(5);
+
       // Directly call flush and await it
       await auditBatcher.flush();
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'audit',
-        'Failed to flush audit log batch',
-        expect.objectContaining({
-          error: apiError,
-          entry_count: 5,
-        }),
-      );
+      // Batch should be empty after flush
+      expect((auditBatcher as any).batch).toHaveLength(0);
     });
   });
 
@@ -816,12 +876,15 @@ describe('Audit Logger', () => {
 
       expect(result).toEqual({ id: 123 });
       expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2');
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.create',
         expect.objectContaining({
-          action: 'user.create',
-          user_id: adminUser.id,
-          success: true,
+          auditEntry: expect.objectContaining({
+            action: 'user.create',
+            user_id: adminUser.id,
+            success: true,
+          }),
         }),
       );
     });
@@ -838,13 +901,16 @@ describe('Audit Logger', () => {
 
       await wrappedFn('test', 456);
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.update',
         expect.objectContaining({
-          metadata: {
-            param1: 'test',
-            param2: 456,
-          },
+          auditEntry: expect.objectContaining({
+            metadata: {
+              param1: 'test',
+              param2: 456,
+            },
+          }),
         }),
       );
     });
@@ -858,12 +924,15 @@ describe('Audit Logger', () => {
 
       await expect(wrappedFn()).rejects.toThrow('Operation failed');
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: user.delete',
         expect.objectContaining({
-          action: 'user.delete',
-          success: false,
-          error_message: 'Operation failed',
+          auditEntry: expect.objectContaining({
+            action: 'user.delete',
+            success: false,
+            error_message: 'Operation failed',
+          }),
         }),
       );
     });
@@ -876,12 +945,15 @@ describe('Audit Logger', () => {
 
       await wrappedFn();
 
-      expect(mockApi.post).toHaveBeenCalledWith(
-        '/api/v1/audit-trail',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'audit',
+        'Admin action: system.restart',
         expect.objectContaining({
-          user_id: undefined,
-          user_email: undefined,
-          user_role: undefined,
+          auditEntry: expect.objectContaining({
+            user_id: undefined,
+            user_email: undefined,
+            user_role: undefined,
+          }),
         }),
       );
     });

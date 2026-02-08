@@ -50,6 +50,17 @@ jest.mock('@/components/ui/Alert', () => ({
   ),
 }));
 
+jest.mock('@/components/ui/Breadcrumbs', () => ({
+  __esModule: true,
+  default: ({ items }: { items: Array<{ label: string; href?: string }> }) => (
+    <nav aria-label="breadcrumb">
+      {items.map((item, i) => (
+        <span key={i}>{item.label}</span>
+      ))}
+    </nav>
+  ),
+}));
+
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

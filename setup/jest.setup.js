@@ -256,3 +256,29 @@ export function getRoleCredentials(role = 'user') {
 
   return roleMap[role.toLowerCase()] || roleMap.user;
 }
+
+/**
+ * Reset Rate Limiter State Between Tests
+ * =======================================
+ * Clears the in-memory rate limiter storage to prevent state leakage
+ * between tests. This is important because the rate limiter uses a
+ * module-level Map that persists across test files.
+ *
+ * Note: When mocking @/lib/network, this won't be needed, but it provides
+ * a safety net for tests that use the real rate limiter.
+ */
+beforeEach(() => {
+  // Reset any global rate limiter state that might leak between tests
+  try {
+    // Dynamic import to avoid breaking tests that mock the module
+    const rateLimiter = require('@/lib/network/rateLimiter');
+    if (rateLimiter.resetRateLimit) {
+      // Clear common rate limit keys used in tests
+      rateLimiter.resetRateLimit('login');
+      rateLimiter.resetRateLimit('unified_login_attempts');
+      rateLimiter.resetRateLimit('api');
+    }
+  } catch {
+    // Module is mocked or not available - that's fine
+  }
+});

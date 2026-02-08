@@ -27,7 +27,7 @@ jest.mock('@/lib/logging', () => {
   };
 });
 
-jest.mock('@/lib/api/auth', () => ({
+jest.mock('@/lib/api/tokenRefresh', () => ({
   refreshAuthToken: jest.fn(),
 }));
 
@@ -40,7 +40,7 @@ import {
   fetchWithAuthQueue,
   resetAuthInterceptorState,
 } from '@/lib/api/authInterceptor';
-import { refreshAuthToken } from '@/lib/api/auth';
+import { refreshAuthToken } from '@/lib/api/tokenRefresh';
 import logger from '@/lib/logging';
 
 const mockRefreshAuthToken = refreshAuthToken as jest.MockedFunction<

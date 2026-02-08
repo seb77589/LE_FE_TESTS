@@ -50,26 +50,42 @@ async function globalSetup(config: FullConfig) {
     errors.push(`   Make sure the frontend is running: cd frontend && npm run dev`);
   }
 
-  // Check Backend availability
-  try {
-    console.log('🔄 [Playwright Global Setup] Checking backend availability...');
-    const response = await page.request.get(`${backendUrl}/health`, {
-      timeout: 15000, // Increased from 10000 for backend + DB init
-      ignoreHTTPSErrors: true,
-    });
+  // Check Backend availability with retry loop for startup timing
+  const maxRetries = 10;
+  let backendAvailable = false;
 
-    if (response.ok()) {
-      console.log('✅ [Playwright Global Setup] Backend is accessible');
-    } else {
-      throw new Error(`Backend returned status: ${response.status()}`);
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 [Playwright Global Setup] Checking backend availability (attempt ${attempt}/${maxRetries})...`);
+      const response = await page.request.get(`${backendUrl}/health`, {
+        timeout: 10000,
+        ignoreHTTPSErrors: true,
+      });
+
+      if (response.ok()) {
+        console.log('✅ [Playwright Global Setup] Backend is accessible');
+        backendAvailable = true;
+        break;
+      } else {
+        throw new Error(`Backend returned status: ${response.status()}`);
+      }
+    } catch (error: any) {
+      if (attempt < maxRetries) {
+        console.log(`   ⏳ Waiting 2s before retry... (${error.message.slice(0, 50)})`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } else {
+        servicesAvailable = false;
+        const errorMsg = `❌ Backend not accessible at ${backendUrl}/health after ${maxRetries} attempts`;
+        console.error(errorMsg);
+        console.error(`   Error: ${error.message}`);
+        errors.push(errorMsg);
+        errors.push(`   Make sure services are running: docker compose up -d`);
+      }
     }
-  } catch (error: any) {
+  }
+
+  if (!backendAvailable) {
     servicesAvailable = false;
-    const errorMsg = `❌ Backend not accessible at ${backendUrl}/health`;
-    console.error(errorMsg);
-    console.error(`   Error: ${error.message}`);
-    errors.push(errorMsg);
-    errors.push(`   Make sure services are running: docker compose up -d`);
   }
 
   // Phase 2: Check critical APIs that registration depends on

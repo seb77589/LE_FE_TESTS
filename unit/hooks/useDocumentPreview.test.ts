@@ -24,6 +24,18 @@ jest.mock('@/lib/errors', () => ({
   extractErrorMessage: jest.fn((err, defaultMsg) => defaultMsg),
 }));
 
+// Mock the api module (axios instance) - hook uses api.get(), not fetch
+const mockApiGet = jest.fn();
+jest.mock('@/lib/api', () => ({
+  __esModule: true,
+  default: {
+    get: (...args: unknown[]) => mockApiGet(...args),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
+
 // Import mocked modules
 import logger from '@/lib/logging';
 import { extractErrorMessage } from '@/lib/errors';
@@ -32,7 +44,7 @@ const mockExtractErrorMessage = extractErrorMessage as jest.MockedFunction<
   typeof extractErrorMessage
 >;
 
-// Mock fetch
+// Legacy fetch mock (kept for backwards compatibility with some tests)
 const mockFetch = jest.fn();
 globalThis.fetch = mockFetch;
 
@@ -117,6 +129,9 @@ describe('useDocumentPreview', () => {
     localStorageMock.clear();
     localStorageMock.setItem('access_token', 'test-token');
     mockExtractErrorMessage.mockImplementation((err, defaultMsg) => defaultMsg);
+    // Setup api.get() mock - axios returns { data: responseData }
+    mockApiGet.mockResolvedValue({ data: mockImagePreviewData });
+    // Legacy fetch mock (kept for backwards compatibility)
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(mockImagePreviewData),
@@ -171,7 +186,7 @@ describe('useDocumentPreview', () => {
     it('should not fetch when isOpen is false', () => {
       renderHook(() => useDocumentPreview({ documentId: 1, isOpen: false }));
 
-      expect(mockFetch).not.toHaveBeenCalled();
+      expect(mockApiGet).not.toHaveBeenCalled();
     });
 
     it('should fetch when isOpen becomes true', async () => {
@@ -180,16 +195,16 @@ describe('useDocumentPreview', () => {
         { initialProps: { isOpen: false } },
       );
 
-      expect(mockFetch).not.toHaveBeenCalled();
+      expect(mockApiGet).not.toHaveBeenCalled();
 
       rerender({ isOpen: true });
 
       await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalled();
+        expect(mockApiGet).toHaveBeenCalled();
       });
     });
 
-    it('should include authorization header from localStorage', async () => {
+    it('should call api.get with correct endpoint', async () => {
       const { rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 1, isOpen }),
         { initialProps: { isOpen: false } },
@@ -198,12 +213,8 @@ describe('useDocumentPreview', () => {
       rerender({ isOpen: true });
 
       await waitFor(() => {
-        expect(mockFetch).toHaveBeenCalledWith(
-          expect.stringContaining('/api/v1/documents/1/preview'),
-          expect.objectContaining({
-            headers: { Authorization: 'Bearer test-token' },
-          }),
-        );
+        // Hook uses api.get() (axios with HttpOnly cookie auth)
+        expect(mockApiGet).toHaveBeenCalledWith('/api/v1/documents/1/preview');
       });
     });
 
@@ -277,11 +288,8 @@ describe('useDocumentPreview', () => {
 
     it('should handle PDF preview type', async () => {
       // Reset mock and set PDF response as the default
-      mockFetch.mockReset();
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockPdfPreviewData),
-      });
+      mockApiGet.mockReset();
+      mockApiGet.mockResolvedValue({ data: mockPdfPreviewData });
 
       const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 2, isOpen }),
@@ -300,11 +308,8 @@ describe('useDocumentPreview', () => {
 
     it('should handle info preview type', async () => {
       // Reset mock and set info response as the default
-      mockFetch.mockReset();
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockInfoPreviewData),
-      });
+      mockApiGet.mockReset();
+      mockApiGet.mockResolvedValue({ data: mockInfoPreviewData });
 
       const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 3, isOpen }),
@@ -355,12 +360,9 @@ describe('useDocumentPreview', () => {
 
   describe('Error handling', () => {
     it('should set error when API returns error response', async () => {
-      // Reset mock and set error response as the default
-      mockFetch.mockReset();
-      mockFetch.mockResolvedValue({
-        ok: false,
-        json: () => Promise.resolve({ detail: 'Document not found' }),
-      });
+      // Reset mock and set error response (axios throws on error)
+      mockApiGet.mockReset();
+      mockApiGet.mockRejectedValue(new Error('Document not found'));
 
       const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 999, isOpen }),
@@ -375,12 +377,9 @@ describe('useDocumentPreview', () => {
     });
 
     it('should log errors for monitoring', async () => {
-      // Reset mock and set error response as the default
-      mockFetch.mockReset();
-      mockFetch.mockResolvedValue({
-        ok: false,
-        json: () => Promise.resolve({ detail: 'Server error' }),
-      });
+      // Reset mock and set error response (axios throws on error)
+      mockApiGet.mockReset();
+      mockApiGet.mockRejectedValue(new Error('Server error'));
 
       const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 1, isOpen }),
@@ -396,15 +395,12 @@ describe('useDocumentPreview', () => {
       expect(logger.error).toHaveBeenCalled();
     });
 
-    it('should use extractErrorMessage for error messages', async () => {
-      // Reset mock and set error response as the default
-      mockFetch.mockReset();
-      mockFetch.mockResolvedValue({
-        ok: false,
-        json: () => Promise.resolve({ detail: 'API Error' }),
-      });
+    it('should handle axios errors correctly', async () => {
+      // Reset mock and set error response (axios throws on error)
+      mockApiGet.mockReset();
+      mockApiGet.mockRejectedValue(new Error('API Error'));
 
-      const { rerender } = renderHook(
+      const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 1, isOpen }),
         { initialProps: { isOpen: false } },
       );
@@ -412,7 +408,7 @@ describe('useDocumentPreview', () => {
       rerender({ isOpen: true });
 
       await waitFor(() => {
-        expect(mockExtractErrorMessage).toHaveBeenCalled();
+        expect(result.current.error).not.toBeNull();
       });
     });
   });
@@ -428,13 +424,13 @@ describe('useDocumentPreview', () => {
         expect(result.current.previewData).not.toBeNull();
       });
 
-      const initialCallCount = mockFetch.mock.calls.length;
+      const initialCallCount = mockApiGet.mock.calls.length;
 
       // Change document ID
       rerender({ documentId: 2, isOpen: true });
 
       await waitFor(() => {
-        expect(mockFetch.mock.calls.length).toBeGreaterThan(initialCallCount);
+        expect(mockApiGet.mock.calls.length).toBeGreaterThan(initialCallCount);
       });
     });
   });
@@ -452,24 +448,21 @@ describe('useDocumentPreview', () => {
         expect(result.current.previewData).not.toBeNull();
       });
 
-      const initialCallCount = mockFetch.mock.calls.length;
+      const initialCallCount = mockApiGet.mock.calls.length;
 
       await act(async () => {
         await result.current.refetch();
       });
 
-      expect(mockFetch.mock.calls.length).toBeGreaterThan(initialCallCount);
+      expect(mockApiGet.mock.calls.length).toBeGreaterThan(initialCallCount);
     });
   });
 
   describe('Preview data structure', () => {
     it('should include all metadata fields for PDF', async () => {
       // Reset mock and set PDF response as the default
-      mockFetch.mockReset();
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve(mockPdfPreviewData),
-      });
+      mockApiGet.mockReset();
+      mockApiGet.mockResolvedValue({ data: mockPdfPreviewData });
 
       const { result, rerender } = renderHook(
         ({ isOpen }) => useDocumentPreview({ documentId: 2, isOpen }),

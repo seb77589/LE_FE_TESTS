@@ -49,10 +49,12 @@ jest.mock('@/lib/logging', () => ({
   },
 }));
 
-jest.mock('@/lib/network/rateLimiter', () => ({
+jest.mock('@/lib/network', () => ({
   isRateLimited: jest.fn(),
   recordAttempt: jest.fn(),
   getRateLimitStatus: jest.fn(),
+  resetRateLimit: jest.fn(),
+  resetRateLimiter: jest.fn(),
 }));
 
 jest.mock('@/lib/session', () => ({
@@ -67,6 +69,14 @@ jest.mock('@/lib/api', () => ({
 
 jest.mock('@/hooks/useCSRFToken', () => ({
   addCSRFToken: jest.fn((headers) => headers),
+}));
+
+jest.mock('@/lib/cookies', () => ({
+  addCSRFTokenToHeaders: jest.fn((headers) => headers),
+  waitForCookie: jest.fn().mockResolvedValue(true),
+  getCookie: jest.fn().mockReturnValue('mock-csrf-token'),
+  setCookie: jest.fn(),
+  deleteCookie: jest.fn(),
 }));
 
 jest.mock('@/lib/errors', () => ({
