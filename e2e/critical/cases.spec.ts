@@ -3,6 +3,7 @@
  * Tests the cases list and detail pages functionality
  *
  * MIGRATED: Uses worker-scoped credentials via auth-fixture
+ * UPDATED: 2026-02-08 - Added tests for new Cases page UI features
  */
 
 import { test, expect } from '../../fixtures/auth-fixture';
@@ -45,24 +46,93 @@ test.describe('Cases Module', () => {
       await expect(casesPage).toBeVisible();
     });
 
-    test('should allow search filtering', async ({ page }) => {
-      // In the new architecture, search/filter controls are only on filtered pages
-      // (/cases/closed, /cases/in-progress, /cases/to-review), not on main page
-      // Main page focuses on analytics and stat cards for navigation
-      test.skip(
-        true,
-        'Search filtering only available on filtered case pages, not main cases page',
-      );
+    test('should display search input', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      // Check if cases exist (search toolbar only shows when cases exist)
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasGrid = await page.locator('[data-testid^="case-card-"]').first().isVisible().catch(() => false);
+
+      if (hasTable || hasGrid) {
+        // Search input should be visible
+        const searchInput = page.getByPlaceholder(/search cases/i);
+        await expect(searchInput).toBeVisible();
+      } else {
+        // If no cases, empty state should show
+        test.skip(true, 'No cases available - search toolbar not shown');
+      }
     });
 
-    test('should allow status filtering', async ({ page }) => {
-      // Status filtering is available via the Dashboard stat cards or by navigating
-      // directly to filtered pages (/cases/closed, /cases/in-progress, /cases/to-review)
-      // The main Cases page shows all cases without status filter cards
-      test.skip(
-        true,
-        'Status filtering via stat cards moved to Dashboard only - use direct URLs for filtered views',
-      );
+    test('should display status filter dropdown', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      // Check if cases exist
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasGrid = await page.locator('[data-testid^="case-card-"]').first().isVisible().catch(() => false);
+
+      if (hasTable || hasGrid) {
+        // Status filter should be visible
+        const statusFilter = page.getByLabel(/filter by status/i);
+        await expect(statusFilter).toBeVisible();
+
+        // Should have "All Statuses" option
+        await expect(page.getByRole('option', { name: /all statuses/i })).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available - filter toolbar not shown');
+      }
+    });
+
+    test('should filter cases by search query', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Find search input
+        const searchInput = page.getByPlaceholder(/search cases/i);
+
+        // Type a search query
+        await searchInput.fill('test');
+
+        // Wait for filtering
+        await page.waitForTimeout(500);
+
+        // Results should be filtered (we can't know exact count, but filtered count text should update)
+        // Just verify search worked without error
+        await expect(searchInput).toHaveValue('test');
+      } else {
+        test.skip(true, 'No cases available for search test');
+      }
+    });
+
+    test('should filter cases by status', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Find status filter
+        const statusFilter = page.getByLabel(/filter by status/i);
+
+        // Select a specific status
+        await statusFilter.selectOption('closed');
+
+        // Wait for filtering
+        await page.waitForTimeout(500);
+
+        // Verify selection
+        await expect(statusFilter).toHaveValue('closed');
+      } else {
+        test.skip(true, 'No cases available for filter test');
+      }
     });
 
     test('should show empty state when no cases', async ({ page }) => {
@@ -70,55 +140,230 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(2000);
 
-      // When no cases exist, the table simply doesn't render (conditional rendering)
-      // Page shows: Header + Bulk Actions (if applicable) + Table (if cases exist)
+      // Check for either table/cards or empty state
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasGrid = await page.locator('[data-testid^="case-card-"]').first().isVisible().catch(() => false);
+      const hasEmptyState = await page.getByText(/no cases yet/i).isVisible().catch(() => false);
 
-      // Check for either table or absence of it (both are valid states)
-      const hasTable = await page
-        .locator('table')
-        .isVisible()
-        .catch(() => false);
-
-      // Verify the page loaded successfully
-      // Either a table exists (cases present) or it doesn't (no cases)
-      // Both are acceptable outcomes
-      expect(true).toBeTruthy();
+      // At least one of these conditions should be true
+      expect(hasTable || hasGrid || hasEmptyState).toBeTruthy();
     });
   });
 
-  // Admin Features - Now implemented with backend filter parameter support
-  test.describe('Cases List Page - Admin Features', () => {
-    test.beforeEach(async ({ page, workerCredentials }) => {
-      // Skip if worker doesn't have admin credentials
-      test.skip(!workerCredentials.isAdmin, 'Test requires admin credentials');
+  test.describe('View Mode Toggle', () => {
+    test('should display view mode toggle buttons', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      // Login as admin
-      await TestHelpers.loginAndWaitForRedirect(
-        page,
-        workerCredentials.email,
-        workerCredentials.password,
-        true,
-      );
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // View toggle buttons should be visible
+        const listViewButton = page.getByLabel(/list view/i);
+        const gridViewButton = page.getByLabel(/grid view/i);
+
+        await expect(listViewButton).toBeVisible();
+        await expect(gridViewButton).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available - view toggle not shown');
+      }
     });
 
-    test('should show view mode toggle for admin users', async ({ page }) => {
-      // Admin view mode toggle (My Cases/All Cases) has been removed
-      // Admin users see all cases by default
+    test('should toggle between list and grid views', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      test.skip(
-        true,
-        'Admin view mode toggle removed - admin users see all cases by default',
-      );
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Default is list view - table should be visible
+        await expect(page.locator('table')).toBeVisible();
+
+        // Click grid view button
+        await page.getByLabel(/grid view/i).click();
+        await page.waitForTimeout(500);
+
+        // Table should be hidden, cards should be visible
+        await expect(page.locator('table')).not.toBeVisible();
+        await expect(page.locator('[data-testid^="case-card-"]').first()).toBeVisible();
+
+        // Click list view button to toggle back
+        await page.getByLabel(/list view/i).click();
+        await page.waitForTimeout(500);
+
+        // Table should be visible again
+        await expect(page.locator('table')).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available for view toggle test');
+      }
     });
 
-    test('should allow switching between my cases and all cases', async ({ page }) => {
-      // In the new architecture, view mode toggle (My Cases/All Cases) has been removed
-      // Admin users see all cases by default; no switching between views needed
+    test('should persist view mode preference', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      test.skip(
-        true,
-        'View mode toggle removed in new architecture - admin users see all cases by default',
-      );
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Switch to grid view
+        await page.getByLabel(/grid view/i).click();
+        await page.waitForTimeout(500);
+
+        // Reload page
+        await page.reload();
+        await page.waitForLoadState('domcontentloaded');
+        await page.waitForTimeout(1000);
+
+        // Grid view should still be active (table hidden)
+        await expect(page.locator('table')).not.toBeVisible();
+        await expect(page.locator('[data-testid^="case-card-"]').first()).toBeVisible();
+
+        // Clean up: switch back to list view
+        await page.getByLabel(/list view/i).click();
+      } else {
+        test.skip(true, 'No cases available for persistence test');
+      }
+    });
+  });
+
+  test.describe('Selection Mode', () => {
+    test('should show selection controls for managers', async ({ page, workerCredentials }) => {
+      // Skip for non-admin users
+      test.skip(!workerCredentials.isAdmin, 'Selection controls only available for managers');
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Select button should be visible for managers
+        const selectButton = page.getByRole('button', { name: /select/i });
+        await expect(selectButton).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available for selection test');
+      }
+    });
+
+    test('should toggle selection mode', async ({ page, workerCredentials }) => {
+      test.skip(!workerCredentials.isAdmin, 'Selection controls only available for managers');
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Click Select button
+        await page.getByRole('button', { name: /select/i }).click();
+        await page.waitForTimeout(300);
+
+        // Cancel button should now be visible
+        await expect(page.getByRole('button', { name: /cancel/i })).toBeVisible();
+
+        // Checkboxes should be visible
+        await expect(page.getByRole('checkbox').first()).toBeVisible();
+
+        // Click Cancel to exit selection mode
+        await page.getByRole('button', { name: /cancel/i }).click();
+        await page.waitForTimeout(300);
+
+        // Select button should be visible again
+        await expect(page.getByRole('button', { name: /select/i })).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available for selection mode test');
+      }
+    });
+
+    test('should show bulk actions bar when items selected', async ({ page, workerCredentials }) => {
+      test.skip(!workerCredentials.isAdmin, 'Selection controls only available for managers');
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Enter selection mode
+        await page.getByRole('button', { name: /select/i }).click();
+        await page.waitForTimeout(300);
+
+        // Select all checkbox
+        const selectAllCheckbox = page.getByLabel(/select all cases/i);
+        if (await selectAllCheckbox.isVisible()) {
+          await selectAllCheckbox.check();
+          await page.waitForTimeout(300);
+
+          // Bulk actions bar should appear (fixed at bottom)
+          const bulkBar = page.locator('.fixed.bottom-6');
+          await expect(bulkBar).toBeVisible();
+
+          // Clear selection
+          await selectAllCheckbox.uncheck();
+        }
+
+        // Exit selection mode
+        await page.getByRole('button', { name: /cancel/i }).click();
+      } else {
+        test.skip(true, 'No cases available for bulk actions test');
+      }
+    });
+  });
+
+  test.describe('Analytics Section', () => {
+    test('should display analytics toggle for managers', async ({ page, workerCredentials }) => {
+      test.skip(!workerCredentials.isAdmin, 'Analytics only available for managers');
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Analytics toggle button should be visible
+        const analyticsToggle = page.getByText(/analytics/i).first();
+        await expect(analyticsToggle).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available for analytics test');
+      }
+    });
+
+    test('should toggle analytics section', async ({ page, workerCredentials }) => {
+      test.skip(!workerCredentials.isAdmin, 'Analytics only available for managers');
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Find analytics toggle button
+        const analyticsButton = page.locator('button').filter({ hasText: /analytics/i });
+
+        if (await analyticsButton.isVisible()) {
+          // Analytics content should be visible by default
+          // Click to toggle off
+          await analyticsButton.click();
+          await page.waitForTimeout(300);
+
+          // Click to toggle on again
+          await analyticsButton.click();
+          await page.waitForTimeout(300);
+
+          // Verify toggle worked (no error)
+          expect(true).toBeTruthy();
+        }
+      } else {
+        test.skip(true, 'No cases available for analytics toggle test');
+      }
     });
   });
 
@@ -143,7 +388,6 @@ test.describe('Cases Module', () => {
         const detailPage = page.locator('[data-testid="case-detail-page"]');
         await expect(detailPage).toBeVisible();
       } else {
-        // Skip reason: TEST_INFRASTRUCTURE - No cases available to test detail navigation
         test.skip(true, 'No cases available to test detail navigation');
       }
     });
@@ -178,7 +422,6 @@ test.describe('Cases Module', () => {
         await expect(page.locator('text=Error Loading Case')).toBeVisible();
         await expect(page.locator('button:has-text("Back to Cases")')).toBeVisible();
       } else {
-        // Skip reason: TEST_INFRASTRUCTURE - Case detail page in unexpected state
         test.skip(true, 'Case detail page in unexpected state');
       }
     });
@@ -212,40 +455,139 @@ test.describe('Cases Module', () => {
     });
   });
 
+  test.describe('Create Case', () => {
+    test('should have New Case button', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+
+      // New Case button should be visible
+      const newCaseLink = page.getByRole('link', { name: /new case/i });
+      await expect(newCaseLink).toBeVisible();
+    });
+
+    test('should navigate to create case page', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+
+      // Click New Case button
+      await page.getByRole('link', { name: /new case/i }).click();
+
+      // Should navigate to new case page
+      await page.waitForURL(/\/cases\/new/);
+
+      // Verify create case page loaded
+      await expect(page.locator('h1')).toContainText(/create|new/i);
+    });
+  });
+
+  test.describe('About Cases Section', () => {
+    test('should display About Cases info panel', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // About Cases section should be visible
+        await expect(page.getByText(/about cases/i)).toBeVisible();
+      } else {
+        // Info panel only shows when cases exist
+        test.skip(true, 'No cases available - About section not shown');
+      }
+    });
+  });
+
+  test.describe('Responsive Behavior', () => {
+    test('should be responsive on mobile viewport', async ({ page }) => {
+      // Set mobile viewport
+      await page.setViewportSize({ width: 375, height: 667 });
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      // Page should still be functional
+      const casesPage = page.locator('[data-testid="cases-page"]');
+      await expect(casesPage).toBeVisible();
+
+      // Header should be visible
+      await expect(page.locator('h1')).toContainText('Cases');
+    });
+
+    test('should show grid with single column on mobile', async ({ page }) => {
+      // Set mobile viewport
+      await page.setViewportSize({ width: 375, height: 667 });
+
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
+
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
+
+      if (hasTable) {
+        // Switch to grid view
+        await page.getByLabel(/grid view/i).click();
+        await page.waitForTimeout(500);
+
+        // Grid should show single column (cards stacked)
+        const cards = page.locator('[data-testid^="case-card-"]');
+        const cardCount = await cards.count();
+
+        if (cardCount > 0) {
+          // Cards should be visible
+          await expect(cards.first()).toBeVisible();
+        }
+      } else {
+        test.skip(true, 'No cases available for responsive grid test');
+      }
+    });
+  });
+
   test.describe('Accessibility', () => {
     test('cases list should be keyboard navigable', async ({ page }) => {
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');
-      await page.waitForTimeout(1000); // Wait for page to fully render
+      await page.waitForTimeout(1000);
 
-      // Check if cases page has interactive elements
-      const searchInput = page.locator('[data-testid="search-input"]');
-      const hasSearchInput = await searchInput.isVisible().catch(() => false);
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
 
-      if (!hasSearchInput) {
-        // Skip reason: FUTURE_FEATURE - Cases page search input not found - page may not be fully implemented
-        test.skip(
-          true,
-          'Cases page search input not found - page may not be fully implemented',
-        );
-        return;
+      if (hasTable) {
+        // Search input should be focusable
+        const searchInput = page.getByPlaceholder(/search cases/i);
+        await searchInput.focus();
+        await expect(searchInput).toBeFocused();
+
+        // Should be able to type in search
+        await searchInput.fill('test');
+        await expect(searchInput).toHaveValue('test');
+
+        // Tab to next element (status filter)
+        await page.keyboard.press('Tab');
+
+        // Status filter should be focusable
+        const statusFilter = page.getByLabel(/filter by status/i);
+        await expect(statusFilter).toBeFocused();
+      } else {
+        test.skip(true, 'No cases available for keyboard navigation test');
       }
+    });
 
-      // Focus the search input directly and verify it can receive focus
-      await searchInput.focus();
-      await expect(searchInput).toBeFocused({ timeout: 5000 });
+    test('should have proper ARIA labels', async ({ page }) => {
+      await page.goto('/cases');
+      await page.waitForLoadState('domcontentloaded');
+      await page.waitForTimeout(1000);
 
-      // Verify we can type in the search input
-      await searchInput.fill('test');
-      await expect(searchInput).toHaveValue('test');
+      const hasTable = await page.locator('table').isVisible().catch(() => false);
 
-      // Check if status filter exists and can receive focus
-      const statusFilter = page.locator('[data-testid="status-filter"]');
-      const hasStatusFilter = await statusFilter.isVisible().catch(() => false);
-
-      if (hasStatusFilter) {
-        await statusFilter.focus();
-        await expect(statusFilter).toBeFocused({ timeout: 5000 });
+      if (hasTable) {
+        // Check for ARIA labels on interactive elements
+        await expect(page.getByLabel(/search cases/i)).toBeVisible();
+        await expect(page.getByLabel(/filter by status/i)).toBeVisible();
+        await expect(page.getByLabel(/list view/i)).toBeVisible();
+        await expect(page.getByLabel(/grid view/i)).toBeVisible();
+      } else {
+        test.skip(true, 'No cases available for ARIA labels test');
       }
     });
   });

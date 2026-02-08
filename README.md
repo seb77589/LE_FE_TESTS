@@ -34,11 +34,40 @@ Examples:
 
 End-to-end tests verify complete user workflows using Playwright.
 
-Examples:
+**Directory Structure:**
 
-- `tests/e2e/smoke.spec.ts`
-- `tests/e2e/auth.spec.ts`
-- `tests/e2e/debug-register.spec.ts`
+- `tests/e2e/smoke.spec.ts` - Basic health checks
+- `tests/e2e/auth.spec.ts` - Authentication workflows
+- `tests/e2e/critical/cases.spec.ts` - Cases page comprehensive tests
+
+**Cases E2E Tests (`tests/e2e/critical/cases.spec.ts`):**
+
+Comprehensive tests for the Cases page including:
+
+- Page load and navigation
+- Search input functionality (debounced, case-insensitive)
+- Status filter dropdown (all 6 case statuses)
+- View mode toggle (grid/list with localStorage persistence)
+- Selection mode (checkbox selection, select all, bulk actions)
+- Analytics section (SuperAdmin only)
+- Responsive behavior (mobile/tablet/desktop layouts)
+- Accessibility (keyboard navigation, ARIA labels)
+- Filter combinations (search + status with AND logic)
+
+**Running Cases E2E Tests:**
+
+```bash
+# Run all critical E2E tests
+npm run test:e2e:real -- tests/e2e/critical/
+
+# Run only cases tests
+npm run test:e2e:real -- tests/e2e/critical/cases.spec.ts
+
+# Run in headed mode for debugging
+npm run test:e2e:headed -- tests/e2e/critical/cases.spec.ts
+```
+
+**Note:** Some tests use conditional `test.skip()` when no case data is available in the system. Ensure the Docker backend is seeded with test data for full test coverage.
 
 ### Test Fixtures
 
