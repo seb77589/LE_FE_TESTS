@@ -157,21 +157,11 @@ describe('cookieUtils', () => {
     });
 
     describe('clearAuth()', () => {
-      it('should call logout endpoint and clear legacy localStorage tokens', async () => {
-        (globalThis.fetch as jest.Mock).mockResolvedValue({
-          ok: true,
-          status: 200,
-        });
-
+      it('should clear legacy localStorage tokens and log success', async () => {
         await cookieUtils.clearAuth();
 
-        expect(globalThis.fetch).toHaveBeenCalledWith('/api/v1/auth/logout', {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        // clearAuth is client-side only — no fetch call
+        expect(globalThis.fetch).not.toHaveBeenCalled();
 
         expect(localStorage.removeItem).toHaveBeenCalledWith('legalease_access_token');
         expect(localStorage.removeItem).toHaveBeenCalledWith('legalease_refresh_token');
@@ -180,60 +170,11 @@ describe('cookieUtils', () => {
 
         expect(mockLogger.info).toHaveBeenCalledWith(
           'general',
-          'User logged out successfully',
+          'User logged out successfully (client-side cleanup)',
         );
-      });
-
-      it('should handle 401 response gracefully (no active session)', async () => {
-        (globalThis.fetch as jest.Mock).mockResolvedValue({
-          ok: false,
-          status: 401,
-        });
-
-        await cookieUtils.clearAuth();
-
-        // 401 is expected during cleanup, so no warning is logged
-        expect(mockLogger.warn).not.toHaveBeenCalled();
-        expect(mockLogger.info).toHaveBeenCalledWith(
-          'general',
-          'User logged out successfully',
-        );
-      });
-
-      it('should warn on non-401 error response', async () => {
-        (globalThis.fetch as jest.Mock).mockResolvedValue({
-          ok: false,
-          status: 500,
-          statusText: 'Internal Server Error',
-        });
-
-        await cookieUtils.clearAuth();
-
-        expect(mockLogger.warn).toHaveBeenCalledWith(
-          'general',
-          'Logout endpoint returned non-401 error',
-          expect.objectContaining({
-            status: 500,
-          }),
-        );
-      });
-
-      it('should handle network errors gracefully', async () => {
-        (globalThis.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
-
-        await cookieUtils.clearAuth();
-
-        expect(mockLogger.error).toHaveBeenCalledWith(
-          'general',
-          'Failed to logout due to network error',
-          expect.objectContaining({ error: 'Network error' }),
-        );
-        // Network error prevents reaching localStorage cleanup code
-        expect(localStorage.removeItem).not.toHaveBeenCalled();
       });
 
       it('should handle localStorage errors gracefully', async () => {
-        (globalThis.fetch as jest.Mock).mockResolvedValue({ ok: true });
         const errorThrowingMock = () => {
           throw new Error('localStorage error');
         };

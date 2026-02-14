@@ -6,15 +6,26 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import CaseCard from '@/components/cases/CaseCard';
 
-// Mock formatDateTime utility
+// Mock utility modules
 jest.mock('@/lib/utils', () => ({
-  formatDateTime: jest.fn((date) => `Formatted: ${date}`),
-  cn: jest.fn((...classes) => classes.filter(Boolean).join(' ')),
+  formatDateTime: jest.fn((date: string) => `Formatted: ${date}`),
+  getStatusColor: jest.fn((status: string) =>
+    status === 'OPEN' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
+  ),
+  getStatusLabel: jest.fn((status: string) => status),
+}));
+
+jest.mock('@/lib/utils/utils', () => ({
+  cn: jest.fn((...classes: unknown[]) => classes.filter(Boolean).join(' ')),
 }));
 
 // Mock next/link
 jest.mock('next/link', () => {
-  const MockLink = ({ children, href }: any) => <a href={href}>{children}</a>;
+  const MockLink = ({ children, href, onClick }: any) => (
+    <a href={href} onClick={onClick}>
+      {children}
+    </a>
+  );
   MockLink.displayName = 'MockLink';
   return MockLink;
 });
@@ -34,13 +45,16 @@ jest.mock('@/components/ui/Button', () => ({
   ),
 }));
 
-// Mock lucide-react icons
+// Mock TemplateTypeBadge
+jest.mock('@/components/ui/TemplateTypeBadge', () => ({
+  TemplateTypeBadge: () => null,
+}));
+
+// Mock lucide-react icons used by CaseCard
 jest.mock('lucide-react', () => ({
-  Briefcase: () => <div data-testid="briefcase-icon">Briefcase</div>,
   Calendar: () => <div data-testid="calendar-icon">Calendar</div>,
-  User: () => <div data-testid="user-icon">User</div>,
-  CheckCircle: () => <div data-testid="check-icon">Check</div>,
-  XCircle: () => <div data-testid="x-icon">X</div>,
+  FileText: () => <div data-testid="filetext-icon">FileText</div>,
+  Clock: () => <div data-testid="clock-icon">Clock</div>,
 }));
 
 describe('CaseCard', () => {
@@ -77,21 +91,19 @@ describe('CaseCard', () => {
       expect(screen.getByText('Test Description')).toBeInTheDocument();
     });
 
-    it('should display case status', () => {
+    it('should display case status label', () => {
       render(<CaseCard {...mockCase} />);
       expect(screen.getByText('OPEN')).toBeInTheDocument();
     });
 
-    it('should display status icon for OPEN status', () => {
-      render(<CaseCard {...mockCase} status="OPEN" />);
-      // Check for the mocked check icon
-      expect(screen.getByTestId('check-icon')).toBeInTheDocument();
+    it('should render file icon', () => {
+      render(<CaseCard {...mockCase} />);
+      expect(screen.getByTestId('filetext-icon')).toBeInTheDocument();
     });
 
-    it('should display status icon for CLOSED status', () => {
-      render(<CaseCard {...mockCase} status="CLOSED" />);
-      // Check for the mocked x icon
-      expect(screen.getByTestId('x-icon')).toBeInTheDocument();
+    it('should render calendar icon for created date', () => {
+      render(<CaseCard {...mockCase} />);
+      expect(screen.getByTestId('calendar-icon')).toBeInTheDocument();
     });
   });
 

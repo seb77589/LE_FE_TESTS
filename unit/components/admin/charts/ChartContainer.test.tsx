@@ -70,7 +70,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer isLoading={true}>
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -88,7 +88,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer isLoading={true} loadingMessage="Fetching data...">
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -105,7 +105,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer>
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -122,7 +122,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer>
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -139,7 +139,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer>
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -157,7 +157,7 @@ describe('ChartContainer', () => {
 
     const { container } = render(
       <ChartContainer height="400px">
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -175,7 +175,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer minWidth={300} minHeight={350}>
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 
@@ -195,7 +195,7 @@ describe('ChartContainer', () => {
 
     render(
       <ChartContainer initializingMessage="Setting up...">
-        {(renderKey) => <div data-testid="chart-content">{renderKey}</div>}
+        {({ renderKey }) => <div data-testid="chart-content">{renderKey}</div>}
       </ChartContainer>,
     );
 

@@ -10,17 +10,14 @@ import path from 'path';
 dotenv.config({ path: path.join(__dirname, '..', '..', '..', 'config', '.env') });
 
 // Configure jsdom location for real backend testing
-// This ensures API client uses the correct backend URL (http://localhost:8000)
-// instead of the default jsdom location (http://localhost)
+// jsdom exposes window.location as non-configurable; use the JSDOM-supported
+// href setter instead so tests that read window.location.origin get the
+// backend URL rather than the default "http://localhost".
 if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_API_URL) {
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   try {
-    Object.defineProperty(window, 'location', {
-      writable: true,
-      value: new URL(backendUrl),
-    });
-  } catch (error) {
-    console.warn('[jest.setup] Failed to configure window.location:', error);
+    window.location.href = process.env.NEXT_PUBLIC_API_URL;
+  } catch {
+    // Older jsdom versions may still throw – harmless in tests
   }
 }
 
@@ -159,6 +156,34 @@ if (typeof window !== 'undefined' && !('IntersectionObserver' in window)) {
   }
 }
 
+// Polyfill ResizeObserver for jsdom environment
+if (typeof window !== 'undefined' && !('ResizeObserver' in window)) {
+  class ResizeObserverMock {
+    observe() {
+      /* noop */
+    }
+    unobserve() {
+      /* noop */
+    }
+    disconnect() {
+      /* noop */
+    }
+  }
+  Object.defineProperty(window, 'ResizeObserver', {
+    writable: true,
+    configurable: true,
+    value: ResizeObserverMock,
+  });
+
+  if (typeof global !== 'undefined') {
+    Object.defineProperty(global, 'ResizeObserver', {
+      writable: true,
+      configurable: true,
+      value: ResizeObserverMock,
+    });
+  }
+}
+
 // Mock next-intl's useTranslations to avoid missing provider errors
 jest.mock('next-intl', () => ({
   useTranslations: () => (key) => key,
@@ -268,6 +293,10 @@ export function getRoleCredentials(role = 'user') {
  * a safety net for tests that use the real rate limiter.
  */
 beforeEach(() => {
+  // Restore any spied-on prototypes (e.g. Storage.prototype.setItem) so that
+  // spy pollution from one test doesn't break the next.
+  jest.restoreAllMocks();
+
   // Reset any global rate limiter state that might leak between tests
   try {
     // Dynamic import to avoid breaking tests that mock the module

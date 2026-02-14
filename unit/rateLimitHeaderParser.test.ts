@@ -284,7 +284,7 @@ describe('rateLimitHeaderParser', () => {
         'rate-limit',
         'Failed to update rate limit from server',
         expect.objectContaining({
-          error: expect.any(Object),
+          message: 'localStorage is full',
           rateLimitInfo,
         }),
       );
@@ -347,7 +347,7 @@ describe('rateLimitHeaderParser', () => {
         'rate-limit',
         'Failed to get rate limit info',
         expect.objectContaining({
-          error: expect.any(Object),
+          message: expect.any(String),
           endpoint: '/api/v1/login',
         }),
       );
