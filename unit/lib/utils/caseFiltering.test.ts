@@ -19,9 +19,7 @@ import {
 import { CaseStatus } from '@/lib/utils/caseStatus';
 
 // Test data factory
-const createCase = (
-  overrides: Partial<FilterableCase> = {},
-): FilterableCase => ({
+const createCase = (overrides: Partial<FilterableCase> = {}): FilterableCase => ({
   id: 1,
   title: 'Default Case',
   description: 'Default description',
@@ -31,13 +29,48 @@ const createCase = (
 
 // Sample test data covering all statuses
 const sampleCases: FilterableCase[] = [
-  createCase({ id: 1, title: 'Contract Review', description: 'Review of employment contract', status: 'open' }),
-  createCase({ id: 2, title: 'Patent Filing', description: 'Patent application for new technology', status: 'in_progress' }),
-  createCase({ id: 3, title: 'Merger Due Diligence', description: 'Due diligence for company merger', status: 'processing' }),
-  createCase({ id: 4, title: 'Trademark Registration', description: 'Register new trademark', status: 'processed' }),
-  createCase({ id: 5, title: 'Compliance Audit', description: 'Annual compliance review pending', status: 'review_pending' }),
-  createCase({ id: 6, title: 'Settlement Agreement', description: 'Final settlement documentation', status: 'closed' }),
-  createCase({ id: 7, title: 'Employment Contract', description: null, status: 'open' }),
+  createCase({
+    id: 1,
+    title: 'Contract Review',
+    description: 'Review of employment contract',
+    status: 'open',
+  }),
+  createCase({
+    id: 2,
+    title: 'Patent Filing',
+    description: 'Patent application for new technology',
+    status: 'in_progress',
+  }),
+  createCase({
+    id: 3,
+    title: 'Merger Due Diligence',
+    description: 'Due diligence for company merger',
+    status: 'processing',
+  }),
+  createCase({
+    id: 4,
+    title: 'Trademark Registration',
+    description: 'Register new trademark',
+    status: 'processed',
+  }),
+  createCase({
+    id: 5,
+    title: 'Compliance Audit',
+    description: 'Annual compliance review pending',
+    status: 'review_pending',
+  }),
+  createCase({
+    id: 6,
+    title: 'Settlement Agreement',
+    description: 'Final settlement documentation',
+    status: 'closed',
+  }),
+  createCase({
+    id: 7,
+    title: 'Employment Contract',
+    description: null,
+    status: 'open',
+  }),
 ];
 
 describe('caseFiltering utilities', () => {
@@ -319,7 +352,11 @@ describe('caseFiltering utilities', () => {
 
     it('should handle unicode characters in search', () => {
       const casesWithUnicode = [
-        createCase({ id: 1, title: 'Société Générale Case', description: 'French company' }),
+        createCase({
+          id: 1,
+          title: 'Société Générale Case',
+          description: 'French company',
+        }),
         createCase({ id: 2, title: 'München Agreement', description: 'German city' }),
       ];
 

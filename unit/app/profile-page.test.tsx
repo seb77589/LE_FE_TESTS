@@ -45,6 +45,7 @@ jest.mock('swr', () => ({
 jest.mock('@/lib/api', () => ({
   __esModule: true,
   default: {
+    put: jest.fn(),
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
@@ -238,7 +239,9 @@ describe('ProfilePage Component', () => {
       render(<ProfilePage />);
 
       await waitFor(() => {
-        expect(screen.getByText('Profile')).toBeInTheDocument();
+        expect(
+          screen.getByRole('heading', { level: 1, name: 'Profile' }),
+        ).toBeInTheDocument();
         expect(
           screen.getByText('Manage your profile information and preferences'),
         ).toBeInTheDocument();
@@ -423,7 +426,7 @@ describe('ProfilePage Component', () => {
     });
 
     it('successfully submits profile update', async () => {
-      (api.patch as jest.Mock).mockResolvedValue({ data: { success: true } });
+      (api.put as jest.Mock).mockResolvedValue({ data: { success: true } });
 
       render(<ProfilePage />);
 
@@ -449,7 +452,7 @@ describe('ProfilePage Component', () => {
       await userEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(api.patch).toHaveBeenCalledWith('/api/v1/users/me', {
+        expect(api.put).toHaveBeenCalledWith('/api/v1/users/me', {
           full_name: 'Jane Smith',
         });
         expect(mockMutate).toHaveBeenCalled();
@@ -458,10 +461,10 @@ describe('ProfilePage Component', () => {
     });
 
     it('shows error toast when profile update fails', async () => {
-      (api.patch as jest.Mock).mockRejectedValue({
+      (api.put as jest.Mock).mockRejectedValue({
         response: {
           data: {
-            detail: 'Failed to update profile',
+            detail: 'Failed to update profile. Please try again.',
           },
         },
       });
@@ -485,12 +488,14 @@ describe('ProfilePage Component', () => {
       await userEvent.click(saveButton);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith('Failed to update profile');
+        expect(toast.error).toHaveBeenCalledWith(
+          'Failed to update profile. Please try again.',
+        );
       });
     });
 
     it('shows generic error message when API error has no detail', async () => {
-      (api.patch as jest.Mock).mockRejectedValue(new Error('Network error'));
+      (api.put as jest.Mock).mockRejectedValue(new Error('Network error'));
 
       render(<ProfilePage />);
 

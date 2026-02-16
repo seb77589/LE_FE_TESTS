@@ -253,6 +253,7 @@ describe('SessionManager Integration Tests', () => {
       const mockEvent = {
         data: {
           type: 'session_invalidated',
+          messageId: 'msg_test_123',
           sessionId: 'test_session',
           timestamp: new Date().toISOString(),
         },

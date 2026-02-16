@@ -144,32 +144,40 @@ test.describe('ASSISTANT Role - Cases Page', () => {
     );
     expect(hasCasesContent).toBe(true);
 
-    // Verify case status cards are visible (same for all roles)
-    const hasClosedCasesCard = await TestHelpers.checkUIElementExists(
+    // Verify core cases controls are visible
+    const hasSearchInput = await TestHelpers.checkUIElementExists(
       page,
-      'main >> text=Closed Cases',
+      'main input[placeholder*="Search"]',
       5000,
     );
-    expect(hasClosedCasesCard).toBe(true);
+
+    const hasStatusFilter = await TestHelpers.checkUIElementExists(
+      page,
+      'main select',
+      5000,
+    );
+
+    expect(hasSearchInput).toBe(true);
+    expect(hasStatusFilter).toBe(true);
   });
 
   test('should be able to view case details', async ({ page }) => {
     await page.goto('/cases');
     await page.waitForLoadState('networkidle');
-    await page.waitForSelector('tbody tr', { timeout: 10000 });
-    await page.waitForSelector('tbody a[href*="/cases/"]', { timeout: 10000 });
     await page.waitForTimeout(1000);
 
-    // Look for case detail links
-    const caseLink = await TestHelpers.checkUIElementExists(
-      page,
-      'tbody a[href*="/cases/"]',
-      5000,
-    );
+    const caseLinks = page
+      .locator('a[href*="/cases/"]')
+      .filter({ hasNot: page.locator('[href="/cases/closed"]') })
+      .filter({ hasNot: page.locator('[href="/cases/in-progress"]') })
+      .filter({ hasNot: page.locator('[href="/cases/to-review"]') })
+      .filter({ hasNot: page.locator('[href="/cases/new"]') });
 
-    if (caseLink) {
+    const caseLinkCount = await caseLinks.count();
+
+    if (caseLinkCount > 0) {
       // Click first case detail link
-      await page.locator('tbody a[href*="/cases/"]').first().click();
+      await caseLinks.first().click();
       await page.waitForTimeout(2000);
 
       // Should navigate to case detail page

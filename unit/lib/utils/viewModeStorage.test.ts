@@ -12,7 +12,6 @@ import {
   ViewMode,
   VIEW_MODE_KEYS,
   DEFAULT_VIEW_MODE,
-  isBrowser,
   isLocalStorageAvailable,
   getViewMode,
   setViewMode,
@@ -83,13 +82,6 @@ describe('viewModeStorage utilities', () => {
   describe('DEFAULT_VIEW_MODE', () => {
     it('should be "list"', () => {
       expect(DEFAULT_VIEW_MODE).toBe('list');
-    });
-  });
-
-  describe('isBrowser()', () => {
-    it('should return true when window is defined', () => {
-      // In Jest/jsdom environment, window is always defined
-      expect(isBrowser()).toBe(true);
     });
   });
 
@@ -169,14 +161,20 @@ describe('viewModeStorage utilities', () => {
       const result = setViewMode(VIEW_MODE_KEYS.cases, 'list');
 
       expect(result).toBe(true);
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('cases-view-mode', 'list');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'cases-view-mode',
+        'list',
+      );
     });
 
     it('should save "grid" to localStorage', () => {
       const result = setViewMode(VIEW_MODE_KEYS.cases, 'grid');
 
       expect(result).toBe(true);
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('cases-view-mode', 'grid');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'cases-view-mode',
+        'grid',
+      );
     });
 
     it('should return false when localStorage throws', () => {
@@ -190,13 +188,22 @@ describe('viewModeStorage utilities', () => {
 
     it('should work with different keys', () => {
       setViewMode(VIEW_MODE_KEYS.cases, 'grid');
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('cases-view-mode', 'grid');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'cases-view-mode',
+        'grid',
+      );
 
       setViewMode(VIEW_MODE_KEYS.templates, 'list');
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('templates-view-mode', 'list');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'templates-view-mode',
+        'list',
+      );
 
       setViewMode(VIEW_MODE_KEYS.documents, 'grid');
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('documents-view-mode', 'grid');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'documents-view-mode',
+        'grid',
+      );
     });
   });
 
@@ -281,9 +288,18 @@ describe('viewModeStorage utilities', () => {
       setViewMode(VIEW_MODE_KEYS.documents, 'grid');
 
       // Verify each was called with correct key
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('cases-view-mode', 'grid');
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('templates-view-mode', 'list');
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('documents-view-mode', 'grid');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'cases-view-mode',
+        'grid',
+      );
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'templates-view-mode',
+        'list',
+      );
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'documents-view-mode',
+        'grid',
+      );
 
       // Verify retrieval
       expect(getViewMode(VIEW_MODE_KEYS.cases)).toBe('grid');
@@ -299,7 +315,10 @@ describe('viewModeStorage utilities', () => {
 
       const saved = setViewMode(VIEW_MODE_KEYS.cases, newMode);
       expect(saved).toBe(true);
-      expect(window.localStorage.setItem).toHaveBeenCalledWith('cases-view-mode', 'grid');
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+        'cases-view-mode',
+        'grid',
+      );
     });
 
     it('should handle remove and get workflow', () => {

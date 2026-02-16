@@ -52,8 +52,15 @@ test.describe('Cases Module', () => {
       await page.waitForTimeout(1000);
 
       // Check if cases exist (search toolbar only shows when cases exist)
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
-      const hasGrid = await page.locator('[data-testid^="case-card-"]').first().isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
+      const hasGrid = await page
+        .locator('[data-testid^="case-card-"]')
+        .first()
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable || hasGrid) {
         // Search input should be visible
@@ -71,8 +78,15 @@ test.describe('Cases Module', () => {
       await page.waitForTimeout(1000);
 
       // Check if cases exist
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
-      const hasGrid = await page.locator('[data-testid^="case-card-"]').first().isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
+      const hasGrid = await page
+        .locator('[data-testid^="case-card-"]')
+        .first()
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable || hasGrid) {
         // Status filter should be visible
@@ -91,7 +105,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Find search input
@@ -116,7 +133,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Find status filter
@@ -141,9 +161,19 @@ test.describe('Cases Module', () => {
       await page.waitForTimeout(2000);
 
       // Check for either table/cards or empty state
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
-      const hasGrid = await page.locator('[data-testid^="case-card-"]').first().isVisible().catch(() => false);
-      const hasEmptyState = await page.getByText(/no cases yet/i).isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
+      const hasGrid = await page
+        .locator('[data-testid^="case-card-"]')
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasEmptyState = await page
+        .getByText(/no cases yet/i)
+        .isVisible()
+        .catch(() => false);
 
       // At least one of these conditions should be true
       expect(hasTable || hasGrid || hasEmptyState).toBeTruthy();
@@ -156,7 +186,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // View toggle buttons should be visible
@@ -175,7 +208,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Default is list view - table should be visible
@@ -205,7 +241,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Switch to grid view
@@ -230,15 +269,24 @@ test.describe('Cases Module', () => {
   });
 
   test.describe('Selection Mode', () => {
-    test('should show selection controls for managers', async ({ page, workerCredentials }) => {
+    test('should show selection controls for managers', async ({
+      page,
+      workerCredentials,
+    }) => {
       // Skip for non-admin users
-      test.skip(!workerCredentials.isAdmin, 'Selection controls only available for managers');
+      test.skip(
+        !workerCredentials.isAdmin,
+        'Selection controls only available for managers',
+      );
 
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Select button should be visible for managers
@@ -250,13 +298,19 @@ test.describe('Cases Module', () => {
     });
 
     test('should toggle selection mode', async ({ page, workerCredentials }) => {
-      test.skip(!workerCredentials.isAdmin, 'Selection controls only available for managers');
+      test.skip(
+        !workerCredentials.isAdmin,
+        'Selection controls only available for managers',
+      );
 
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Click Select button
@@ -280,14 +334,23 @@ test.describe('Cases Module', () => {
       }
     });
 
-    test('should show bulk actions bar when items selected', async ({ page, workerCredentials }) => {
-      test.skip(!workerCredentials.isAdmin, 'Selection controls only available for managers');
+    test('should show bulk actions bar when items selected', async ({
+      page,
+      workerCredentials,
+    }) => {
+      test.skip(
+        !workerCredentials.isAdmin,
+        'Selection controls only available for managers',
+      );
 
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Enter selection mode
@@ -317,14 +380,20 @@ test.describe('Cases Module', () => {
   });
 
   test.describe('Analytics Section', () => {
-    test('should display analytics toggle for managers', async ({ page, workerCredentials }) => {
+    test('should display analytics toggle for managers', async ({
+      page,
+      workerCredentials,
+    }) => {
       test.skip(!workerCredentials.isAdmin, 'Analytics only available for managers');
 
       await page.goto('/cases');
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Analytics toggle button should be visible
@@ -342,11 +411,16 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Find analytics toggle button
-        const analyticsButton = page.locator('button').filter({ hasText: /analytics/i });
+        const analyticsButton = page
+          .locator('button')
+          .filter({ hasText: /analytics/i });
 
         if (await analyticsButton.isVisible()) {
           // Analytics content should be visible by default
@@ -486,7 +560,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // About Cases section should be visible
@@ -523,7 +600,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Switch to grid view
@@ -550,7 +630,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Search input should be focusable
@@ -578,7 +661,10 @@ test.describe('Cases Module', () => {
       await page.waitForLoadState('domcontentloaded');
       await page.waitForTimeout(1000);
 
-      const hasTable = await page.locator('table').isVisible().catch(() => false);
+      const hasTable = await page
+        .locator('table')
+        .isVisible()
+        .catch(() => false);
 
       if (hasTable) {
         // Check for ARIA labels on interactive elements

@@ -56,7 +56,9 @@ async function globalSetup(config: FullConfig) {
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔄 [Playwright Global Setup] Checking backend availability (attempt ${attempt}/${maxRetries})...`);
+      console.log(
+        `🔄 [Playwright Global Setup] Checking backend availability (attempt ${attempt}/${maxRetries})...`,
+      );
       const response = await page.request.get(`${backendUrl}/health`, {
         timeout: 10000,
         ignoreHTTPSErrors: true,
@@ -72,7 +74,7 @@ async function globalSetup(config: FullConfig) {
     } catch (error: any) {
       if (attempt < maxRetries) {
         console.log(`   ⏳ Waiting 2s before retry... (${error.message.slice(0, 50)})`);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
       } else {
         servicesAvailable = false;
         const errorMsg = `❌ Backend not accessible at ${backendUrl}/health after ${maxRetries} attempts`;

@@ -509,7 +509,7 @@ describe('UserDetailsDrawer', () => {
       await user.click(updateButton);
 
       await waitFor(() => {
-        expect(mockApi.put).toHaveBeenCalledWith('/api/v1/users/1', {
+        expect(mockApi.put).toHaveBeenCalledWith('/api/v1/admin/users/1', {
           role: 'MANAGER',
         });
       });
@@ -1493,7 +1493,7 @@ describe('UserDetailsDrawer', () => {
       fireEvent.click(updateButton);
 
       await waitFor(() => {
-        expect(mockApi.put).toHaveBeenCalledWith(`/api/v1/users/${mockUser.id}`, {
+        expect(mockApi.put).toHaveBeenCalledWith(`/api/v1/admin/users/${mockUser.id}`, {
           role: 'MANAGER',
         });
         expect(screen.getByText('Role updated successfully')).toBeInTheDocument();

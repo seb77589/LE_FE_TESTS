@@ -60,6 +60,8 @@ jest.mock('@/lib/session', () => ({
   },
   sessionManager: {
     initialize: jest.fn(),
+    updateSessionId: jest.fn(),
+    endSession: jest.fn(),
     getSessionId: jest.fn(),
     validateSession: jest.fn(),
     cleanup: jest.fn(),
@@ -88,6 +90,11 @@ jest.mock('react-hot-toast', () => ({
     success: jest.fn(),
     error: jest.fn(),
   },
+}));
+
+jest.mock('@/lib/cookies', () => ({
+  waitForCookie: jest.fn().mockResolvedValue(true),
+  addCSRFTokenToHeaders: jest.fn((headers = {}) => headers),
 }));
 
 // Import mocked modules

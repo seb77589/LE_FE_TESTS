@@ -111,7 +111,7 @@ describe('rateLimitConfig', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'rate-limit',
         'Failed to fetch rate limit configurations',
-        expect.any(Error),
+        expect.objectContaining({ message: 'Network error' }),
       );
       expect(configs).toHaveProperty('login');
       expect(configs).toHaveProperty('register');

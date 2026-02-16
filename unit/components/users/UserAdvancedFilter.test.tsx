@@ -19,9 +19,9 @@ describe('UserAdvancedFilter', () => {
   it('should render filter form', () => {
     render(<UserAdvancedFilter values={{}} onChange={mockOnChange} />);
 
-    expect(screen.getByLabelText('Role')).toBeInTheDocument();
-    expect(screen.getByLabelText('Status')).toBeInTheDocument();
-    expect(screen.getByLabelText('Verified')).toBeInTheDocument();
+    expect(screen.getByLabelText('Filter by role')).toBeInTheDocument();
+    expect(screen.getByLabelText('Filter by status')).toBeInTheDocument();
+    expect(screen.getByLabelText('Filter by verification')).toBeInTheDocument();
   });
 
   it('should call onChange when role filter changes', () => {
@@ -36,7 +36,7 @@ describe('UserAdvancedFilter', () => {
   it('should call onChange when status filter changes', () => {
     render(<UserAdvancedFilter values={{}} onChange={mockOnChange} />);
 
-    const statusSelect = screen.getByLabelText('Status');
+    const statusSelect = screen.getByLabelText('Filter by status');
     fireEvent.change(statusSelect, { target: { value: 'active' } });
 
     expect(mockOnChange).toHaveBeenCalledWith({ isActive: true });
@@ -45,7 +45,7 @@ describe('UserAdvancedFilter', () => {
   it('should call onChange when verified filter changes', () => {
     render(<UserAdvancedFilter values={{}} onChange={mockOnChange} />);
 
-    const verifiedSelect = screen.getByLabelText('Verified');
+    const verifiedSelect = screen.getByLabelText('Filter by verification');
     fireEvent.change(verifiedSelect, { target: { value: 'yes' } });
 
     expect(mockOnChange).toHaveBeenCalledWith({ isVerified: true });

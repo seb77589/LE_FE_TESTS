@@ -31,7 +31,9 @@ import { TEST_CREDENTIALS, PROFILE_TEST_CREDENTIALS } from '../test-credentials'
  * @param timeout - Maximum time to wait for health check (default: 30s)
  */
 export async function waitForBackendHealth(
-  request: { get: (url: string) => Promise<{ ok: () => boolean; status: () => number }> },
+  request: {
+    get: (url: string) => Promise<{ ok: () => boolean; status: () => number }>;
+  },
   timeout = 30000,
 ): Promise<void> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -55,9 +57,15 @@ export async function waitForBackendHealth(
  * @param retries - Number of retry attempts (default: 3)
  */
 export async function gotoWithRetry(
-  page: { goto: (url: string, options?: object) => Promise<unknown>; waitForTimeout: (ms: number) => Promise<void> },
+  page: {
+    goto: (url: string, options?: object) => Promise<unknown>;
+    waitForTimeout: (ms: number) => Promise<void>;
+  },
   url: string,
-  options: { timeout?: number; waitUntil?: 'load' | 'domcontentloaded' | 'networkidle' } = {},
+  options: {
+    timeout?: number;
+    waitUntil?: 'load' | 'domcontentloaded' | 'networkidle';
+  } = {},
   retries = 3,
 ): Promise<void> {
   let lastError: Error | null = null;
@@ -80,7 +88,9 @@ export async function gotoWithRetry(
         errorMessage.includes('ECONNRESET') ||
         errorMessage.includes('net::')
       ) {
-        console.log(`[Retry ${i + 1}/${retries}] Navigation failed: ${errorMessage.slice(0, 100)}`);
+        console.log(
+          `[Retry ${i + 1}/${retries}] Navigation failed: ${errorMessage.slice(0, 100)}`,
+        );
         // Exponential backoff: 1s, 2s, 4s
         await page.waitForTimeout(1000 * Math.pow(2, i));
         continue;

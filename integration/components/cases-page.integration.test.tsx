@@ -23,9 +23,13 @@ jest.mock('next/navigation', () => ({
 
 // Mock next/link
 jest.mock('next/link', () => {
-  const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  );
+  const MockLink = ({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => <a href={href}>{children}</a>;
   MockLink.displayName = 'MockLink';
   return MockLink;
 });
@@ -119,7 +123,11 @@ jest.mock('@/components/ui/LoadingState', () => ({
 }));
 
 jest.mock('@/components/cases/CaseBulkActionsBar', () => ({
-  CaseBulkActionsBar: ({ selectedCount, onClearSelection, onBulkStatusChange }: any) => (
+  CaseBulkActionsBar: ({
+    selectedCount,
+    onClearSelection,
+    onBulkStatusChange,
+  }: any) => (
     <div data-testid="bulk-actions-bar">
       <span>{selectedCount} selected</span>
       <button onClick={onClearSelection} data-testid="clear-selection">
@@ -515,7 +523,9 @@ describe('Cases Page Integration Tests', () => {
       });
 
       // Should show "Clear Filters" button
-      expect(screen.getByRole('button', { name: /clear filters/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /clear filters/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -629,7 +639,7 @@ describe('Cases Page Integration Tests', () => {
 
       // Check for "New Case" link
       const newCaseLink = screen.getByRole('link', { name: /new case/i });
-      expect(newCaseLink).toHaveAttribute('href', '/cases/new');
+      expect(newCaseLink).toHaveAttribute('href', '/templates?action=create-case');
     });
 
     it('should display breadcrumbs for navigation', async () => {

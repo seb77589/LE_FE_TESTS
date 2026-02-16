@@ -54,27 +54,22 @@ describe('SecurityTab', () => {
       id: 'session1',
       device: 'Chrome on Windows',
       location: 'New York, US',
-      last_active: '2025-01-01T12:00:00Z',
-      is_current: true,
+      lastActivity: '2025-01-01T12:00:00Z',
+      isCurrent: true,
     },
     {
       id: 'session2',
       device: 'Firefox on Mac',
       location: 'San Francisco, US',
-      last_active: '2025-01-01T10:00:00Z',
-      is_current: false,
+      lastActivity: '2025-01-01T10:00:00Z',
+      isCurrent: false,
     },
   ];
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // API returns { active_sessions: Session[], session_count: number, max_concurrent_sessions: number }
     mockUseSWR.mockReturnValue({
-      data: {
-        active_sessions: mockSessions,
-        session_count: mockSessions.length,
-        max_concurrent_sessions: 10,
-      },
+      data: mockSessions,
       error: undefined,
       isLoading: false,
       mutate: jest.fn(),
@@ -274,7 +269,7 @@ describe('SecurityTab', () => {
       const revokeButton = screen.queryByText(/^revoke$/i);
       if (!revokeButton) {
         // If no revoke button exists (all sessions are current), test passes
-        expect(mockSessions.filter((s) => !s.is_current).length).toBeGreaterThanOrEqual(
+        expect(mockSessions.filter((s) => !s.isCurrent).length).toBeGreaterThanOrEqual(
           0,
         );
         return;
@@ -372,8 +367,8 @@ describe('SecurityTab', () => {
           id: 'custom1',
           device: 'Custom Device',
           location: 'Custom Location',
-          last_active: '2025-01-01T00:00:00Z',
-          is_current: false,
+          lastActivity: '2025-01-01T00:00:00Z',
+          isCurrent: false,
         },
       ];
       render(<SecurityTab sessions={customSessions} />);
@@ -478,13 +473,9 @@ describe('SecurityTab', () => {
             mutate: jest.fn(),
           } as any;
         }
-        if (key === '/api/v1/auth/sessions') {
+        if (key === 'auth-sessions-normalized') {
           return {
-            data: {
-              active_sessions: mockSessions,
-              session_count: mockSessions.length,
-              max_concurrent_sessions: 10,
-            },
+            data: mockSessions,
             error: undefined,
             isLoading: false,
             mutate: jest.fn(),

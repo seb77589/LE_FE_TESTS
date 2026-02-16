@@ -152,7 +152,7 @@ describe('SessionManager', () => {
         expect.objectContaining({
           type: 'session_invalidated',
           messageId: expect.any(String),
-        })
+        }),
       );
     });
 

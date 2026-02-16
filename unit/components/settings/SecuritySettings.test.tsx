@@ -91,11 +91,7 @@ describe('SecuritySettings', () => {
 
     // Default SWR mock - no sessions
     mockUseSWR.mockReturnValue({
-      data: {
-        active_sessions: [],
-        session_count: 0,
-        max_concurrent_sessions: 5,
-      },
+      data: [],
       error: undefined,
       isLoading: false,
       mutate: jest.fn(),
@@ -261,26 +257,22 @@ describe('SecuritySettings', () => {
   describe('Session Management', () => {
     it('should display active sessions when available', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome on Windows',
-              location: 'New York, US',
-              last_active: '2024-01-01T12:00:00Z',
-              is_current: true,
-            },
-            {
-              id: 'session-2',
-              device: 'Firefox on Mac',
-              location: 'Los Angeles, US',
-              last_active: '2024-01-01T10:00:00Z',
-              is_current: false,
-            },
-          ],
-          session_count: 2,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome on Windows',
+            location: 'New York, US',
+            lastActivity: '2024-01-01T12:00:00Z',
+            isCurrent: true,
+          },
+          {
+            id: 'session-2',
+            device: 'Firefox on Mac',
+            location: 'Los Angeles, US',
+            lastActivity: '2024-01-01T10:00:00Z',
+            isCurrent: false,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: jest.fn(),
@@ -294,19 +286,15 @@ describe('SecuritySettings', () => {
 
     it('should show current session badge', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome on Windows',
-              location: 'New York, US',
-              last_active: '2024-01-01T12:00:00Z',
-              is_current: true,
-            },
-          ],
-          session_count: 1,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome on Windows',
+            location: 'New York, US',
+            lastActivity: '2024-01-01T12:00:00Z',
+            isCurrent: true,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: jest.fn(),

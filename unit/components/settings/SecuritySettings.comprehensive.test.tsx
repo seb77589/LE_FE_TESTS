@@ -42,16 +42,21 @@ jest.mock('swr', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('@/lib/api', () => ({
-  __esModule: true,
-  default: {
-    delete: jest.fn(),
-  },
-  fetcher: jest.fn(),
-}));
-
 jest.mock('@/lib/api/auth', () => ({
   changePassword: jest.fn(),
+}));
+
+jest.mock('@/lib/confirm', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('@/lib/api/session', () => ({
+  __esModule: true,
+  sessionApi: {
+    getUserSessions: jest.fn(),
+    logoutAllDevices: jest.fn(),
+  },
 }));
 
 jest.mock('@/hooks/usePasswordPolicy', () => ({
@@ -122,25 +127,31 @@ jest.mock('@/lib/utils', () => ({
 
 import useSWR from 'swr';
 import { changePassword } from '@/lib/api/auth';
-import api from '@/lib/api';
+import confirmDialog from '@/lib/confirm';
+import { sessionApi } from '@/lib/api/session';
 
 const mockUseSWR = useSWR as jest.MockedFunction<typeof useSWR>;
 const mockChangePassword = changePassword as jest.MockedFunction<typeof changePassword>;
-const mockApiDelete = api.delete as jest.MockedFunction<typeof api.delete>;
+const mockConfirmDialog = confirmDialog as jest.MockedFunction<typeof confirmDialog>;
+const mockGetUserSessions = sessionApi.getUserSessions as jest.MockedFunction<
+  typeof sessionApi.getUserSessions
+>;
+const mockLogoutAllDevices = sessionApi.logoutAllDevices as jest.MockedFunction<
+  typeof sessionApi.logoutAllDevices
+>;
 
 describe('SecuritySettings', () => {
   const mockMutate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockConfirmDialog.mockResolvedValue(true);
+    mockGetUserSessions.mockResolvedValue([]);
+    mockLogoutAllDevices.mockResolvedValue({ message: 'ok' });
 
     // Default SWR mock - no sessions
     mockUseSWR.mockReturnValue({
-      data: {
-        active_sessions: [],
-        session_count: 0,
-        max_concurrent_sessions: 5,
-      },
+      data: [],
       error: undefined,
       isLoading: false,
       mutate: mockMutate,
@@ -540,33 +551,29 @@ describe('SecuritySettings', () => {
   describe('Session Management', () => {
     it('displays multiple active sessions', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome on Windows',
-              location: 'New York, US',
-              last_active: '2024-01-01T12:00:00Z',
-              is_current: true,
-            },
-            {
-              id: 'session-2',
-              device: 'Firefox on Mac',
-              location: 'Los Angeles, US',
-              last_active: '2024-01-01T10:00:00Z',
-              is_current: false,
-            },
-            {
-              id: 'session-3',
-              device: 'Safari on iPhone',
-              location: 'Chicago, US',
-              last_active: '2024-01-01T08:00:00Z',
-              is_current: false,
-            },
-          ],
-          session_count: 3,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome on Windows',
+            location: 'New York, US',
+            lastActivity: '2024-01-01T12:00:00Z',
+            isCurrent: true,
+          },
+          {
+            id: 'session-2',
+            device: 'Firefox on Mac',
+            location: 'Los Angeles, US',
+            lastActivity: '2024-01-01T10:00:00Z',
+            isCurrent: false,
+          },
+          {
+            id: 'session-3',
+            device: 'Safari on iPhone',
+            location: 'Chicago, US',
+            lastActivity: '2024-01-01T08:00:00Z',
+            isCurrent: false,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -581,19 +588,15 @@ describe('SecuritySettings', () => {
 
     it('shows Current badge for current session', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome on Windows',
-              location: 'New York, US',
-              last_active: '2024-01-01T12:00:00Z',
-              is_current: true,
-            },
-          ],
-          session_count: 1,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome on Windows',
+            location: 'New York, US',
+            lastActivity: '2024-01-01T12:00:00Z',
+            isCurrent: true,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -606,26 +609,22 @@ describe('SecuritySettings', () => {
 
     it('shows Active badge for non-current sessions', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome on Windows',
-              location: 'New York, US',
-              last_active: '2024-01-01T12:00:00Z',
-              is_current: true,
-            },
-            {
-              id: 'session-2',
-              device: 'Firefox on Mac',
-              location: 'Los Angeles, US',
-              last_active: '2024-01-01T10:00:00Z',
-              is_current: false,
-            },
-          ],
-          session_count: 2,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome on Windows',
+            location: 'New York, US',
+            lastActivity: '2024-01-01T12:00:00Z',
+            isCurrent: true,
+          },
+          {
+            id: 'session-2',
+            device: 'Firefox on Mac',
+            location: 'Los Angeles, US',
+            lastActivity: '2024-01-01T10:00:00Z',
+            isCurrent: false,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -640,26 +639,22 @@ describe('SecuritySettings', () => {
 
     it('shows revoke all button when multiple sessions exist', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome',
-              location: 'NY',
-              last_active: '2024-01-01',
-              is_current: true,
-            },
-            {
-              id: 'session-2',
-              device: 'Firefox',
-              location: 'LA',
-              last_active: '2024-01-01',
-              is_current: false,
-            },
-          ],
-          session_count: 2,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome',
+            location: 'NY',
+            lastActivity: '2024-01-01',
+            isCurrent: true,
+          },
+          {
+            id: 'session-2',
+            device: 'Firefox',
+            location: 'LA',
+            lastActivity: '2024-01-01',
+            isCurrent: false,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -673,19 +668,15 @@ describe('SecuritySettings', () => {
 
     it('does not show revoke button with single session', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome',
-              location: 'NY',
-              last_active: '2024-01-01',
-              is_current: true,
-            },
-          ],
-          session_count: 1,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome',
+            location: 'NY',
+            lastActivity: '2024-01-01',
+            isCurrent: true,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -698,19 +689,15 @@ describe('SecuritySettings', () => {
 
     it('displays formatted last active time', () => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 'session-1',
-              device: 'Chrome',
-              location: 'NY',
-              last_active: '2024-01-15T14:30:00Z',
-              is_current: true,
-            },
-          ],
-          session_count: 1,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 'session-1',
+            device: 'Chrome',
+            location: 'NY',
+            lastActivity: '2024-01-15T14:30:00Z',
+            isCurrent: true,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -725,26 +712,22 @@ describe('SecuritySettings', () => {
   describe('Revoke All Sessions', () => {
     beforeEach(() => {
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 's1',
-              device: 'Chrome',
-              location: 'NY',
-              last_active: '2024',
-              is_current: true,
-            },
-            {
-              id: 's2',
-              device: 'Firefox',
-              location: 'LA',
-              last_active: '2024',
-              is_current: false,
-            },
-          ],
-          session_count: 2,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 's1',
+            device: 'Chrome',
+            location: 'NY',
+            lastActivity: '2024',
+            isCurrent: true,
+          },
+          {
+            id: 's2',
+            device: 'Firefox',
+            location: 'LA',
+            lastActivity: '2024',
+            isCurrent: false,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -752,49 +735,47 @@ describe('SecuritySettings', () => {
     });
 
     it('shows confirmation dialog before revoking', async () => {
-      const confirmSpy = jest.spyOn(globalThis, 'confirm').mockReturnValue(false);
-
-      render(<SecuritySettings />);
-
-      fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-
-      expect(confirmSpy).toHaveBeenCalledWith(
-        'Are you sure you want to sign out of all other sessions? You will remain logged in on this device.',
-      );
-
-      confirmSpy.mockRestore();
-    });
-
-    it('does not call API when user cancels confirmation', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(false);
-
-      render(<SecuritySettings />);
-
-      fireEvent.click(screen.getByTestId('revoke-all-sessions'));
-
-      expect(mockApiDelete).not.toHaveBeenCalled();
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
-    });
-
-    it('calls API when user confirms', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockResolvedValueOnce({});
+      mockConfirmDialog.mockResolvedValueOnce(false);
 
       render(<SecuritySettings />);
 
       fireEvent.click(screen.getByTestId('revoke-all-sessions'));
 
       await waitFor(() => {
-        expect(mockApiDelete).toHaveBeenCalledWith('/api/v1/auth/sessions');
+        expect(mockConfirmDialog).toHaveBeenCalledWith(
+          'Are you sure you want to sign out of all other sessions? You will remain logged in on this device.',
+        );
       });
+    });
 
-      jest.spyOn(globalThis, 'confirm').mockRestore();
+    it('does not call API when user cancels confirmation', async () => {
+      mockConfirmDialog.mockResolvedValueOnce(false);
+
+      render(<SecuritySettings />);
+
+      fireEvent.click(screen.getByTestId('revoke-all-sessions'));
+
+      await waitFor(() => {
+        expect(mockLogoutAllDevices).not.toHaveBeenCalled();
+      });
+    });
+
+    it('calls API when user confirms', async () => {
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockResolvedValueOnce({ message: 'ok' });
+
+      render(<SecuritySettings />);
+
+      fireEvent.click(screen.getByTestId('revoke-all-sessions'));
+
+      await waitFor(() => {
+        expect(mockLogoutAllDevices).toHaveBeenCalledWith(true);
+      });
     });
 
     it('shows success message after revoking sessions', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockResolvedValueOnce({});
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockResolvedValueOnce({ message: 'ok' });
 
       render(<SecuritySettings />);
 
@@ -805,13 +786,11 @@ describe('SecuritySettings', () => {
           screen.getByText(/All other sessions have been signed out successfully/),
         ).toBeInTheDocument();
       });
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('refreshes sessions list after successful revoke', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockResolvedValueOnce({});
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockResolvedValueOnce({ message: 'ok' });
 
       render(<SecuritySettings />);
 
@@ -820,13 +799,11 @@ describe('SecuritySettings', () => {
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalled();
       });
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('shows error message when revoke fails', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockRejectedValueOnce({ message: 'Network error' });
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockRejectedValueOnce({ message: 'Network error' });
 
       render(<SecuritySettings />);
 
@@ -835,13 +812,11 @@ describe('SecuritySettings', () => {
       await waitFor(() => {
         expect(screen.getByText(/Network error/)).toBeInTheDocument();
       });
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('logs revoking sessions', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockResolvedValueOnce({});
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockResolvedValueOnce({ message: 'ok' });
 
       render(<SecuritySettings />);
 
@@ -853,13 +828,11 @@ describe('SecuritySettings', () => {
           'Revoking all other sessions',
         );
       });
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
     });
 
     it('logs error when revoke fails', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockRejectedValueOnce({ message: 'Server error' });
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockRejectedValueOnce({ message: 'Server error' });
 
       render(<SecuritySettings />);
 
@@ -872,8 +845,6 @@ describe('SecuritySettings', () => {
           expect.any(Object),
         );
       });
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
     });
   });
 
@@ -913,30 +884,26 @@ describe('SecuritySettings', () => {
     });
 
     it('clears session error when close is clicked', async () => {
-      jest.spyOn(globalThis, 'confirm').mockReturnValue(true);
-      mockApiDelete.mockRejectedValueOnce({ message: 'Session error!' });
+      mockConfirmDialog.mockResolvedValueOnce(true);
+      mockLogoutAllDevices.mockRejectedValueOnce({ message: 'Session error!' });
 
       mockUseSWR.mockReturnValue({
-        data: {
-          active_sessions: [
-            {
-              id: 's1',
-              device: 'C',
-              location: 'NY',
-              last_active: '2024',
-              is_current: true,
-            },
-            {
-              id: 's2',
-              device: 'F',
-              location: 'LA',
-              last_active: '2024',
-              is_current: false,
-            },
-          ],
-          session_count: 2,
-          max_concurrent_sessions: 5,
-        },
+        data: [
+          {
+            id: 's1',
+            device: 'C',
+            location: 'NY',
+            lastActivity: '2024',
+            isCurrent: true,
+          },
+          {
+            id: 's2',
+            device: 'F',
+            location: 'LA',
+            lastActivity: '2024',
+            isCurrent: false,
+          },
+        ],
         error: undefined,
         isLoading: false,
         mutate: mockMutate,
@@ -949,8 +916,6 @@ describe('SecuritySettings', () => {
       await waitFor(() => {
         expect(screen.getByText(/Session error!/)).toBeInTheDocument();
       });
-
-      jest.spyOn(globalThis, 'confirm').mockRestore();
     });
   });
 

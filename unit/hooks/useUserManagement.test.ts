@@ -357,7 +357,7 @@ describe('useUserManagement', () => {
         await result.current.handleToggleUserStatus(mockUsers[0]);
       });
 
-      expect(mockApi.put).toHaveBeenCalledWith(`/api/v1/users/1`, {
+      expect(mockApi.put).toHaveBeenCalledWith(`/api/v1/admin/users/1`, {
         is_active: false,
       });
       expect(mockMutate).toHaveBeenCalled();
@@ -436,7 +436,7 @@ describe('useUserManagement', () => {
         await result.current.handleBulkAction('activate');
       });
 
-      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/users/bulk-update', {
+      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/admin/users/bulk-update', {
         user_ids: [1, 2],
         action: 'activate',
       });
@@ -455,7 +455,7 @@ describe('useUserManagement', () => {
         await result.current.handleBulkAction('deactivate');
       });
 
-      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/users/bulk-update', {
+      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/admin/users/bulk-update', {
         user_ids: [1],
         action: 'deactivate',
       });
@@ -474,7 +474,7 @@ describe('useUserManagement', () => {
         await result.current.handleBulkAction('delete');
       });
 
-      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/users/bulk-update', {
+      expect(mockApi.post).toHaveBeenCalledWith('/api/v1/admin/users/bulk-update', {
         user_ids: [3],
         action: 'delete',
       });

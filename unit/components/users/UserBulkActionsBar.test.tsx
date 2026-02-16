@@ -38,7 +38,7 @@ describe('UserBulkActionsBar', () => {
       />,
     );
 
-    expect(screen.getByText('3 users selected')).toBeInTheDocument();
+    expect(screen.getByText('3 selected')).toBeInTheDocument();
   });
 
   it('should display singular form for single user', () => {
@@ -51,7 +51,7 @@ describe('UserBulkActionsBar', () => {
       />,
     );
 
-    expect(screen.getByText('1 user selected')).toBeInTheDocument();
+    expect(screen.getByText('1 selected')).toBeInTheDocument();
   });
 
   it('should call onActivate when activate button clicked', () => {

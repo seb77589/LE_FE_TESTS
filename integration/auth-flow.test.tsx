@@ -92,6 +92,7 @@ jest.mock('@/lib/session', () => {
     },
     sessionManager: {
       initialize: jest.fn(),
+      updateSessionId: jest.fn(),
       end: jest.fn(),
       endSession: jest.fn(), // Alias for end
       destroy: jest.fn(),
@@ -543,7 +544,7 @@ describe('Full Authentication Flow Integration', () => {
     it('should initialize session on login and destroy on logout', async () => {
       const mockAuthApi = authApi as jest.Mocked<typeof authApi>;
       const mockSessionManager = sessionManager as jest.Mocked<typeof sessionManager>;
-      const initializeSpy = mockSessionManager.initialize as jest.Mock;
+      const updateSessionIdSpy = mockSessionManager.updateSessionId as jest.Mock;
       const endSessionSpy = mockSessionManager.endSession as jest.Mock;
 
       // Mock getCurrentUser: first call (AuthProvider init) rejects, subsequent calls succeed
@@ -581,7 +582,7 @@ describe('Full Authentication Flow Integration', () => {
       await clickButton(getByTestId, 'login-btn');
 
       await waitForExpectation(() => {
-        expect(initializeSpy).toHaveBeenCalledWith('session_789_ghi');
+        expect(updateSessionIdSpy).toHaveBeenCalledWith('session_789_ghi');
       });
 
       // Logout

@@ -230,7 +230,7 @@ describe('SessionManager', () => {
       expect(globalThis.BroadcastChannel).toHaveBeenCalledWith('session_sync');
       expect(mockLogger.debug).toHaveBeenCalledWith(
         'session',
-        'BroadcastChannel initialized',
+        'BroadcastChannel initialized with acknowledgment support',
       );
     });
 
@@ -575,6 +575,7 @@ describe('SessionManager', () => {
         const event = {
           data: {
             type: 'session_invalidated',
+            messageId: 'msg_test_123',
             sessionId: 'session_test_123',
             timestamp: new Date().toISOString(),
           },
@@ -586,6 +587,7 @@ describe('SessionManager', () => {
         expect(mockLogger.info).toHaveBeenCalledWith(
           'session',
           'Session invalidated in another tab',
+          expect.objectContaining({ messageId: 'msg_test_123' }),
         );
 
         // Should clear session data
@@ -625,11 +627,14 @@ describe('SessionManager', () => {
 
         await sessionManager.endSession(true);
 
-        expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith({
-          type: 'session_invalidated',
-          sessionId: 'session_test_123',
-          timestamp: expect.any(String),
-        });
+        expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'session_invalidated',
+            messageId: expect.any(String),
+            sessionId: 'session_test_123',
+            timestamp: expect.any(String),
+          }),
+        );
       });
 
       it('should NOT broadcast when broadcastToOtherTabs is false', async () => {
@@ -652,7 +657,7 @@ describe('SessionManager', () => {
 
         expect(mockLogger.warn).toHaveBeenCalledWith(
           'session',
-          'Failed to broadcast session invalidation',
+          'Broadcast acknowledgment timeout or failed',
           expect.any(Object),
         );
       });
@@ -671,6 +676,7 @@ describe('SessionManager', () => {
         const event = {
           data: {
             type: 'session_invalidated',
+            messageId: 'msg_shared_123',
             sessionId: 'session_shared_123',
             timestamp: new Date().toISOString(),
           },
@@ -698,11 +704,14 @@ describe('SessionManager', () => {
         expect(mockSessionApi.sessionApi.logoutAllDevices).toHaveBeenCalledWith(false);
 
         // Should broadcast invalidation
-        expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith({
-          type: 'session_invalidated',
-          sessionId: 'session_test_123',
-          timestamp: expect.any(String),
-        });
+        expect(mockBroadcastChannel.postMessage).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: 'session_invalidated',
+            messageId: expect.any(String),
+            sessionId: 'session_test_123',
+            timestamp: expect.any(String),
+          }),
+        );
 
         // Should end current session
         expect((sessionManager as any).sessionId).toBeNull();

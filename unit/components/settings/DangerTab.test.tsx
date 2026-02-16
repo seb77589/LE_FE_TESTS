@@ -88,12 +88,12 @@ describe('DangerTab', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render help section', () => {
+    it('should render additional information section', () => {
       render(<DangerTab />);
 
-      expect(screen.getByText('Need Help Instead?')).toBeInTheDocument();
+      expect(screen.getByText('Important Information')).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: /Contact Support/i }),
+        screen.getByText(/Account deletion is permanent and cannot be undone/),
       ).toBeInTheDocument();
     });
 

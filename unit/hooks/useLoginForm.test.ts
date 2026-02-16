@@ -63,6 +63,11 @@ jest.mock('@/lib/api', () => ({
   testApiConnectivity: jest.fn().mockResolvedValue(true),
 }));
 
+jest.mock('@/lib/cookies', () => ({
+  addCSRFTokenToHeaders: jest.fn((headers) => headers),
+  waitForCookie: jest.fn().mockResolvedValue(undefined),
+}));
+
 jest.mock('@/hooks/useCSRFToken', () => ({
   addCSRFToken: jest.fn((headers) => headers),
 }));

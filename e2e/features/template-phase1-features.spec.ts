@@ -36,7 +36,7 @@ async function waitForTemplatesLoad(page: import('@playwright/test').Page) {
   // Wait for either template cards or empty state
   await page.waitForSelector(
     '[data-template-card], [data-template-row], :has-text("No templates")',
-    { timeout: 10000 }
+    { timeout: 10000 },
   );
 }
 
@@ -46,24 +46,28 @@ test.describe('Template Category Filter (Task 1.2)', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await navigateToTemplates(page);
     await waitForTemplatesLoad(page);
   });
 
-  test('should display category filter dropdown when categories exist', async ({ page }) => {
+  test('should display category filter dropdown when categories exist', async ({
+    page,
+  }) => {
     // Check if category filter exists (only shows when templates have categories)
     const categorySelect = page.locator('button[aria-haspopup="listbox"]').first();
 
     // The category filter may not appear if no categories exist
     const categoryFilterContainer = page.locator('.w-full.sm\\:w-48');
 
-    if (await categoryFilterContainer.count() > 0) {
+    if ((await categoryFilterContainer.count()) > 0) {
       await expect(categorySelect).toBeVisible();
       console.log('Category filter dropdown is visible');
     } else {
-      console.log('No categories found - filter not displayed (expected if no templates with categories)');
+      console.log(
+        'No categories found - filter not displayed (expected if no templates with categories)',
+      );
     }
   });
 
@@ -71,13 +75,15 @@ test.describe('Template Category Filter (Task 1.2)', () => {
     // Look for category dropdown
     const categorySelect = page.locator('.w-full.sm\\:w-48 button').first();
 
-    if (await categorySelect.count() === 0) {
+    if ((await categorySelect.count()) === 0) {
       console.log('No category filter - skipping filter test');
       return;
     }
 
     // Get initial template count
-    const initialCount = await page.locator('[data-template-card], [data-template-row]').count();
+    const initialCount = await page
+      .locator('[data-template-card], [data-template-row]')
+      .count();
 
     if (initialCount === 0) {
       console.log('No templates to filter');
@@ -98,16 +104,20 @@ test.describe('Template Category Filter (Task 1.2)', () => {
       await page.waitForTimeout(500);
 
       // Verify filter was applied (count should change or stay same)
-      const filteredCount = await page.locator('[data-template-card], [data-template-row]').count();
+      const filteredCount = await page
+        .locator('[data-template-card], [data-template-row]')
+        .count();
       expect(filteredCount).toBeLessThanOrEqual(initialCount);
-      console.log(`Category filter applied: ${initialCount} -> ${filteredCount} templates`);
+      console.log(
+        `Category filter applied: ${initialCount} -> ${filteredCount} templates`,
+      );
     }
   });
 
   test('should show all templates when "All Categories" selected', async ({ page }) => {
     const categorySelect = page.locator('.w-full.sm\\:w-48 button').first();
 
-    if (await categorySelect.count() === 0) {
+    if ((await categorySelect.count()) === 0) {
       console.log('No category filter present');
       return;
     }
@@ -116,13 +126,17 @@ test.describe('Template Category Filter (Task 1.2)', () => {
     await categorySelect.click();
     await page.waitForTimeout(300);
 
-    const allCategoriesOption = page.locator('[role="option"]:has-text("All Categories")');
-    if (await allCategoriesOption.count() > 0) {
+    const allCategoriesOption = page.locator(
+      '[role="option"]:has-text("All Categories")',
+    );
+    if ((await allCategoriesOption.count()) > 0) {
       await allCategoriesOption.click();
       await page.waitForTimeout(300);
 
       // Templates should be visible
-      const templateCount = await page.locator('[data-template-card], [data-template-row]').count();
+      const templateCount = await page
+        .locator('[data-template-card], [data-template-row]')
+        .count();
       expect(templateCount).toBeGreaterThanOrEqual(0);
       console.log(`All categories selected - showing ${templateCount} templates`);
     }
@@ -132,13 +146,16 @@ test.describe('Template Category Filter (Task 1.2)', () => {
 test.describe('Template Inactive Toggle (Task 1.3)', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
     // This feature is only for Managers/SuperAdmins
-    test.skip(!workerCredentials.isAdmin, 'Inactive toggle requires Manager/SuperAdmin role');
+    test.skip(
+      !workerCredentials.isAdmin,
+      'Inactive toggle requires Manager/SuperAdmin role',
+    );
 
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await navigateToTemplates(page);
     await waitForTemplatesLoad(page);
@@ -199,17 +216,21 @@ test.describe('Template Delete UI (Task 1.1)', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await navigateToTemplates(page);
     await waitForTemplatesLoad(page);
   });
 
-  test('should show Delete button in template view modal for company templates', async ({ page }) => {
+  test('should show Delete button in template view modal for company templates', async ({
+    page,
+  }) => {
     // Find a company template (not system template)
-    const companyTemplate = page.locator('[data-template-card]:not(:has([data-system-template]))').first();
+    const companyTemplate = page
+      .locator('[data-template-card]:not(:has([data-system-template]))')
+      .first();
 
-    if (await companyTemplate.count() === 0) {
+    if ((await companyTemplate.count()) === 0) {
       console.log('No company templates found - skipping delete button test');
       return;
     }
@@ -227,9 +248,11 @@ test.describe('Template Delete UI (Task 1.1)', () => {
 
   test('should NOT show Delete button for system templates', async ({ page }) => {
     // Find a system template
-    const systemTemplate = page.locator('[data-template-card]:has([data-system-template])').first();
+    const systemTemplate = page
+      .locator('[data-template-card]:has([data-system-template])')
+      .first();
 
-    if (await systemTemplate.count() === 0) {
+    if ((await systemTemplate.count()) === 0) {
       console.log('No system templates found - skipping test');
       return;
     }
@@ -247,9 +270,11 @@ test.describe('Template Delete UI (Task 1.1)', () => {
 
   test('should show confirmation dialog when Delete clicked', async ({ page }) => {
     // Find a company template
-    const companyTemplate = page.locator('[data-template-card]:not(:has([data-system-template]))').first();
+    const companyTemplate = page
+      .locator('[data-template-card]:not(:has([data-system-template]))')
+      .first();
 
-    if (await companyTemplate.count() === 0) {
+    if ((await companyTemplate.count()) === 0) {
       console.log('No company templates found - skipping confirmation test');
       return;
     }
@@ -285,7 +310,7 @@ test.describe('Template Document Preview', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await navigateToTemplates(page);
     await waitForTemplatesLoad(page);
@@ -295,7 +320,7 @@ test.describe('Template Document Preview', () => {
     // Wait for templates
     const templateCard = page.locator('[data-template-card]').first();
 
-    if (await templateCard.count() === 0) {
+    if ((await templateCard.count()) === 0) {
       console.log('No templates found');
       return;
     }
@@ -315,7 +340,7 @@ test.describe('Template Document Preview', () => {
   test('should display zoom controls in preview', async ({ page }) => {
     const templateCard = page.locator('[data-template-card]').first();
 
-    if (await templateCard.count() === 0) {
+    if ((await templateCard.count()) === 0) {
       console.log('No templates found');
       return;
     }
@@ -339,7 +364,7 @@ test.describe('Template Variable Form', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await navigateToTemplates(page);
     await waitForTemplatesLoad(page);
@@ -349,7 +374,7 @@ test.describe('Template Variable Form', () => {
     // Find a template and click Use Template
     const templateCard = page.locator('[data-template-card]').first();
 
-    if (await templateCard.count() === 0) {
+    if ((await templateCard.count()) === 0) {
       console.log('No templates found');
       return;
     }
@@ -369,7 +394,7 @@ test.describe('Template Variable Form', () => {
   test('should display input fields for template variables', async ({ page }) => {
     const templateCard = page.locator('[data-template-card]').first();
 
-    if (await templateCard.count() === 0) {
+    if ((await templateCard.count()) === 0) {
       console.log('No templates found');
       return;
     }
@@ -380,7 +405,9 @@ test.describe('Template Variable Form', () => {
     await page.waitForTimeout(500);
 
     // Count input fields in the form
-    const inputFields = page.locator('[role="dialog"] input[type="text"], [role="dialog"] textarea');
+    const inputFields = page.locator(
+      '[role="dialog"] input[type="text"], [role="dialog"] textarea',
+    );
     const fieldCount = await inputFields.count();
 
     console.log(`Variable form has ${fieldCount} input fields`);
@@ -390,7 +417,7 @@ test.describe('Template Variable Form', () => {
   test('should validate required fields', async ({ page }) => {
     const templateCard = page.locator('[data-template-card]').first();
 
-    if (await templateCard.count() === 0) {
+    if ((await templateCard.count()) === 0) {
       console.log('No templates found');
       return;
     }
@@ -401,9 +428,11 @@ test.describe('Template Variable Form', () => {
     await page.waitForTimeout(500);
 
     // Try to submit without filling fields
-    const submitButton = page.locator('[role="dialog"] button[type="submit"], [role="dialog"] button:has-text("Create")');
+    const submitButton = page.locator(
+      '[role="dialog"] button[type="submit"], [role="dialog"] button:has-text("Create")',
+    );
 
-    if (await submitButton.count() > 0) {
+    if ((await submitButton.count()) > 0) {
       await submitButton.click();
       await page.waitForTimeout(300);
 
@@ -419,13 +448,16 @@ test.describe('Template Variable Form', () => {
 test.describe('Template File Upload (Task 2.6)', () => {
   test.beforeEach(async ({ page, workerCredentials }) => {
     // File upload requires Manager/SuperAdmin role
-    test.skip(!workerCredentials.isAdmin, 'File upload requires Manager/SuperAdmin role');
+    test.skip(
+      !workerCredentials.isAdmin,
+      'File upload requires Manager/SuperAdmin role',
+    );
 
     await TestHelpers.loginAndWaitForRedirect(
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
     await navigateToTemplates(page);
     await waitForTemplatesLoad(page);
@@ -477,8 +509,10 @@ test.describe('Template File Upload (Task 2.6)', () => {
     await page.waitForTimeout(500);
 
     // Verify file was accepted (check for filename display or success indicator)
-    const uploadedFileDisplay = page.locator(':has-text("test-template.docx"), :has-text("File selected")');
-    const isFileShown = await uploadedFileDisplay.count() > 0;
+    const uploadedFileDisplay = page.locator(
+      ':has-text("test-template.docx"), :has-text("File selected")',
+    );
+    const isFileShown = (await uploadedFileDisplay.count()) > 0;
 
     console.log(`File upload ${isFileShown ? 'successful' : 'status unknown'}`);
   });
@@ -489,14 +523,18 @@ test.describe('Template File Upload (Task 2.6)', () => {
     await page.waitForTimeout(500);
 
     // Fill in template name
-    const nameInput = page.locator('input[name="name"], input[placeholder*="name" i]').first();
-    if (await nameInput.count() > 0) {
+    const nameInput = page
+      .locator('input[name="name"], input[placeholder*="name" i]')
+      .first();
+    if ((await nameInput.count()) > 0) {
       await nameInput.fill(TEST_TEMPLATE_NAME);
     }
 
     // Fill in description
-    const descInput = page.locator('textarea[name="description"], textarea[placeholder*="description" i]').first();
-    if (await descInput.count() > 0) {
+    const descInput = page
+      .locator('textarea[name="description"], textarea[placeholder*="description" i]')
+      .first();
+    if ((await descInput.count()) > 0) {
       await descInput.fill('Test template for E2E testing');
     }
 

@@ -367,7 +367,12 @@ describe('sessionApi', () => {
 
       const result = await sessionApi.terminateAllOtherSessions();
 
-      expect(mockApi.delete).toHaveBeenCalledWith('/api/v1/auth/sessions/others');
+      expect(mockApi.delete).toHaveBeenCalledWith(
+        '/api/v1/auth/sessions',
+        expect.objectContaining({
+          params: { exclude_current: true },
+        }),
+      );
       expect(result).toEqual(mockResponse);
       expect(result.terminatedCount).toBe(3);
     });

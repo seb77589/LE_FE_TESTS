@@ -36,20 +36,20 @@ test.describe('Email Verification Workflow', () => {
 
     // Submit form and wait for registration to complete
     await page.click('button[type="submit"]');
-    
+
     // Wait for registration API response
     try {
       await page.waitForResponse(
-        (response) => 
-          response.url().includes('/api/v1/auth/register') && 
+        (response) =>
+          response.url().includes('/api/v1/auth/register') &&
           (response.status() === 200 || response.status() === 201),
-        { timeout: 15000 }
+        { timeout: 15000 },
       );
     } catch {
       // API may not be intercepted, wait for navigation instead
       await page.waitForLoadState('networkidle', { timeout: 15000 });
     }
-    
+
     // Give time for any redirects
     await page.waitForTimeout(2000);
 

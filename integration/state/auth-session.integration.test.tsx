@@ -43,6 +43,7 @@ jest.mock('@/lib/api', () => ({
 jest.mock('@/lib/session', () => ({
   sessionManager: {
     initialize: jest.fn(),
+    updateSessionId: jest.fn(),
     endSession: jest.fn(),
     end: jest.fn(),
     destroy: jest.fn(),
@@ -227,7 +228,9 @@ describe('Auth + Session State Management Integration Tests', () => {
       });
 
       await waitFor(() => {
-        expect(mockSessionManager.initialize).toHaveBeenCalledWith('test-session-123');
+        expect(mockSessionManager.updateSessionId).toHaveBeenCalledWith(
+          'test-session-123',
+        );
       });
     });
 

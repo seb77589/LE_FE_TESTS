@@ -252,9 +252,9 @@ describe('SWR Config Module', () => {
   // User Configuration Tests
   // ==========================================================================
   describe('userSWRConfig', () => {
-    it('should have refreshInterval of 1 minute', async () => {
+    it('should have refreshInterval of 30 seconds', async () => {
       const { userSWRConfig } = await import('@/lib/swr-config');
-      expect(userSWRConfig.refreshInterval).toBe(60000);
+      expect(userSWRConfig.refreshInterval).toBe(30000);
     });
 
     it('should have revalidateOnReconnect enabled', async () => {

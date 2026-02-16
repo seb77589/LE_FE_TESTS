@@ -17,7 +17,7 @@ describe('UserAnalytics', () => {
   describe('Basic Rendering', () => {
     it('should render user analytics component', () => {
       render(<UserAnalytics analytics={mockAnalytics} />);
-      expect(screen.getByText(/user analytics/i)).toBeInTheDocument();
+      expect(screen.getByText('Total Users')).toBeInTheDocument();
     });
 
     it('should display total users', () => {
@@ -89,7 +89,15 @@ describe('UserAnalytics', () => {
     it('should have correct container classes', () => {
       const { container } = render(<UserAnalytics analytics={mockAnalytics} />);
       const mainDiv = container.firstChild as HTMLElement;
-      expect(mainDiv).toHaveClass('bg-white', 'shadow-md', 'rounded-lg', 'p-4');
+      expect(mainDiv).toHaveClass(
+        'bg-card',
+        'text-card-foreground',
+        'rounded-lg',
+        'shadow-md',
+        'border',
+        'border-border',
+        'p-4',
+      );
     });
 
     it('should display metrics in grid layout', () => {

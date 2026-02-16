@@ -29,7 +29,7 @@ async function navigateToTemplates(page: import('@playwright/test').Page) {
 async function waitForContentLoad(page: import('@playwright/test').Page) {
   await page.waitForSelector(
     '[data-template-card], [data-template-row], :has-text("No templates")',
-    { timeout: 10000 }
+    { timeout: 10000 },
   );
 }
 
@@ -39,7 +39,7 @@ test.describe('Conditional Template Form Rendering', () => {
       page,
       workerCredentials.email,
       workerCredentials.password,
-      workerCredentials.isAdmin
+      workerCredentials.isAdmin,
     );
   });
 
@@ -84,8 +84,14 @@ test.describe('Conditional Template Form Rendering', () => {
     await waitForContentLoad(page);
 
     // Try to find and click a "Use Template" button
-    const useTemplateButton = page.locator('button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]').first();
-    const hasUseButton = await useTemplateButton.isVisible({ timeout: 5000 }).catch(() => false);
+    const useTemplateButton = page
+      .locator(
+        'button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]',
+      )
+      .first();
+    const hasUseButton = await useTemplateButton
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
 
     if (hasUseButton) {
       await useTemplateButton.click();
@@ -94,8 +100,12 @@ test.describe('Conditional Template Form Rendering', () => {
       await page.waitForTimeout(1000);
 
       // Look for form elements - either standard inputs or the form dialog
-      const formDialog = page.locator('[role="dialog"], .modal, [data-testid="variable-form"]');
-      const hasFormDialog = await formDialog.isVisible({ timeout: 5000 }).catch(() => false);
+      const formDialog = page.locator(
+        '[role="dialog"], .modal, [data-testid="variable-form"]',
+      );
+      const hasFormDialog = await formDialog
+        .isVisible({ timeout: 5000 })
+        .catch(() => false);
 
       if (hasFormDialog) {
         console.log('✓ Variable form dialog opened');
@@ -112,14 +122,22 @@ test.describe('Conditional Template Form Rendering', () => {
     }
   });
 
-  test('template variable form renders boolean fields as checkboxes', async ({ page }) => {
+  test('template variable form renders boolean fields as checkboxes', async ({
+    page,
+  }) => {
     await navigateToTemplates(page);
     await waitForContentLoad(page);
 
     // Navigate to templates page and find a template that might have boolean variables
     // Look for checkbox inputs or toggle switches in any open form
-    const useTemplateButton = page.locator('button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]').first();
-    const hasUseButton = await useTemplateButton.isVisible({ timeout: 5000 }).catch(() => false);
+    const useTemplateButton = page
+      .locator(
+        'button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]',
+      )
+      .first();
+    const hasUseButton = await useTemplateButton
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
 
     if (hasUseButton) {
       await useTemplateButton.click();
@@ -128,10 +146,14 @@ test.describe('Conditional Template Form Rendering', () => {
       // Check if form has any checkbox inputs (boolean variables render as checkboxes per Task 3.1)
       const checkboxes = page.locator('input[type="checkbox"]');
       const checkboxCount = await checkboxes.count();
-      console.log(`✓ Found ${checkboxCount} checkbox inputs in form (boolean variables)`);
+      console.log(
+        `✓ Found ${checkboxCount} checkbox inputs in form (boolean variables)`,
+      );
 
       // Check for text inputs (standard variables)
-      const textInputs = page.locator('input[type="text"], input[type="number"], input[type="date"]');
+      const textInputs = page.locator(
+        'input[type="text"], input[type="number"], input[type="date"]',
+      );
       const textInputCount = await textInputs.count();
       console.log(`  Found ${textInputCount} text/number/date inputs in form`);
     } else {
@@ -148,7 +170,9 @@ test.describe('Conditional Template Form Rendering', () => {
     const simpleBadges = page.locator(':has-text("Simple")').first();
     const aiBadges = page.locator(':has-text("AI-Assisted")').first();
 
-    const hasSimpleBadge = await simpleBadges.isVisible({ timeout: 3000 }).catch(() => false);
+    const hasSimpleBadge = await simpleBadges
+      .isVisible({ timeout: 3000 })
+      .catch(() => false);
     const hasAIBadge = await aiBadges.isVisible({ timeout: 3000 }).catch(() => false);
 
     console.log(`✓ Simple badge visible: ${hasSimpleBadge}`);
@@ -166,8 +190,14 @@ test.describe('Conditional Template Form Rendering', () => {
     await navigateToTemplates(page);
     await waitForContentLoad(page);
 
-    const useTemplateButton = page.locator('button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]').first();
-    const hasUseButton = await useTemplateButton.isVisible({ timeout: 5000 }).catch(() => false);
+    const useTemplateButton = page
+      .locator(
+        'button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]',
+      )
+      .first();
+    const hasUseButton = await useTemplateButton
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
 
     if (hasUseButton) {
       await useTemplateButton.click();
@@ -181,8 +211,14 @@ test.describe('Conditional Template Form Rendering', () => {
         await firstInput.fill('Test Value');
 
         // Look for a Preview or Submit button
-        const previewButton = page.locator('button:has-text("Preview"), button:has-text("Submit"), button:has-text("Create Case")').first();
-        const hasPreview = await previewButton.isVisible({ timeout: 3000 }).catch(() => false);
+        const previewButton = page
+          .locator(
+            'button:has-text("Preview"), button:has-text("Submit"), button:has-text("Create Case")',
+          )
+          .first();
+        const hasPreview = await previewButton
+          .isVisible({ timeout: 3000 })
+          .catch(() => false);
 
         if (hasPreview) {
           console.log('✓ Form filled and preview/submit button available');
@@ -197,24 +233,38 @@ test.describe('Conditional Template Form Rendering', () => {
     }
   });
 
-  test('bifurcation: simple template shows variable form, not upload flow', async ({ page }) => {
+  test('bifurcation: simple template shows variable form, not upload flow', async ({
+    page,
+  }) => {
     await navigateToTemplates(page);
     await waitForContentLoad(page);
 
     // Try to select a simple template
-    const useTemplateButton = page.locator('button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]').first();
-    const hasUseButton = await useTemplateButton.isVisible({ timeout: 5000 }).catch(() => false);
+    const useTemplateButton = page
+      .locator(
+        'button:has-text("Use Template"), button:has-text("Use this"), [data-action="use-template"]',
+      )
+      .first();
+    const hasUseButton = await useTemplateButton
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
 
     if (hasUseButton) {
       await useTemplateButton.click();
       await page.waitForTimeout(1000);
 
       // For simple templates, should see variable input form, NOT upload flow
-      const uploadArea = page.locator('[data-testid="source-upload"], :has-text("Upload source documents"), :has-text("drag and drop")');
-      const hasUploadArea = await uploadArea.isVisible({ timeout: 3000 }).catch(() => false);
+      const uploadArea = page.locator(
+        '[data-testid="source-upload"], :has-text("Upload source documents"), :has-text("drag and drop")',
+      );
+      const hasUploadArea = await uploadArea
+        .isVisible({ timeout: 3000 })
+        .catch(() => false);
 
       // Variable form inputs
-      const formInputs = page.locator('input[type="text"], input[type="number"], input[type="date"], input[type="checkbox"]');
+      const formInputs = page.locator(
+        'input[type="text"], input[type="number"], input[type="date"], input[type="checkbox"]',
+      );
       const inputCount = await formInputs.count();
 
       if (!hasUploadArea && inputCount > 0) {

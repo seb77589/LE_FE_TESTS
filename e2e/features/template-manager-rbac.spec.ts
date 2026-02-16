@@ -25,9 +25,11 @@ import { waitForBackendHealth, gotoWithRetry } from '../../fixtures/api-fixture'
 // Test credentials with proper fallbacks (NOT to protected manual accounts)
 // Uses admin as manager-equivalent and user as assistant-equivalent
 const MANAGER_EMAIL = process.env.TEST_MANAGER_EMAIL || process.env.TEST_ADMIN_EMAIL;
-const MANAGER_PASSWORD = process.env.TEST_MANAGER_PASSWORD || process.env.TEST_ADMIN_PASSWORD;
+const MANAGER_PASSWORD =
+  process.env.TEST_MANAGER_PASSWORD || process.env.TEST_ADMIN_PASSWORD;
 const ASSISTANT_EMAIL = process.env.TEST_ASSISTANT_EMAIL || process.env.TEST_USER_EMAIL;
-const ASSISTANT_PASSWORD = process.env.TEST_ASSISTANT_PASSWORD || process.env.TEST_USER_PASSWORD;
+const ASSISTANT_PASSWORD =
+  process.env.TEST_ASSISTANT_PASSWORD || process.env.TEST_USER_PASSWORD;
 
 // Validate credentials are available
 if (!MANAGER_EMAIL || !MANAGER_PASSWORD) {
@@ -239,8 +241,12 @@ test.describe('Manager Template RBAC - Modify Flow', () => {
 
       // Verify form fields
       await expect(page.locator('input[name="name"]')).toBeVisible({ timeout: 5000 });
-      await expect(page.locator('textarea[name="description"]')).toBeVisible({ timeout: 5000 });
-      await expect(page.locator('input[name="category"]')).toBeVisible({ timeout: 5000 });
+      await expect(page.locator('textarea[name="description"]')).toBeVisible({
+        timeout: 5000,
+      });
+      await expect(page.locator('input[name="category"]')).toBeVisible({
+        timeout: 5000,
+      });
 
       console.log('✅ Modify modal opens with correct form fields');
     } else {
@@ -259,7 +265,9 @@ test.describe('Manager Template RBAC - Modify Flow', () => {
     if ((await companyTemplate.count()) > 0) {
       // Click Edit button
       await companyTemplate.locator('button[title="Modify template"]').click();
-      await page.waitForSelector('[role="dialog"]:has-text("Modify Template")', { timeout: 10000 });
+      await page.waitForSelector('[role="dialog"]:has-text("Modify Template")', {
+        timeout: 10000,
+      });
 
       // Update name
       const nameInput = page.locator('input[name="name"]');
@@ -310,7 +318,9 @@ test.describe('Manager Template RBAC - Create Flow', () => {
 
   test('Manager can open create modal', async ({ page }) => {
     // Wait for page to be fully loaded
-    await page.waitForSelector('button:has-text("Create Template")', { timeout: 15000 });
+    await page.waitForSelector('button:has-text("Create Template")', {
+      timeout: 15000,
+    });
 
     // Click Create Template button
     await page.locator('button:has-text("Create Template")').click();
@@ -322,7 +332,9 @@ test.describe('Manager Template RBAC - Create Flow', () => {
 
     // Verify form fields
     await expect(page.locator('input[name="name"]')).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('textarea[name="description"]')).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('textarea[name="description"]')).toBeVisible({
+      timeout: 5000,
+    });
     await expect(page.locator('input[name="category"]')).toBeVisible({ timeout: 5000 });
     // File input is hidden (styled upload), verify the file upload section exists
     // Check for either visible file input OR a label/button for the file upload
@@ -331,18 +343,24 @@ test.describe('Manager Template RBAC - Create Flow', () => {
       (await page.locator('label[for="file"]').count()) > 0 ||
       (await page.locator('text=Upload').count()) > 0 ||
       (await page.locator('[data-testid="file-upload"]').count()) > 0;
-    expect(fileUploadVisible || (await page.locator('input[type="file"]').count()) > 0).toBeTruthy();
+    expect(
+      fileUploadVisible || (await page.locator('input[type="file"]').count()) > 0,
+    ).toBeTruthy();
 
     console.log('✅ Create modal opens with correct form fields');
   });
 
   test('Manager can create new template', async ({ page }) => {
     // Wait for page to be fully loaded
-    await page.waitForSelector('button:has-text("Create Template")', { timeout: 15000 });
+    await page.waitForSelector('button:has-text("Create Template")', {
+      timeout: 15000,
+    });
 
     // Open create modal
     await page.locator('button:has-text("Create Template")').click();
-    await page.waitForSelector('[role="dialog"]:has-text("Create Template")', { timeout: 10000 });
+    await page.waitForSelector('[role="dialog"]:has-text("Create Template")', {
+      timeout: 10000,
+    });
 
     // Fill form
     const testName = `E2E Test Template ${Date.now()}`;

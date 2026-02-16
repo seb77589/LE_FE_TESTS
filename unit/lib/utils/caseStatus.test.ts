@@ -20,17 +20,20 @@ import {
 
 describe('caseStatus utilities', () => {
   describe('CaseStatus type coverage', () => {
-    it('should include all 6 case statuses', () => {
+    it('should include all supported case statuses', () => {
       const expectedStatuses: CaseStatus[] = [
         'open',
         'in_progress',
         'processing',
+        'extraction_review',
+        'validated',
+        'generating_documents',
         'processed',
         'review_pending',
         'closed',
       ];
 
-      expect(allCaseStatuses).toHaveLength(6);
+      expect(allCaseStatuses).toHaveLength(expectedStatuses.length);
       expectedStatuses.forEach((status) => {
         expect(allCaseStatuses).toContain(status);
       });
@@ -38,14 +41,17 @@ describe('caseStatus utilities', () => {
   });
 
   describe('statusLabels', () => {
-    it('should have labels for all 6 statuses', () => {
-      expect(Object.keys(statusLabels)).toHaveLength(6);
+    it('should have labels for all statuses', () => {
+      expect(Object.keys(statusLabels)).toHaveLength(allCaseStatuses.length);
     });
 
     it('should return correct display labels', () => {
       expect(statusLabels.open).toBe('Open');
       expect(statusLabels.in_progress).toBe('In Progress');
       expect(statusLabels.processing).toBe('Processing');
+      expect(statusLabels.extraction_review).toBe('Extraction Review');
+      expect(statusLabels.validated).toBe('Validated');
+      expect(statusLabels.generating_documents).toBe('Generating Documents');
       expect(statusLabels.processed).toBe('Processed');
       expect(statusLabels.review_pending).toBe('Review Pending');
       expect(statusLabels.closed).toBe('Closed');
@@ -59,14 +65,17 @@ describe('caseStatus utilities', () => {
   });
 
   describe('statusColors', () => {
-    it('should have colors for all 6 statuses', () => {
-      expect(Object.keys(statusColors)).toHaveLength(6);
+    it('should have colors for all statuses', () => {
+      expect(Object.keys(statusColors)).toHaveLength(allCaseStatuses.length);
     });
 
     it('should return correct Tailwind CSS classes', () => {
       expect(statusColors.open).toBe('bg-blue-100 text-blue-800');
       expect(statusColors.in_progress).toBe('bg-indigo-100 text-indigo-800');
       expect(statusColors.processing).toBe('bg-purple-100 text-purple-800');
+      expect(statusColors.extraction_review).toBe('bg-amber-100 text-amber-800');
+      expect(statusColors.validated).toBe('bg-teal-100 text-teal-800');
+      expect(statusColors.generating_documents).toBe('bg-violet-100 text-violet-800');
       expect(statusColors.processed).toBe('bg-yellow-100 text-yellow-800');
       expect(statusColors.review_pending).toBe('bg-orange-100 text-orange-800');
       expect(statusColors.closed).toBe('bg-green-100 text-green-800');
@@ -81,7 +90,7 @@ describe('caseStatus utilities', () => {
     it('should use distinct colors for each status', () => {
       const colors = Object.values(statusColors);
       const uniqueColors = new Set(colors);
-      expect(uniqueColors.size).toBe(6);
+      expect(uniqueColors.size).toBe(allCaseStatuses.length);
     });
   });
 
@@ -90,6 +99,11 @@ describe('caseStatus utilities', () => {
       expect(getStatusColor('open')).toBe('bg-blue-100 text-blue-800');
       expect(getStatusColor('in_progress')).toBe('bg-indigo-100 text-indigo-800');
       expect(getStatusColor('processing')).toBe('bg-purple-100 text-purple-800');
+      expect(getStatusColor('extraction_review')).toBe('bg-amber-100 text-amber-800');
+      expect(getStatusColor('validated')).toBe('bg-teal-100 text-teal-800');
+      expect(getStatusColor('generating_documents')).toBe(
+        'bg-violet-100 text-violet-800',
+      );
       expect(getStatusColor('processed')).toBe('bg-yellow-100 text-yellow-800');
       expect(getStatusColor('review_pending')).toBe('bg-orange-100 text-orange-800');
       expect(getStatusColor('closed')).toBe('bg-green-100 text-green-800');
@@ -112,6 +126,9 @@ describe('caseStatus utilities', () => {
       expect(getStatusLabel('open')).toBe('Open');
       expect(getStatusLabel('in_progress')).toBe('In Progress');
       expect(getStatusLabel('processing')).toBe('Processing');
+      expect(getStatusLabel('extraction_review')).toBe('Extraction Review');
+      expect(getStatusLabel('validated')).toBe('Validated');
+      expect(getStatusLabel('generating_documents')).toBe('Generating Documents');
       expect(getStatusLabel('processed')).toBe('Processed');
       expect(getStatusLabel('review_pending')).toBe('Review Pending');
       expect(getStatusLabel('closed')).toBe('Closed');
@@ -134,14 +151,14 @@ describe('caseStatus utilities', () => {
       expect(Array.isArray(allCaseStatuses)).toBe(true);
     });
 
-    it('should contain exactly 6 statuses', () => {
-      expect(allCaseStatuses).toHaveLength(6);
+    it('should contain all supported statuses', () => {
+      expect(allCaseStatuses).toHaveLength(9);
     });
 
     it('should be in logical workflow order', () => {
-      // Order: open -> in_progress -> processing -> processed -> review_pending -> closed
+      // Order starts at open and ends at closed
       expect(allCaseStatuses[0]).toBe('open');
-      expect(allCaseStatuses[5]).toBe('closed');
+      expect(allCaseStatuses[allCaseStatuses.length - 1]).toBe('closed');
     });
 
     it('should be immutable (frozen array reference)', () => {
@@ -152,8 +169,8 @@ describe('caseStatus utilities', () => {
   });
 
   describe('statusFilterOptions', () => {
-    it('should have 7 options (All + 6 statuses)', () => {
-      expect(statusFilterOptions).toHaveLength(7);
+    it('should have options for all statuses plus All', () => {
+      expect(statusFilterOptions).toHaveLength(allCaseStatuses.length + 1);
     });
 
     it('should have "All Statuses" as first option', () => {
@@ -163,9 +180,9 @@ describe('caseStatus utilities', () => {
       });
     });
 
-    it('should have all 6 status options after "All"', () => {
+    it('should have all status options after "All"', () => {
       const statusOptions = statusFilterOptions.slice(1);
-      expect(statusOptions).toHaveLength(6);
+      expect(statusOptions).toHaveLength(allCaseStatuses.length);
 
       statusOptions.forEach((option, index) => {
         expect(option.value).toBe(allCaseStatuses[index]);
