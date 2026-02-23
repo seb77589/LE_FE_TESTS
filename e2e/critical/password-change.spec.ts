@@ -39,11 +39,12 @@ async function loginAndNavigateToSecuritySettings(
   await expect(page).toHaveURL(/.*\/dashboard/, { timeout: 15000 });
 
   // Navigate to security settings page
-  await page.goto('/settings/security');
+  await page.goto('/settings?tab=security');
   await page.waitForLoadState('networkidle');
 
-  // Ensure security heading is visible before proceeding
-  await expect(page.locator('h1:has-text("Security Settings")').first()).toBeVisible({
+  // Ensure security tab content is visible before proceeding
+  // The settings page renders <h1>Settings</h1> and the SecurityTab renders <h3>Change Password</h3>
+  await expect(page.locator('h3:has-text("Change Password")').first()).toBeVisible({
     timeout: 10000,
   });
 }
@@ -56,15 +57,15 @@ test.describe('Password Change E2E Workflow', () => {
 
     await loginAndNavigateToSecuritySettings(page, testUser.email, testUser.password);
 
-    // Fill in password change form
-    await page.fill('#current-password', testUser.password);
-    await page.fill('#new-password', newPassword);
-    await page.fill('#confirm-password', newPassword);
+    // Fill in password change form using label selectors
+    await page.getByLabel('Current Password').fill(testUser.password);
+    await page.getByLabel('New Password', { exact: true }).fill(newPassword);
+    await page.getByLabel('Confirm New Password').fill(newPassword);
 
     // Wait for password validation to complete (300ms debounce + processing)
     await page.waitForTimeout(1000);
 
-    const submitButton = page.locator('button:has-text("Update Password")');
+    const submitButton = page.locator('button:has-text("Change Password")');
     await submitButton.waitFor({ state: 'visible', timeout: 10000 });
 
     // Button may still be disabled if password doesn't meet validation
@@ -74,25 +75,20 @@ test.describe('Password Change E2E Workflow', () => {
     // Submit password change form
     await submitButton.click();
 
-    // Wait for success message or redirect
-    // The component shows success alert then redirects to login after 2 seconds
+    // Wait for success message (toast notification)
+    // The component calls toast.success('Password changed successfully') and stays on page.
     await expect(
-      page.locator(
-        'text=/password changed successfully|All sessions have been logged out/i',
-      ),
+      page.locator('text=/password changed successfully/i').first(),
     ).toBeVisible({ timeout: 10000 });
 
-    // Wait for automatic redirect to login page (after 2 seconds)
-    await expect(page).toHaveURL(/.*\/auth\/login/, { timeout: 10000 });
-
-    // Clear all cookies and storage to simulate complete session invalidation
+    // Clear all cookies and storage to simulate session invalidation
     await page.context().clearCookies();
     await page.evaluate(() => {
       localStorage.clear();
       sessionStorage.clear();
     });
 
-    // Try accessing protected page (should redirect to login)
+    // Try accessing protected page (should redirect to login since session is cleared)
     await page.goto('/dashboard', { waitUntil: 'networkidle' });
     await expect(page).toHaveURL(/.*\/auth\/login/, { timeout: 10000 });
 
@@ -114,14 +110,14 @@ test.describe('Password Change E2E Workflow', () => {
     await loginAndNavigateToSecuritySettings(page, testUser.email, testUser.password);
 
     // Fill in form with incorrect current password
-    await page.fill('#current-password', wrongCurrentPassword);
-    await page.fill('#new-password', newPassword);
-    await page.fill('#confirm-password', newPassword);
+    await page.getByLabel('Current Password').fill(wrongCurrentPassword);
+    await page.getByLabel('New Password', { exact: true }).fill(newPassword);
+    await page.getByLabel('Confirm New Password').fill(newPassword);
 
     // Wait for password validation (300ms debounce + processing)
     await page.waitForTimeout(1000);
 
-    const submitButton = page.locator('button:has-text("Update Password")');
+    const submitButton = page.locator('button:has-text("Change Password")');
     await submitButton.waitFor({ state: 'visible', timeout: 10000 });
     await expect(submitButton).toBeEnabled({ timeout: 15000 });
     await submitButton.click();
@@ -132,10 +128,10 @@ test.describe('Password Change E2E Workflow', () => {
     ).toBeVisible({ timeout: 10000 });
 
     // Should NOT redirect to login - still on security page
-    await expect(page).toHaveURL(/.*\/settings\/security/, { timeout: 2000 });
+    await expect(page).toHaveURL(/.*\/settings.*tab=security/, { timeout: 2000 });
   });
 
-  test('should disable submit button when passwords do not match', async ({ page }) => {
+  test('should show error when passwords do not match', async ({ page }) => {
     // Use dedicated test user 3
     const testUser = PASSWORD_TEST_CREDENTIALS.USER_3;
     const newPassword = generateValidPassword();
@@ -144,23 +140,25 @@ test.describe('Password Change E2E Workflow', () => {
     await loginAndNavigateToSecuritySettings(page, testUser.email, testUser.password);
 
     // Fill in form with mismatched passwords
-    await page.fill('#current-password', testUser.password);
-    await page.fill('#new-password', newPassword);
-    await page.fill('#confirm-password', differentPassword);
+    await page.getByLabel('Current Password').fill(testUser.password);
+    await page.getByLabel('New Password', { exact: true }).fill(newPassword);
+    await page.getByLabel('Confirm New Password').fill(differentPassword);
 
-    // Wait for password validation to complete (300ms debounce + processing)
-    await page.waitForTimeout(1000);
-
-    // Button should be visible but DISABLED due to password mismatch
-    const submitButton = page.locator('button:has-text("Update Password")');
+    // Submit the form — the component validates on submit, not via button disabled state
+    const submitButton = page.locator('button:has-text("Change Password")');
     await submitButton.waitFor({ state: 'visible', timeout: 10000 });
-    await expect(submitButton).toBeDisabled();
+    await submitButton.click();
+
+    // Should show "Passwords do not match" error
+    await expect(page.locator('text=/passwords do not match/i').first()).toBeVisible({
+      timeout: 10000,
+    });
 
     // Should remain on security settings page (no submission)
-    await expect(page).toHaveURL(/.*\/settings\/security/);
+    await expect(page).toHaveURL(/.*\/settings.*tab=security/);
   });
 
-  test('should disable submit button with weak password', async ({ page }) => {
+  test('should show validation errors with weak password', async ({ page }) => {
     // Use dedicated test user 4
     const testUser = PASSWORD_TEST_CREDENTIALS.USER_4;
     const weakPassword = 'weak'; // Too short and missing complexity
@@ -168,27 +166,30 @@ test.describe('Password Change E2E Workflow', () => {
     await loginAndNavigateToSecuritySettings(page, testUser.email, testUser.password);
 
     // Fill in form with weak password
-    await page.fill('#current-password', testUser.password);
-    await page.fill('#new-password', weakPassword);
-    await page.fill('#confirm-password', weakPassword);
+    await page.getByLabel('Current Password').fill(testUser.password);
+    await page.getByLabel('New Password', { exact: true }).fill(weakPassword);
+    await page.getByLabel('Confirm New Password').fill(weakPassword);
 
     // Wait for password validation to complete (300ms debounce + processing)
     await page.waitForTimeout(1000);
 
-    // Should show validation errors for weak password
+    // Should show validation requirement failures (XCircle icons with unmet requirements)
     await expect(
-      page
-        .locator('text=/✗|must|uppercase|lowercase|number|special|characters/i')
-        .first(),
+      page.locator('text=/characters|uppercase|lowercase|number|special/i').first(),
     ).toBeVisible({ timeout: 5000 });
 
-    // Button should be visible but DISABLED due to weak password
-    const submitButton = page.locator('button:has-text("Update Password")');
+    // Submit the form — the component validates on submit
+    const submitButton = page.locator('button:has-text("Change Password")');
     await submitButton.waitFor({ state: 'visible', timeout: 10000 });
-    await expect(submitButton).toBeDisabled();
+    await submitButton.click();
+
+    // Should show error about password length/complexity
+    await expect(
+      page.locator('text=/at least 8 characters|password must/i').first(),
+    ).toBeVisible({ timeout: 10000 });
 
     // Should remain on security settings page (no submission)
-    await expect(page).toHaveURL(/.*\/settings\/security/);
+    await expect(page).toHaveURL(/.*\/settings.*tab=security/);
   });
 
   test('should display password strength indicator', async ({ page }) => {
@@ -198,7 +199,7 @@ test.describe('Password Change E2E Workflow', () => {
     await loginAndNavigateToSecuritySettings(page, testUser.email, testUser.password);
 
     // Type in a weak password
-    const newPasswordInput = page.locator('#new-password');
+    const newPasswordInput = page.getByLabel('New Password', { exact: true });
     await newPasswordInput.fill('abc');
 
     // Wait for validation (300ms debounce + processing)

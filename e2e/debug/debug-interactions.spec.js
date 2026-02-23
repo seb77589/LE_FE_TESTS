@@ -5,7 +5,14 @@ const path = require('path');
 
 const BASE_URL = 'http://localhost:3000';
 const LOGIN_URL = `${BASE_URL}/auth/login`;
-const SCREENSHOT_DIR = '/home/duck/legalease/.playwright-mcp/interactions';
+const SCREENSHOT_DIR = path.join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '.playwright-mcp',
+  'interactions',
+);
 
 // Credentials from config/.env
 const CREDENTIALS = {

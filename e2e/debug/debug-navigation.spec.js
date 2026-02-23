@@ -14,7 +14,14 @@ const CREDENTIALS = {
   password: 'M@nager!Qw3rty$9',
 };
 
-const SCREENSHOT_DIR = '/home/duck/legalease/.playwright-mcp/debug-screenshots';
+const SCREENSHOT_DIR = path.join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '.playwright-mcp',
+  'debug-screenshots',
+);
 
 // Ensure screenshot directory exists
 if (!fs.existsSync(SCREENSHOT_DIR)) {

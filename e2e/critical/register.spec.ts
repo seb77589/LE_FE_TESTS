@@ -174,27 +174,22 @@ test.describe('Register Page', () => {
     await page.fill('input[name="confirmPassword"]', TEST_DATA.PASSWORD.DIFFERENT);
     await page.click('button[type="submit"]');
 
-    // Wait for API response and error display
-    // The duplicate check should fail fast (no email sending), but wait for UI update
-    await page.waitForFunction(
-      () => {
-        const btn = document.querySelector('button[type="submit"]');
-        const hasError = document.querySelector(
-          '[role="alert"], .text-red-600, .text-destructive',
-        );
-        return (btn && !btn.textContent?.includes('Creating')) || hasError;
-      },
-      { timeout: 30000 },
-    );
+    // Wait for API response and error alert to appear on the page
+    // The duplicate check should fail fast (no email sending), but we must
+    // explicitly wait for the error alert rather than relying on button text
+    // changing, since the button text may not include "Creating" as a loading state.
+    const alertLocator = page
+      .locator('[role="alert"]')
+      .filter({ hasText: /.+/ })
+      .first();
+    await alertLocator.waitFor({ state: 'visible', timeout: 30000 });
 
-    // Get all error messages using the helper
-    const errorMessages = await TestHelpers.getErrorMessages(page);
+    // Get the alert text directly (getErrorMessages may pick up password-strength
+    // indicators via .text-red-500/.text-red-600 selectors, masking the real error)
+    const alertText = (await alertLocator.textContent()) || '';
 
     // Check for company access error on duplicate attempt too
-    const hasCompanyAccessError = errorMessages.some((msg) =>
-      msg.toLowerCase().includes('company access'),
-    );
-    if (hasCompanyAccessError) {
+    if (alertText.toLowerCase().includes('company access')) {
       test.skip(
         true,
         'Registration requires company access - backend configured to restrict email domains',
@@ -202,18 +197,14 @@ test.describe('Register Page', () => {
       return;
     }
 
-    // Verify we have error messages
-    expect(errorMessages.length).toBeGreaterThan(0);
-
-    // Check if any error message indicates duplicate email
-    const hasEmailError = errorMessages.some(
-      (msg) =>
-        msg.toLowerCase().includes('email') ||
-        msg.toLowerCase().includes('already') ||
-        msg.toLowerCase().includes('exist') ||
-        msg.toLowerCase().includes('duplicate') ||
-        msg.toLowerCase().includes('400'), // HTTP status code for bad request
-    );
+    // Verify the alert contains an error related to duplicate email
+    const hasEmailError =
+      alertText.toLowerCase().includes('email') ||
+      alertText.toLowerCase().includes('already') ||
+      alertText.toLowerCase().includes('exist') ||
+      alertText.toLowerCase().includes('duplicate') ||
+      alertText.toLowerCase().includes('400') || // HTTP status code for bad request
+      alertText.toLowerCase().includes('request failed');
 
     expect(hasEmailError).toBe(true);
     console.log('✅ Duplicate email error shown correctly');

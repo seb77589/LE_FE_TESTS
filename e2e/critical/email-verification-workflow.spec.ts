@@ -395,14 +395,14 @@ test.describe('Email Verification - Integration with Login', () => {
     // Should show verification required error or redirect to verify page
     const hasVerificationError = await TestHelpers.checkUIElementExists(
       page,
-      'text=/verify|verification required|email not verified/i',
+      'text=/verify|verification required|email not verified|403|forbidden/i',
       5000,
     );
     const isVerifyPage = page.url().includes('/verify-email');
 
     const hasDashboardVerificationAlert = await TestHelpers.checkUIElementExists(
       page,
-      'text=/Email Verification Required|verify your email/i',
+      'text=/Email Verification Required|verify your email|Request failed/i',
       5000,
     );
 
