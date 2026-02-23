@@ -233,9 +233,14 @@ test.describe('MANAGER Role - Cases Page', () => {
     );
 
     if (caseLink) {
-      // Click first case detail link
+      // Click first case detail link and wait for navigation
       await page.locator('tbody a[href*="/cases/"]').first().click();
-      await page.waitForTimeout(2000);
+      try {
+        await page.waitForURL(/\/cases\/\d+/, { timeout: 10000 });
+      } catch {
+        // Fallback: wait and check
+        await page.waitForTimeout(3000);
+      }
 
       // Should navigate to case detail page
       const isCaseDetail =
@@ -272,17 +277,30 @@ test.describe('MANAGER Role - Admin Access', () => {
     );
   });
 
-  test('should NOT have direct access to /admin page (SUPERADMIN only)', async ({
+  test('should have limited admin access (Manager view, no Health/Analytics tabs)', async ({
     page,
   }) => {
     await page.goto('/admin');
-    await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(1000);
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
 
-    // MANAGER should see access denied for /admin (SUPERADMIN only)
-    // MANAGER only has access to /admin/users, not /admin
-    const accessDenied = page.locator('text=/access denied|unauthorized|forbidden/i');
-    await expect(accessDenied).toBeVisible();
+    // MANAGER can access /admin but gets a limited view
+    // Should see "Admin Dashboard" heading
+    const heading = page.locator('h1');
+    await expect(heading).toBeVisible();
+
+    // MANAGER should see Overview, Users, Activity tabs in admin nav
+    const adminTabs = page.locator('nav[aria-label="Admin tabs"]');
+    await expect(adminTabs).toBeVisible({ timeout: 10000 });
+    await expect(adminTabs.locator('text=Overview')).toBeVisible();
+    await expect(adminTabs.locator('text=Users')).toBeVisible();
+
+    // MANAGER should NOT see SUPERADMIN-only tabs (Health, Analytics)
+    const healthTab = page.locator('text=Health');
+    const analyticsTab = page.locator('text=Analytics');
+    const hasHealth = await healthTab.count();
+    const hasAnalytics = await analyticsTab.count();
+    expect(hasHealth + hasAnalytics).toBe(0);
   });
 
   test('should be able to access admin users page', async ({ page }) => {

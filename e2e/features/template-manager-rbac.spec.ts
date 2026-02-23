@@ -118,9 +118,11 @@ test.describe('Manager Template RBAC - View & Modify', () => {
       timeout: 15000,
     });
 
-    // Find first company template (not system template)
+    // Find first company template (not system template) in grid or list view
     const companyTemplate = page
-      .locator('[data-template-card]:not(:has([data-system-template]))')
+      .locator(
+        '[data-template-card]:not(:has([data-system-template])), [data-template-row]:not(:has([data-system-template]))',
+      )
       .first();
 
     if ((await companyTemplate.count()) > 0) {
@@ -135,12 +137,16 @@ test.describe('Manager Template RBAC - View & Modify', () => {
   });
 
   test('Manager should NOT see Edit button on system templates', async ({ page }) => {
-    // Wait for templates to load first
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load first (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
-    // Find system template badge
+    // Find system template badge (grid or list view)
     const systemTemplate = page
-      .locator('[data-template-card]:has([data-system-template])')
+      .locator(
+        '[data-template-card]:has([data-system-template]), [data-template-row]:has([data-system-template])',
+      )
       .first();
 
     if ((await systemTemplate.count()) > 0) {
@@ -155,11 +161,15 @@ test.describe('Manager Template RBAC - View & Modify', () => {
   });
 
   test('Manager can click template card to open view modal', async ({ page }) => {
-    // Wait for templates to load
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
-    // Click first template card
-    const firstTemplate = page.locator('[data-template-card]').first();
+    // Click first template card/row
+    const firstTemplate = page
+      .locator('[data-template-card], [data-template-row]')
+      .first();
     await firstTemplate.click();
 
     // Wait for TemplateViewModal to open
@@ -183,12 +193,16 @@ test.describe('Manager Template RBAC - View & Modify', () => {
   test('Manager can see Modify button in view modal for company templates', async ({
     page,
   }) => {
-    // Wait for templates to load
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
-    // Find and click first company template
+    // Find and click first company template (grid or list view)
     const companyTemplate = page
-      .locator('[data-template-card]:not(:has([data-system-template]))')
+      .locator(
+        '[data-template-card]:not(:has([data-system-template])), [data-template-row]:not(:has([data-system-template]))',
+      )
       .first();
 
     if ((await companyTemplate.count()) > 0) {
@@ -222,12 +236,16 @@ test.describe('Manager Template RBAC - Modify Flow', () => {
   });
 
   test('Manager can open modify modal from Edit button', async ({ page }) => {
-    // Wait for templates to load
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
-    // Find and click Edit button on first company template
+    // Find and click Edit button on first company template (grid or list view)
     const companyTemplate = page
-      .locator('[data-template-card]:not(:has([data-system-template]))')
+      .locator(
+        '[data-template-card]:not(:has([data-system-template])), [data-template-row]:not(:has([data-system-template]))',
+      )
       .first();
 
     if ((await companyTemplate.count()) > 0) {
@@ -255,11 +273,15 @@ test.describe('Manager Template RBAC - Modify Flow', () => {
   });
 
   test('Manager can update template metadata', async ({ page }) => {
-    // Wait for templates to load
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
     const companyTemplate = page
-      .locator('[data-template-card]:not(:has([data-system-template]))')
+      .locator(
+        '[data-template-card]:not(:has([data-system-template])), [data-template-row]:not(:has([data-system-template]))',
+      )
       .first();
 
     if ((await companyTemplate.count()) > 0) {
@@ -414,11 +436,15 @@ test.describe('Assistant Template RBAC - Read-Only', () => {
   });
 
   test('Assistant can view templates in read-only mode', async ({ page }) => {
-    // Wait for templates to load
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
-    // Click first template
-    const firstTemplate = page.locator('[data-template-card]').first();
+    // Click first template card/row
+    const firstTemplate = page
+      .locator('[data-template-card], [data-template-row]')
+      .first();
     await firstTemplate.click();
 
     // Wait for modal
@@ -500,11 +526,15 @@ test.describe('Permission Boundaries', () => {
     // This test verifies UI doesn't show Edit button for system templates
     // Backend permission check is already tested in backend/tests/
 
-    // Wait for templates to load
-    await page.waitForSelector('[data-template-card]', { timeout: 15000 });
+    // Wait for templates to load (grid or list view)
+    await page.waitForSelector('[data-template-card], [data-template-row]', {
+      timeout: 15000,
+    });
 
     const systemTemplate = page
-      .locator('[data-template-card]:has([data-system-template])')
+      .locator(
+        '[data-template-card]:has([data-system-template]), [data-template-row]:has([data-system-template])',
+      )
       .first();
 
     if ((await systemTemplate.count()) > 0) {

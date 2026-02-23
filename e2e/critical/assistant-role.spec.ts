@@ -166,19 +166,20 @@ test.describe('ASSISTANT Role - Cases Page', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
-    const caseLinks = page
-      .locator('a[href*="/cases/"]')
-      .filter({ hasNot: page.locator('[href="/cases/closed"]') })
-      .filter({ hasNot: page.locator('[href="/cases/in-progress"]') })
-      .filter({ hasNot: page.locator('[href="/cases/to-review"]') })
-      .filter({ hasNot: page.locator('[href="/cases/new"]') });
-
-    const caseLinkCount = await caseLinks.count();
+    // Look for case detail links specifically in the table body
+    const caseLinks = page.locator('tbody a[href*="/cases/"]');
+    const caseLinkCount = await caseLinks.count().catch(() => 0);
 
     if (caseLinkCount > 0) {
-      // Click first case detail link
+      const href = await caseLinks.first().getAttribute('href');
+      // Click first case detail link and wait for navigation
       await caseLinks.first().click();
-      await page.waitForTimeout(2000);
+      try {
+        await page.waitForURL(/\/cases\/\d+/, { timeout: 10000 });
+      } catch {
+        // Fallback: wait and check
+        await page.waitForTimeout(3000);
+      }
 
       // Should navigate to case detail page
       const isCaseDetail =
