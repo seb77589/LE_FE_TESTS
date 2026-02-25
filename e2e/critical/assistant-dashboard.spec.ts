@@ -113,7 +113,9 @@ test.describe('ASSISTANT Role - Dashboard', () => {
   }) => {
     // TemplateWidget renders Browse All as <Button> (not <a>), uses router.push('/templates')
     const browseAllButton = page
-      .locator('button:has-text("Browse All"), a[href="/templates"]:has-text("Browse All")')
+      .locator(
+        'button:has-text("Browse All"), a[href="/templates"]:has-text("Browse All")',
+      )
       .first();
     if (await browseAllButton.isVisible({ timeout: 5000 })) {
       await browseAllButton.click();

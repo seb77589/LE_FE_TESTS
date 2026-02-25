@@ -74,9 +74,7 @@ test.describe('ASSISTANT Role - Templates Browse & Search', () => {
     // Templates page uses the custom <Select> component which renders as
     // <button aria-haspopup="listbox"> with placeholder "All Categories"
     // The filter is conditionally rendered: {categories.length > 0 && (...)}
-    const categoryFilter = page
-      .locator('button[aria-haspopup="listbox"]')
-      .first();
+    const categoryFilter = page.locator('button[aria-haspopup="listbox"]').first();
     if (await categoryFilter.isVisible({ timeout: 5000 })) {
       // Click to open the custom dropdown
       await categoryFilter.click();
@@ -96,7 +94,10 @@ test.describe('ASSISTANT Role - Templates Browse & Search', () => {
       await firstOption.click();
       await page.waitForTimeout(500);
     } else {
-      test.skip(true, 'Category filter not visible (may need seeded templates with categories)');
+      test.skip(
+        true,
+        'Category filter not visible (may need seeded templates with categories)',
+      );
     }
   });
 
@@ -652,10 +653,7 @@ test.describe('ASSISTANT Role - Case Creation from Template', () => {
     // Now click the Preview button (should be enabled after filling all fields)
     const isStillDisabled = await previewButton.isDisabled();
     if (isStillDisabled) {
-      test.skip(
-        true,
-        'Preview button still disabled after filling all fields',
-      );
+      test.skip(true, 'Preview button still disabled after filling all fields');
       return;
     }
 
@@ -892,7 +890,9 @@ test.describe('ASSISTANT Role - Template Packages', () => {
     await page.waitForTimeout(1000);
 
     // Packages view shows EmptyState with "Browse Template Packages" button
-    const browseBtn = page.locator('button:has-text("Browse Template Packages")').first();
+    const browseBtn = page
+      .locator('button:has-text("Browse Template Packages")')
+      .first();
     if (!(await browseBtn.isVisible({ timeout: 5000 }))) {
       test.skip(true, 'Browse Template Packages button not visible');
       return;
@@ -913,7 +913,9 @@ test.describe('ASSISTANT Role - Template Packages', () => {
 
     // Look for package cards inside the modal
     const packageCard = page
-      .locator('[role="dialog"] .cursor-pointer, [role="dialog"] [data-testid*="package"]')
+      .locator(
+        '[role="dialog"] .cursor-pointer, [role="dialog"] [data-testid*="package"]',
+      )
       .first();
     if (await packageCard.isVisible({ timeout: 5000 })) {
       await packageCard.click();
@@ -937,7 +939,9 @@ test.describe('ASSISTANT Role - Template Packages', () => {
     await page.waitForTimeout(1000);
 
     // Click "Browse Template Packages" to open the modal
-    const browseBtn = page.locator('button:has-text("Browse Template Packages")').first();
+    const browseBtn = page
+      .locator('button:has-text("Browse Template Packages")')
+      .first();
     if (!(await browseBtn.isVisible({ timeout: 5000 }))) {
       test.skip(true, 'Browse Template Packages button not visible');
       return;
@@ -947,7 +951,9 @@ test.describe('ASSISTANT Role - Template Packages', () => {
 
     // Look for "Use Package" button inside the modal
     const usePackageButton = page
-      .locator('[role="dialog"] button:has-text("Use Package"), [role="dialog"] button:has-text("Use")')
+      .locator(
+        '[role="dialog"] button:has-text("Use Package"), [role="dialog"] button:has-text("Use")',
+      )
       .first();
     if (await usePackageButton.isVisible({ timeout: 5000 })) {
       await usePackageButton.click();
@@ -1000,7 +1006,9 @@ test.describe('ASSISTANT Role - Case Creation from Package', () => {
     await page.waitForTimeout(1000);
 
     // Packages view shows EmptyState with "Browse Template Packages" button
-    const browseBtn = page.locator('button:has-text("Browse Template Packages")').first();
+    const browseBtn = page
+      .locator('button:has-text("Browse Template Packages")')
+      .first();
     if (!(await browseBtn.isVisible({ timeout: 5000 }))) {
       test.skip(true, 'Browse Template Packages button not visible');
       return;

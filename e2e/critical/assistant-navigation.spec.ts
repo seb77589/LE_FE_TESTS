@@ -40,7 +40,9 @@ test.describe('ASSISTANT Role - Main Navigation', () => {
     await expect(page.locator('nav a[href="/cases"]').first()).toBeVisible();
     await expect(page.locator('nav a[href="/templates"]').first()).toBeVisible();
     await expect(
-      page.locator('[data-testid="notification-bell"], nav a[href="/notifications"]').first(),
+      page
+        .locator('[data-testid="notification-bell"], nav a[href="/notifications"]')
+        .first(),
     ).toBeVisible();
   });
 
@@ -246,7 +248,9 @@ test.describe('ASSISTANT Role - NotificationBell', () => {
     }
   });
 
-  test('should open notification dropdown and show recent items @P1', async ({ page }) => {
+  test('should open notification dropdown and show recent items @P1', async ({
+    page,
+  }) => {
     const bell = page.locator('[data-testid="notification-bell"]');
     if (await bell.isVisible({ timeout: 5000 })) {
       // Click the bell to open the dropdown

@@ -229,9 +229,12 @@ test.describe('ASSISTANT Role - Case Detail', () => {
     if (page.url().match(/\/cases\/\d+/)) {
       // Wait for case detail content to actually load (data-testid only renders after fetch)
       await page
-        .waitForSelector('[data-testid="case-detail-page"] h1, [data-testid="case-detail-page"] h2', {
-          timeout: 15000,
-        })
+        .waitForSelector(
+          '[data-testid="case-detail-page"] h1, [data-testid="case-detail-page"] h2',
+          {
+            timeout: 15000,
+          },
+        )
         .catch(() => {});
       caseDetailUrl = page.url();
     }
@@ -417,7 +420,10 @@ test.describe('ASSISTANT Role - Lock-Controlled Editing', () => {
       .waitForSelector('[data-testid="cases-page"]', { timeout: 15000 })
       .catch(() => {});
     await page
-      .waitForSelector('a:has-text("View Details"), a[href*="/cases/"]:not([href*="closed"]):not([href*="in-progress"]):not([href*="to-review"]), :has-text("No cases yet")', { timeout: 10000 })
+      .waitForSelector(
+        'a:has-text("View Details"), a[href*="/cases/"]:not([href*="closed"]):not([href*="in-progress"]):not([href*="to-review"]), :has-text("No cases yet")',
+        { timeout: 10000 },
+      )
       .catch(() => {});
 
     // Navigate to a case
@@ -548,7 +554,10 @@ test.describe('ASSISTANT Role - Case Notes', () => {
       .waitForSelector('[data-testid="cases-page"]', { timeout: 15000 })
       .catch(() => {});
     await page
-      .waitForSelector('a:has-text("View Details"), a[href*="/cases/"]:not([href*="closed"]):not([href*="in-progress"]):not([href*="to-review"]), :has-text("No cases yet")', { timeout: 10000 })
+      .waitForSelector(
+        'a:has-text("View Details"), a[href*="/cases/"]:not([href*="closed"]):not([href*="in-progress"]):not([href*="to-review"]), :has-text("No cases yet")',
+        { timeout: 10000 },
+      )
       .catch(() => {});
 
     // Navigate to a case detail
@@ -680,7 +689,9 @@ test.describe('ASSISTANT Role - Case Notes', () => {
 
     // Click delete on existing note — delete button is icon-only (Trash2) with aria-label
     const deleteButton = page
-      .locator('button[aria-label*="Delete" i], button[title*="Delete" i], button:has-text("Delete")')
+      .locator(
+        'button[aria-label*="Delete" i], button[title*="Delete" i], button:has-text("Delete")',
+      )
       .first();
     if (await deleteButton.isVisible({ timeout: 5000 })) {
       await deleteButton.click();

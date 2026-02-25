@@ -108,9 +108,7 @@ test.describe('ASSISTANT Role - Documents Page', () => {
       .locator('.cursor-pointer:has(.truncate), [role="button"]:has(.truncate)')
       .first();
     // Fallback: look for any clickable element with a document name
-    const docName = page
-      .locator('h3.truncate, p.truncate, span.truncate')
-      .first();
+    const docName = page.locator('h3.truncate, p.truncate, span.truncate').first();
 
     if (await docCard.isVisible({ timeout: 5000 })) {
       await docCard.click();

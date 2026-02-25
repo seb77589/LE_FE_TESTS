@@ -41,7 +41,9 @@ test.describe('ASSISTANT Role - Navigation', () => {
     await expect(page.locator('nav a[href="/templates"]').first()).toBeVisible();
     // Notifications may be a bell icon (NotificationBell component) instead of a nav link
     await expect(
-      page.locator('[data-testid="notification-bell"], nav a[href="/notifications"]').first(),
+      page
+        .locator('[data-testid="notification-bell"], nav a[href="/notifications"]')
+        .first(),
     ).toBeVisible();
 
     // CRITICAL: Admin link should NOT be visible for ASSISTANT role
@@ -58,7 +60,10 @@ test.describe('ASSISTANT Role - Navigation', () => {
       .locator('nav a[href^="/"]')
       .filter({ hasText: /Dashboard|Cases|Templates/ });
     const count = await navLinks.count();
-    const hasBell = await page.locator('[data-testid="notification-bell"]').isVisible().catch(() => false);
+    const hasBell = await page
+      .locator('[data-testid="notification-bell"]')
+      .isVisible()
+      .catch(() => false);
 
     // ASSISTANT should see 3 standard nav links + 1 notification bell (or 4 nav links)
     expect(count + (hasBell ? 1 : 0)).toBeGreaterThanOrEqual(4);

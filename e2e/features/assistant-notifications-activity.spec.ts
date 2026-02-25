@@ -228,7 +228,9 @@ test.describe('ASSISTANT Role - Activity', () => {
   test('should filter activity by type @P1', async ({ page }) => {
     // Activity page type filter is inside a collapsible panel ({showFilters && (...)})
     // Step 1: Expand the filter panel by clicking the "Filters" toggle button
-    const filtersToggle = page.locator('button:has-text("Filters"), button:has-text("Filter")').first();
+    const filtersToggle = page
+      .locator('button:has-text("Filters"), button:has-text("Filter")')
+      .first();
     if (await filtersToggle.isVisible({ timeout: 5000 })) {
       await filtersToggle.click();
       await page.waitForTimeout(500);

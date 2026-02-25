@@ -258,7 +258,9 @@ test.describe('ASSISTANT Role - Settings Security', () => {
     // Type in new password to trigger strength meter
     // SecurityTab renders <input type="password" id="newPassword"> with NO name attribute
     const newPasswordInput = page
-      .locator('input#newPassword[type="password"], input[id*="new" i][type="password"]')
+      .locator(
+        'input#newPassword[type="password"], input[id*="new" i][type="password"]',
+      )
       .first();
     if (await newPasswordInput.isVisible({ timeout: 5000 })) {
       await newPasswordInput.fill('TestP@ssword123!');
@@ -329,9 +331,11 @@ test.describe('ASSISTANT Role - Settings Security', () => {
   test('should revoke a specific session @P0', async ({ page }) => {
     // Create a second session via CSRF-compliant API login so the UI shows Revoke buttons
     // (SecurityTab only renders Revoke for non-current sessions: {!session.isCurrent && ...})
-    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(() => {
-      // Best-effort — don't fail test if API login fails
-    });
+    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(
+      () => {
+        // Best-effort — don't fail test if API login fails
+      },
+    );
 
     // Navigate to security tab to force SWR re-fetch of sessions
     await page.goto('/settings?tab=security');
@@ -363,9 +367,11 @@ test.describe('ASSISTANT Role - Settings Security', () => {
 
   test('should revoke all other sessions @P1', async ({ page }) => {
     // Create a second session via CSRF-compliant API login so the "Revoke All" button appears
-    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(() => {
-      // Best-effort — don't fail test if API login fails
-    });
+    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(
+      () => {
+        // Best-effort — don't fail test if API login fails
+      },
+    );
 
     const securityTab = page
       .locator(
@@ -721,7 +727,9 @@ test.describe('ASSISTANT Role - Sessions', () => {
 
   test('should terminate a non-current session @P0', async ({ page }) => {
     // Create a second session via CSRF-compliant API login so terminate button appears
-    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(() => {});
+    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(
+      () => {},
+    );
     await page.waitForTimeout(1000);
 
     // Navigate to sessions page (fresh mount triggers useEffect → loadSessions)
@@ -758,16 +766,21 @@ test.describe('ASSISTANT Role - Sessions', () => {
         .first();
 
       // Also check for "Log Out All" button in the Security Actions card
-      const logOutAllButton = page
-        .locator('button:has-text("Log Out All")')
-        .first();
+      const logOutAllButton = page.locator('button:has-text("Log Out All")').first();
 
-      const hasDestroy = await destroyButton.isVisible({ timeout: 5000 }).catch(() => false);
-      const hasLogOutAll = await logOutAllButton.isVisible({ timeout: 3000 }).catch(() => false);
+      const hasDestroy = await destroyButton
+        .isVisible({ timeout: 5000 })
+        .catch(() => false);
+      const hasLogOutAll = await logOutAllButton
+        .isVisible({ timeout: 3000 })
+        .catch(() => false);
 
       expect(hasDestroy || hasLogOutAll).toBe(true);
     } else {
-      test.skip(true, `Only ${cardCount} session card(s) visible — need 2+ for terminate test`);
+      test.skip(
+        true,
+        `Only ${cardCount} session card(s) visible — need 2+ for terminate test`,
+      );
     }
   });
 });
