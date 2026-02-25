@@ -241,6 +241,27 @@ async function globalSetup(config: FullConfig) {
     console.warn('   Tests may skip if no notification data exists');
     // Don't throw - allow tests to run even if notification seeding fails
   }
+
+  // Seed E2E-specific test data (documents, packages, template usage)
+  try {
+    console.log('🔄 [Playwright Global Setup] Seeding E2E test data...');
+    const { execSync } = require('node:child_process');
+    execSync(
+      'docker exec legalease-backend-1 python -m scripts.app_scripts.seed_e2e_test_data',
+      {
+        stdio: 'pipe',
+        timeout: 60000,
+      },
+    );
+    console.log('✅ [Playwright Global Setup] E2E test data seeded successfully');
+  } catch (error: any) {
+    console.warn(
+      '\n⚠️  [Playwright Global Setup] Warning: Failed to seed E2E test data',
+    );
+    console.warn(`   Error: ${error.message}`);
+    console.warn('   Tests may skip if no E2E-specific data exists');
+    // Don't throw - allow tests to run even if E2E data seeding fails
+  }
 }
 
 export default globalSetup;

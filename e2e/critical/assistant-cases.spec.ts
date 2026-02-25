@@ -201,7 +201,14 @@ test.describe('ASSISTANT Role - Case Detail', () => {
     // Navigate to a case
     await page.goto('/cases');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    // Wait for cases page to finish rendering (auth context + SWR fetch)
+    await page
+      .waitForSelector('[data-testid="cases-page"]', { timeout: 15000 })
+      .catch(() => {});
+    // Wait for case cards/links to appear (SWR data loaded)
+    await page
+      .waitForSelector('a:has-text("View Details")', { timeout: 10000 })
+      .catch(() => {});
 
     // Use "View Details" link which navigates to /cases/<id>
     const viewDetailsLink = page.locator('a:has-text("View Details")').first();
@@ -220,10 +227,10 @@ test.describe('ASSISTANT Role - Case Detail', () => {
       await page.waitForTimeout(3000);
     }
     if (page.url().match(/\/cases\/\d+/)) {
-      // Wait for case detail content to actually load
+      // Wait for case detail content to actually load (data-testid only renders after fetch)
       await page
-        .waitForSelector('h1, h2, [data-testid="case-title"], main *', {
-          timeout: 10000,
+        .waitForSelector('[data-testid="case-detail-page"] h1, [data-testid="case-detail-page"] h2', {
+          timeout: 15000,
         })
         .catch(() => {});
       caseDetailUrl = page.url();
@@ -282,11 +289,11 @@ test.describe('ASSISTANT Role - Case Detail', () => {
       return;
     }
 
-    // Verify page content loaded (not empty main)
+    // Verify page content loaded
     const hasContent = await TestHelpers.checkUIElementExists(
       page,
-      'h1, h2, [data-testid="case-title"]',
-      5000,
+      '[data-testid="case-detail-page"] h1, [data-testid="case-detail-page"] h2',
+      10000,
     );
     if (!hasContent) {
       test.skip(true, 'Case detail page content did not load');
@@ -405,7 +412,13 @@ test.describe('ASSISTANT Role - Lock-Controlled Editing', () => {
     );
     await page.goto('/cases');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    // Wait for cases page to finish rendering (auth context + SWR fetch)
+    await page
+      .waitForSelector('[data-testid="cases-page"]', { timeout: 15000 })
+      .catch(() => {});
+    await page
+      .waitForSelector('a:has-text("View Details"), a[href*="/cases/"]:not([href*="closed"]):not([href*="in-progress"]):not([href*="to-review"]), :has-text("No cases yet")', { timeout: 10000 })
+      .catch(() => {});
 
     // Navigate to a case
     const caseLink = page
@@ -419,6 +432,10 @@ test.describe('ASSISTANT Role - Lock-Controlled Editing', () => {
       } catch {
         await page.waitForTimeout(3000);
       }
+      // Wait for case detail content to render
+      await page
+        .waitForSelector('[data-testid="case-detail-page"] h1', { timeout: 15000 })
+        .catch(() => {});
     }
   });
 
@@ -526,7 +543,13 @@ test.describe('ASSISTANT Role - Case Notes', () => {
     );
     await page.goto('/cases');
     await page.waitForLoadState('domcontentloaded');
-    await page.waitForTimeout(2000);
+    // Wait for cases page to finish rendering (auth context + SWR fetch)
+    await page
+      .waitForSelector('[data-testid="cases-page"]', { timeout: 15000 })
+      .catch(() => {});
+    await page
+      .waitForSelector('a:has-text("View Details"), a[href*="/cases/"]:not([href*="closed"]):not([href*="in-progress"]):not([href*="to-review"]), :has-text("No cases yet")', { timeout: 10000 })
+      .catch(() => {});
 
     // Navigate to a case detail
     const caseLink = page
@@ -540,6 +563,10 @@ test.describe('ASSISTANT Role - Case Notes', () => {
       } catch {
         await page.waitForTimeout(3000);
       }
+      // Wait for case detail content to render
+      await page
+        .waitForSelector('[data-testid="case-detail-page"] h1', { timeout: 15000 })
+        .catch(() => {});
     }
   });
 
@@ -651,9 +678,9 @@ test.describe('ASSISTANT Role - Case Notes', () => {
       await page.waitForTimeout(1000);
     }
 
-    // Click delete on existing note
+    // Click delete on existing note — delete button is icon-only (Trash2) with aria-label
     const deleteButton = page
-      .locator('button:has-text("Delete"), button[title*="Delete" i]')
+      .locator('button[aria-label*="Delete" i], button[title*="Delete" i], button:has-text("Delete")')
       .first();
     if (await deleteButton.isVisible({ timeout: 5000 })) {
       await deleteButton.click();

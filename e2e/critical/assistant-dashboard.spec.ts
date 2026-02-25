@@ -111,16 +111,21 @@ test.describe('ASSISTANT Role - Dashboard', () => {
   test('should navigate to /templates from TemplateWidget Browse All @P1', async ({
     page,
   }) => {
-    const browseAllLink = page
-      .locator('a[href="/templates"]')
-      .filter({ hasText: /browse all/i });
-    if (await browseAllLink.isVisible({ timeout: 5000 })) {
-      await browseAllLink.click();
-      await page.waitForLoadState('domcontentloaded');
+    // TemplateWidget renders Browse All as <Button> (not <a>), uses router.push('/templates')
+    const browseAllButton = page
+      .locator('button:has-text("Browse All"), a[href="/templates"]:has-text("Browse All")')
+      .first();
+    if (await browseAllButton.isVisible({ timeout: 5000 })) {
+      await browseAllButton.click();
+      try {
+        await page.waitForURL('**/templates', { timeout: 10000 });
+      } catch {
+        await page.waitForTimeout(3000);
+      }
       expect(page.url()).toContain('/templates');
     } else {
       // Browse All button may not be visible — skip gracefully
-      test.skip(true, 'TemplateWidget Browse All link not visible');
+      test.skip(true, 'TemplateWidget Browse All button not visible');
     }
   });
 

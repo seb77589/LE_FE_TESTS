@@ -39,7 +39,10 @@ test.describe('ASSISTANT Role - Navigation', () => {
     await expect(page.locator('nav a[href="/dashboard"]').first()).toBeVisible();
     await expect(page.locator('nav a[href="/cases"]').first()).toBeVisible();
     await expect(page.locator('nav a[href="/templates"]').first()).toBeVisible();
-    await expect(page.locator('nav a[href="/notifications"]').first()).toBeVisible();
+    // Notifications may be a bell icon (NotificationBell component) instead of a nav link
+    await expect(
+      page.locator('[data-testid="notification-bell"], nav a[href="/notifications"]').first(),
+    ).toBeVisible();
 
     // CRITICAL: Admin link should NOT be visible for ASSISTANT role
     const adminLink = page.locator('nav a[href="/admin"]');
@@ -50,14 +53,15 @@ test.describe('ASSISTANT Role - Navigation', () => {
     await page.goto('/dashboard');
     await page.waitForLoadState('domcontentloaded');
 
-    // Count visible navigation links
+    // Count visible navigation links (Notifications may be a bell icon, not a nav link)
     const navLinks = page
       .locator('nav a[href^="/"]')
-      .filter({ hasText: /Dashboard|Cases|Templates|Notifications/ });
+      .filter({ hasText: /Dashboard|Cases|Templates/ });
     const count = await navLinks.count();
+    const hasBell = await page.locator('[data-testid="notification-bell"]').isVisible().catch(() => false);
 
-    // ASSISTANT should see exactly 4 standard nav items (Dashboard, Cases, Templates, Notifications)
-    expect(count).toBeGreaterThanOrEqual(4);
+    // ASSISTANT should see 3 standard nav links + 1 notification bell (or 4 nav links)
+    expect(count + (hasBell ? 1 : 0)).toBeGreaterThanOrEqual(4);
   });
 
   test('should display correct role badge', async ({ page }) => {

@@ -28,12 +28,12 @@ test.describe('ASSISTANT Role - Notifications', () => {
     );
     await page.goto('/notifications');
     await page.waitForLoadState('domcontentloaded');
-    // Wait for notifications page content to render
+    // Wait for the actual notifications page content (not just nav h1)
     await page
-      .locator('h1')
-      .or(page.locator('[data-testid*="notification"]'))
-      .first()
-      .waitFor({ timeout: 10000 });
+      .waitForSelector('h1:has-text("Notifications"), [data-testid="filter-all"]', {
+        timeout: 15000,
+      })
+      .catch(() => {});
   });
 
   test('should load notifications page @P0', async ({ page }) => {
@@ -47,13 +47,18 @@ test.describe('ASSISTANT Role - Notifications', () => {
   });
 
   test('should filter notifications by read status @P1', async ({ page }) => {
-    // All/Unread filter toggle
-    const allFilter = page.locator('button:has-text("All")').first();
-    const unreadFilter = page.locator('button:has-text("Unread")').first();
+    // All/Unread filter toggle (always rendered, uses data-testid)
+    // Use waitForSelector to properly wait for the element to appear in DOM
+    const filterAllExists = await page
+      .waitForSelector('[data-testid="filter-all"]', { timeout: 10000 })
+      .then(() => true)
+      .catch(() => false);
 
-    if (await allFilter.isVisible({ timeout: 5000 })) {
+    if (filterAllExists) {
+      const allFilter = page.locator('[data-testid="filter-all"]').first();
+      const unreadFilter = page.locator('[data-testid="filter-unread"]').first();
       // Click Unread filter
-      if (await unreadFilter.isVisible({ timeout: 3000 })) {
+      if (await unreadFilter.isVisible()) {
         await unreadFilter.click();
         await page.waitForTimeout(1000);
       }
@@ -66,23 +71,26 @@ test.describe('ASSISTANT Role - Notifications', () => {
   });
 
   test('should filter notifications by type @P1', async ({ page }) => {
-    // Type filter dropdown
-    const typeFilter = page
-      .locator('select, [role="combobox"], button:has-text("Type")')
-      .first();
-    if (await typeFilter.isVisible({ timeout: 5000 })) {
-      await typeFilter.click();
-      await page.waitForTimeout(500);
+    // Notifications page has a native <select data-testid="type-filter">
+    // Use waitForSelector to properly wait for the element to appear
+    const typeFilterExists = await page
+      .waitForSelector('[data-testid="type-filter"]', { timeout: 10000 })
+      .then(() => true)
+      .catch(() => false);
 
-      const hasOptions = await TestHelpers.checkUIElementExists(
-        page,
-        'option, [role="option"], [role="listbox"]',
-        3000,
-      );
-      // Options may not appear if filter is a different UI pattern
-      if (!hasOptions) {
-        test.skip(true, 'Type filter does not show dropdown options');
+    if (typeFilterExists) {
+      const typeFilter = page.locator('select[data-testid="type-filter"]').first();
+      // Native <select> — use Playwright's selectOption() API
+      await typeFilter.selectOption('CASE_UPDATE');
+      const selectedValue = await typeFilter.inputValue();
+      if (selectedValue !== 'CASE_UPDATE') {
+        test.skip(true, 'Type filter selection did not work');
+        return;
       }
+      await page.waitForTimeout(500);
+      // Reset to show all (default option value is 'all')
+      await typeFilter.selectOption('all');
+      await page.waitForTimeout(500);
     } else {
       test.skip(true, 'Type filter not visible');
     }
@@ -218,36 +226,40 @@ test.describe('ASSISTANT Role - Activity', () => {
   });
 
   test('should filter activity by type @P1', async ({ page }) => {
-    const typeFilter = page
-      .locator(
-        'select, [role="combobox"], button:has-text("Type"), button:has-text("Filter")',
-      )
-      .first();
-    if (await typeFilter.isVisible({ timeout: 5000 })) {
-      await typeFilter.click();
+    // Activity page type filter is inside a collapsible panel ({showFilters && (...)})
+    // Step 1: Expand the filter panel by clicking the "Filters" toggle button
+    const filtersToggle = page.locator('button:has-text("Filters"), button:has-text("Filter")').first();
+    if (await filtersToggle.isVisible({ timeout: 5000 })) {
+      await filtersToggle.click();
       await page.waitForTimeout(500);
+    }
 
-      const hasOptions = await TestHelpers.checkUIElementExists(
-        page,
-        'option, [role="option"], [role="listbox"]',
-        3000,
-      );
-      // Options may not appear if filter is a different UI pattern
-      if (!hasOptions) {
-        test.skip(true, 'Type filter does not show dropdown options');
+    // Step 2: The <select id="activity-type-filter"> is now visible
+    const typeFilter = page.locator('select#activity-type-filter').first();
+    if (await typeFilter.isVisible({ timeout: 3000 })) {
+      // Native <select> — use selectOption() API
+      const options = await typeFilter.locator('option').allTextContents();
+      if (options.length > 1) {
+        // Select the second option (first is usually "All")
+        await typeFilter.selectOption({ index: 1 });
+        await page.waitForTimeout(500);
       }
     } else {
-      test.skip(true, 'Type filter not visible');
+      test.skip(true, 'Type filter not visible (may need to expand filter panel)');
     }
   });
 
   test('should filter activity by date range @P1', async ({ page }) => {
-    // Look for date range selector (7/30/90/365 days)
-    const dateRangeButton = page
-      .locator('button:has-text("7"), button:has-text("30"), button:has-text("90")')
-      .first();
-    if (await dateRangeButton.isVisible({ timeout: 5000 })) {
-      await dateRangeButton.click();
+    // Activity page uses a native <select id="activity-date-range"> with
+    // options: 7 (Last 7 days), 30, 90, 365 — NOT button toggles
+    const dateRangeSelect = page.locator('select#activity-date-range').first();
+    if (await dateRangeSelect.isVisible({ timeout: 5000 })) {
+      await dateRangeSelect.selectOption('7');
+      const selectedValue = await dateRangeSelect.inputValue();
+      if (selectedValue !== '7') {
+        test.skip(true, 'Date range selection did not work');
+        return;
+      }
       await page.waitForTimeout(1000);
       expect(page.url()).toContain('/activity');
     } else {

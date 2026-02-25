@@ -256,18 +256,20 @@ test.describe('ASSISTANT Role - Settings Security', () => {
     }
 
     // Type in new password to trigger strength meter
+    // SecurityTab renders <input type="password" id="newPassword"> with NO name attribute
     const newPasswordInput = page
-      .locator('input[name*="new" i][type="password"], input[placeholder*="new" i]')
+      .locator('input#newPassword[type="password"], input[id*="new" i][type="password"]')
       .first();
     if (await newPasswordInput.isVisible({ timeout: 5000 })) {
       await newPasswordInput.fill('TestP@ssword123!');
-      await page.waitForTimeout(500);
+      // Wait for debounce (300ms) + password strength API call
+      await page.waitForTimeout(1500);
 
-      // Password strength meter or requirements checklist should appear
+      // Password strength meter shows "Password Strength" text with a progress bar
       const hasStrengthIndicator = await TestHelpers.checkUIElementExists(
         page,
-        ':has-text("strength"), :has-text("requirement"), [data-testid*="strength"], [role="progressbar"]',
-        3000,
+        ':has-text("Password Strength"), :has-text("strength"), [data-testid*="strength"], [role="progressbar"]',
+        5000,
       );
       expect(hasStrengthIndicator).toBe(true);
     } else {
@@ -325,6 +327,17 @@ test.describe('ASSISTANT Role - Settings Security', () => {
   });
 
   test('should revoke a specific session @P0', async ({ page }) => {
+    // Create a second session via CSRF-compliant API login so the UI shows Revoke buttons
+    // (SecurityTab only renders Revoke for non-current sessions: {!session.isCurrent && ...})
+    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(() => {
+      // Best-effort — don't fail test if API login fails
+    });
+
+    // Navigate to security tab to force SWR re-fetch of sessions
+    await page.goto('/settings?tab=security');
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(2000);
+
     const securityTab = page
       .locator(
         'nav[aria-label="Settings tabs"] a:has-text("Security"), button:has-text("Security")',
@@ -335,12 +348,13 @@ test.describe('ASSISTANT Role - Settings Security', () => {
       await page.waitForTimeout(1000);
     }
 
-    // Look for Revoke/Terminate button on a non-current session
-    const revokeButton = page
-      .locator('button:has-text("Revoke"), button:has-text("Terminate")')
-      .first();
-    if (await revokeButton.isVisible({ timeout: 5000 })) {
-      // Just verify the button exists — don't actually revoke
+    // Wait for Revoke button on a non-current session
+    const revokeExists = await page
+      .waitForSelector('button:has-text("Revoke")', { timeout: 10000 })
+      .then(() => true)
+      .catch(() => false);
+    if (revokeExists) {
+      const revokeButton = page.locator('button:has-text("Revoke")').first();
       await expect(revokeButton).toBeVisible();
     } else {
       test.skip(true, 'No revokable sessions visible (may be only one active session)');
@@ -348,11 +362,26 @@ test.describe('ASSISTANT Role - Settings Security', () => {
   });
 
   test('should revoke all other sessions @P1', async ({ page }) => {
+    // Create a second session via CSRF-compliant API login so the "Revoke All" button appears
+    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(() => {
+      // Best-effort — don't fail test if API login fails
+    });
+
     const securityTab = page
       .locator(
         'nav[aria-label="Settings tabs"] a:has-text("Security"), button:has-text("Security")',
       )
       .first();
+    if (await securityTab.isVisible({ timeout: 3000 })) {
+      await securityTab.click();
+      await page.waitForTimeout(1000);
+    }
+
+    // Reload to pick up the new session
+    await page.reload();
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(2000);
+
     if (await securityTab.isVisible({ timeout: 3000 })) {
       await securityTab.click();
       await page.waitForTimeout(1000);
@@ -691,16 +720,54 @@ test.describe('ASSISTANT Role - Sessions', () => {
   });
 
   test('should terminate a non-current session @P0', async ({ page }) => {
-    // Look for terminate button on non-current sessions
-    const terminateButton = page
-      .locator('button:has-text("Terminate"), button:has-text("Revoke")')
-      .first();
-    if (await terminateButton.isVisible({ timeout: 5000 })) {
-      // Just verify the button exists — don't actually terminate
-      await expect(terminateButton).toBeVisible();
+    // Create a second session via CSRF-compliant API login so terminate button appears
+    await TestHelpers.loginViaAPI(page, ASSISTANT.email, ASSISTANT.password).catch(() => {});
+    await page.waitForTimeout(1000);
+
+    // Navigate to sessions page (fresh mount triggers useEffect → loadSessions)
+    await page.goto('/dashboard/sessions');
+    await page.waitForLoadState('domcontentloaded');
+
+    // Wait for session cards to render (Card component uses .bg-card class, data-testid not passed through)
+    // Session cards are Card components containing "Session ID:" text
+    await page
+      .waitForSelector('.bg-card:has-text("Session ID:")', { timeout: 15000 })
+      .catch(() => {});
+    await page.waitForTimeout(500);
+
+    // Click Refresh button to force re-fetch with latest session data
+    const refreshBtn = page.locator('button:has-text("Refresh")').first();
+    if (await refreshBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await refreshBtn.click();
+      // Wait for the cards to re-render after refresh
+      await page
+        .waitForSelector('.bg-card:has-text("Session ID:")', { timeout: 10000 })
+        .catch(() => {});
+      await page.waitForTimeout(1000);
+    }
+
+    // Count session cards (Card components with "Session ID:" text, excluding the Security info cards)
+    const sessionCards = page.locator('.bg-card:has-text("Session ID:")');
+    const cardCount = await sessionCards.count();
+
+    if (cardCount > 1) {
+      // Multiple sessions exist — there should be destructive icon buttons on non-current ones
+      // Non-current sessions render a destructive Button with Trash2 icon
+      const destroyButton = page
+        .locator('.bg-card:has-text("Session ID:") button[class*="destructive"]')
+        .first();
+
+      // Also check for "Log Out All" button in the Security Actions card
+      const logOutAllButton = page
+        .locator('button:has-text("Log Out All")')
+        .first();
+
+      const hasDestroy = await destroyButton.isVisible({ timeout: 5000 }).catch(() => false);
+      const hasLogOutAll = await logOutAllButton.isVisible({ timeout: 3000 }).catch(() => false);
+
+      expect(hasDestroy || hasLogOutAll).toBe(true);
     } else {
-      // May have only one active session — that's acceptable
-      test.skip(true, 'No terminable sessions visible (single active session)');
+      test.skip(true, `Only ${cardCount} session card(s) visible — need 2+ for terminate test`);
     }
   });
 });
