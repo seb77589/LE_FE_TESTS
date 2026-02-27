@@ -13,17 +13,29 @@
  */
 
 import { test, expect } from '../../fixtures/auth-fixture';
+import type { Page } from '@playwright/test';
 import { TEST_DATA } from '../../test-credentials';
 import { TestHelpers } from '../../utils/test-helpers';
 
 // Check if email testing is available
-const EMAIL_TESTING_ENABLED = process.env.SMTP_TEST_SERVER || process.env.MAILHOG_URL;
+const EMAIL_TESTING_ENABLED = Boolean(
+  process.env.SMTP_TEST_SERVER || process.env.MAILHOG_URL,
+);
+
+const waitForUiSettled = async (page: Page) => {
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+};
+
+test.skip(
+  !EMAIL_TESTING_ENABLED,
+  'Email testing infrastructure is not configured (set SMTP_TEST_SERVER or MAILHOG_URL)',
+);
 
 test.describe('Email Workflows - Password Reset', () => {
   test('should access password reset page', async ({ page }) => {
     await page.goto('/auth/login');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Look for "Forgot Password" link
     const forgotPasswordLink = await TestHelpers.checkUIElementExists(
@@ -77,7 +89,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Check for email input field
     const emailInput = await TestHelpers.checkUIElementExists(
@@ -121,7 +133,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Fill email field
     await page.fill(
@@ -136,7 +148,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Check for success message
     const successMessage = await TestHelpers.checkUIElementExists(
@@ -173,7 +185,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Submit with non-existent email
     // Extract email domain from TEST_USER_EMAIL environment variable
@@ -201,7 +213,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Check for error or success (may show generic message for security)
     const hasResponse = await TestHelpers.checkUIElementExists(
@@ -236,7 +248,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Enter invalid email
     await page.fill(
@@ -251,7 +263,7 @@ test.describe('Email Workflows - Password Reset', () => {
       )
       .first()
       .click();
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Check for validation error
     const validationError = await TestHelpers.checkUIElementExists(
@@ -276,7 +288,7 @@ test.describe('Email Workflows - Password Reset Completion', () => {
 
     await page.goto(`/auth/reset-password?token=${mockToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Check if form exists or if we get 404
     const hasForm = await TestHelpers.checkUIElementExists(
@@ -312,7 +324,7 @@ test.describe('Email Workflows - Password Reset Completion', () => {
 
     await page.goto(`/auth/reset-password?token=${expiredToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Check for error message about expired token
     const hasExpiredMessage = await TestHelpers.checkUIElementExists(
@@ -335,7 +347,7 @@ test.describe('Email Workflows - Email Verification', () => {
   }) => {
     await page.goto('/auth/register');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Generate unique test user
     const timestamp = Date.now();
@@ -363,7 +375,7 @@ test.describe('Email Workflows - Email Verification', () => {
 
     // Submit form
     await page.click('button[type="submit"]');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Check for verification message
     const verificationMessage = await TestHelpers.checkUIElementExists(
@@ -408,7 +420,7 @@ test.describe('Email Workflows - Email Verification', () => {
     await page.fill('input[name="password"]', TEST_DATA.PASSWORD.VALID);
     await page.fill('input[name="confirmPassword"]', TEST_DATA.PASSWORD.VALID);
     await page.click('button[type="submit"]');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Look for resend link/button
     const resendButton = await TestHelpers.checkUIElementExists(
@@ -427,7 +439,7 @@ test.describe('Email Workflows - Email Verification', () => {
         )
         .first()
         .click();
-      await page.waitForTimeout(1000);
+      await waitForUiSettled(page);
 
       // Check for success message
       const resentMessage = await TestHelpers.checkUIElementExists(
@@ -450,7 +462,7 @@ test.describe('Email Workflows - Email Verification', () => {
 
     await page.goto(`/auth/verify-email?token=${mockToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Check for verification result (success or error)
     const hasVerificationResult = await TestHelpers.checkUIElementExists(
@@ -473,7 +485,7 @@ test.describe('Email Workflows - Email Verification', () => {
 
     await page.goto(`/auth/verify-email?token=${invalidToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Check for error message
     const hasError = await TestHelpers.checkUIElementExists(
@@ -554,7 +566,7 @@ test.describe('Email Workflows - Email Notifications', () => {
           .check();
       }
 
-      await page.waitForTimeout(1000);
+      await waitForUiSettled(page);
 
       console.log('✅ Email notification toggle functional');
     } else {
@@ -591,7 +603,7 @@ test.describe('Email Workflows - Admin Email Management', () => {
         .locator('button:has-text("Users"), [role="tab"]:has-text("User")')
         .first()
         .click();
-      await page.waitForTimeout(1000);
+      await waitForUiSettled(page);
     } else {
       await page.goto('/admin/users');
       await page.waitForLoadState('networkidle');
@@ -625,7 +637,7 @@ test.describe('Email Workflows - Admin Email Management', () => {
         .locator('button:has-text("Users"), [role="tab"]:has-text("User")')
         .first()
         .click();
-      await page.waitForTimeout(1000);
+      await waitForUiSettled(page);
     } else {
       await page.goto('/admin/users');
       await page.waitForLoadState('networkidle');

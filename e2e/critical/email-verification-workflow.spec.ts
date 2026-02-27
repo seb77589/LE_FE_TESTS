@@ -12,16 +12,21 @@
  */
 
 import { test, expect } from '../../fixtures/auth-fixture';
+import type { Page } from '@playwright/test';
 import { TEST_DATA } from '../../test-credentials';
 import { TestHelpers } from '../../utils/test-helpers';
 import { generateRandomEmail, generateRandomPassword } from '../../utils/testUtils';
+
+const waitForUiSettled = async (page: Page) => {
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+};
 
 test.describe('Email Verification Workflow', () => {
   test('should show verification pending page after registration', async ({ page }) => {
     // Navigate to registration page
     await page.goto('/auth/register');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Generate unique test user
     const timestamp = Date.now();
@@ -50,8 +55,8 @@ test.describe('Email Verification Workflow', () => {
       await page.waitForLoadState('networkidle', { timeout: 15000 });
     }
 
-    // Give time for any redirects
-    await page.waitForTimeout(2000);
+    // Wait for redirect/network to settle before assertions
+    await waitForUiSettled(page);
 
     // Check if redirected to verify-email page with pending state
     const isVerifyPage =
@@ -78,7 +83,7 @@ test.describe('Email Verification Workflow', () => {
     const mockToken = 'test-verification-token-123';
     await page.goto(`/verify-email?token=${mockToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Check for verification page elements
     const hasTitle = await TestHelpers.checkUIElementExists(
@@ -98,7 +103,7 @@ test.describe('Email Verification Workflow', () => {
   test('should show error for missing token', async ({ page }) => {
     await page.goto('/verify-email');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Should show error about missing token
     const hasError = await TestHelpers.checkUIElementExists(
@@ -114,7 +119,7 @@ test.describe('Email Verification Workflow', () => {
     const invalidToken = 'invalid-token-xyz-123';
     await page.goto(`/verify-email?token=${invalidToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Should show error message
     const hasError = await TestHelpers.checkUIElementExists(
@@ -146,7 +151,7 @@ test.describe('Email Verification Workflow', () => {
 
     await page.goto(`/verify-email?token=${mockToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(3000);
+    await waitForUiSettled(page);
 
     // Check if redirected to login or shows success message
     const isLoginPage =
@@ -164,7 +169,7 @@ test.describe('Email Verification Workflow', () => {
   test('should show pending verification state', async ({ page }) => {
     await page.goto('/verify-email?pending=true');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Should show pending message
     const hasPendingMessage = await TestHelpers.checkUIElementExists(
@@ -179,7 +184,7 @@ test.describe('Email Verification Workflow', () => {
   test('should provide return to login link on pending page', async ({ page }) => {
     await page.goto('/verify-email?pending=true');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Look for return to login button/link
     const returnToLogin = await TestHelpers.checkUIElementExists(
@@ -196,7 +201,7 @@ test.describe('Email Verification Workflow', () => {
         )
         .first()
         .click();
-      await page.waitForTimeout(1000);
+      await waitForUiSettled(page);
 
       const isLoginPage =
         page.url().includes('/auth/login') || page.url().includes('/login');
@@ -208,7 +213,7 @@ test.describe('Email Verification Workflow', () => {
     const expiredToken = 'expired-token-123';
     await page.goto(`/verify-email?token=${expiredToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Should show expired token error
     const hasExpiredMessage = await TestHelpers.checkUIElementExists(
@@ -280,7 +285,7 @@ test.describe('Email Verification Workflow', () => {
 
     await page.goto(`/verify-email?token=${mockToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Should show error message
     const hasError = await TestHelpers.checkUIElementExists(
@@ -298,7 +303,7 @@ test.describe('Email Verification Workflow', () => {
     const mockToken = 'already-verified-token';
     await page.goto(`/verify-email?token=${mockToken}`);
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Should show appropriate message (already verified or error)
     const hasMessage = await TestHelpers.checkUIElementExists(
@@ -315,7 +320,7 @@ test.describe('Email Verification - Resend Flow', () => {
   test('should show resend verification email option', async ({ page }) => {
     await page.goto('/verify-email?pending=true');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     // Look for resend button/link
     const resendButton = await TestHelpers.checkUIElementExists(
@@ -335,7 +340,7 @@ test.describe('Email Verification - Resend Flow', () => {
     // For now, test the UI flow
     await page.goto('/verify-email?pending=true');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     const resendButton = await TestHelpers.checkUIElementExists(
       page,
@@ -348,7 +353,7 @@ test.describe('Email Verification - Resend Flow', () => {
         .locator('button:has-text("Resend"), a:has-text("Resend")')
         .first()
         .click();
-      await page.waitForTimeout(2000);
+      await waitForUiSettled(page);
 
       // Should show success message
       const hasSuccess = await TestHelpers.checkUIElementExists(
@@ -367,7 +372,7 @@ test.describe('Email Verification - Integration with Login', () => {
     // Register new unverified user
     await page.goto('/auth/register');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     const testEmail = generateRandomEmail();
     const password = generateRandomPassword();
@@ -377,7 +382,7 @@ test.describe('Email Verification - Integration with Login', () => {
     await page.fill('input[name="password"]', password);
     await page.fill('input[name="confirmPassword"]', password);
     await page.click('button[type="submit"]');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Registration flow may log the user in automatically; reset session before login attempt.
     await page.context().clearCookies();
@@ -385,12 +390,12 @@ test.describe('Email Verification - Integration with Login', () => {
     // Try to login
     await page.goto('/auth/login');
     await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    await waitForUiSettled(page);
 
     await page.fill('input[name="email"]', testEmail);
     await page.fill('input[name="password"]', password);
     await page.click('button[type="submit"]');
-    await page.waitForTimeout(2000);
+    await waitForUiSettled(page);
 
     // Should show verification required error or redirect to verify page
     const hasVerificationError = await TestHelpers.checkUIElementExists(
