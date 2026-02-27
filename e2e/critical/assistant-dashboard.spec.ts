@@ -134,9 +134,15 @@ test.describe('ASSISTANT Role - Dashboard', () => {
   test('should open template variable form from TemplateWidget Use button @P1', async ({
     page,
   }) => {
-    // Look for Use button within the template widget area
-    // (only visible when user has recently used templates)
-    const useButton = page.locator('button:has-text("Use Template")').first();
+    // Look for Use button within the template widget area.
+    // The TemplateWidget renders a "Use" button (not "Use Template") per template card,
+    // with aria-label="Use <template name> template". Only visible when user has
+    // recent template usage records in the database.
+    const useButton = page
+      .locator(
+        'button[aria-label*="Use"][aria-label*="template" i], button:text-is("Use")',
+      )
+      .first();
     if (await useButton.isVisible({ timeout: 5000 })) {
       await useButton.click();
       await page.waitForTimeout(2000);

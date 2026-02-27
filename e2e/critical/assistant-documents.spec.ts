@@ -198,8 +198,8 @@ test.describe('ASSISTANT Role - Documents Page', () => {
   });
 });
 
-test.describe('ASSISTANT Role - Documents Upload Access Gap', () => {
-  test('should access /documents/upload directly and see upload form @P0', async ({
+test.describe('ASSISTANT Role - Documents Upload Access', () => {
+  test('should redirect /documents/upload to /cases (standalone upload deprecated) @P0', async ({
     page,
   }) => {
     await TestHelpers.loginAndWaitForRedirect(
@@ -209,27 +209,15 @@ test.describe('ASSISTANT Role - Documents Upload Access Gap', () => {
       false,
     );
 
-    // Navigate directly to upload page — no frontend role gate
+    // Navigate directly to upload page — server-side redirect to /cases
     await page.goto('/documents/upload');
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(2000);
 
-    // The upload page has NO frontend role check — ASSISTANT can see the full UI
-    // This documents a known access control gap (backend enforcement is the only gate)
-    const hasUploadUI = await TestHelpers.checkUIElementExists(
-      page,
-      'input[type="file"], :has-text("upload"), :has-text("drag"), :has-text("drop")',
-      5000,
-    );
-
-    // Either the upload page loads (gap confirmed) or redirects (gap fixed)
+    // The upload page redirects all users to /cases (standalone upload deprecated).
+    // Ingestion uploads are case-context only, initiated from case workflows.
     const url = page.url();
-    if (url.includes('/documents/upload')) {
-      // Gap exists — ASSISTANT can access upload page
-      expect(hasUploadUI).toBe(true);
-    } else {
-      // Gap fixed — ASSISTANT was redirected away
-      expect(url).not.toContain('/documents/upload');
-    }
+    expect(url).not.toContain('/documents/upload');
+    expect(url).toContain('/cases');
   });
 });

@@ -540,7 +540,12 @@ test.describe('ASSISTANT Role - Lock-Controlled Editing', () => {
 test.describe('ASSISTANT Role - Case Notes', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test.beforeEach(async ({ page }) => {
+  // NOTE: No beforeEach navigation here. In serial mode, tests share page state.
+  // The first test (add note) performs login + navigation. Subsequent tests
+  // (edit, delete) inherit the page context so notes persist across tests.
+
+  test('should add a note to a case @P0', async ({ page }) => {
+    // Login and navigate to case detail (only in the first serial test)
     await TestHelpers.loginAndWaitForRedirect(
       page,
       ASSISTANT_MUTATE.email,
@@ -549,7 +554,6 @@ test.describe('ASSISTANT Role - Case Notes', () => {
     );
     await page.goto('/cases');
     await page.waitForLoadState('domcontentloaded');
-    // Wait for cases page to finish rendering (auth context + SWR fetch)
     await page
       .waitForSelector('[data-testid="cases-page"]', { timeout: 15000 })
       .catch(() => {});
@@ -560,7 +564,6 @@ test.describe('ASSISTANT Role - Case Notes', () => {
       )
       .catch(() => {});
 
-    // Navigate to a case detail
     const caseLink = page
       .locator('a[href*="/cases/"]')
       .filter({ hasNotText: /new|closed|in-progress|to-review/i })
@@ -572,14 +575,11 @@ test.describe('ASSISTANT Role - Case Notes', () => {
       } catch {
         await page.waitForTimeout(3000);
       }
-      // Wait for case detail content to render
       await page
         .waitForSelector('[data-testid="case-detail-page"] h1', { timeout: 15000 })
         .catch(() => {});
     }
-  });
 
-  test('should add a note to a case @P0', async ({ page }) => {
     if (!page.url().match(/\/cases\/\d+/)) {
       test.skip(true, 'No case available');
       return;
