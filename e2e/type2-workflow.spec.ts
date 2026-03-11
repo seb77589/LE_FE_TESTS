@@ -31,7 +31,8 @@ test.describe('Type 2 Workflow - UI Elements', () => {
   test.beforeEach(async ({ page }) => {
     // Login with test credentials
     const email = process.env.TEST_MANAGER_EMAIL || process.env.TEST_ADMIN_EMAIL;
-    const password = process.env.TEST_MANAGER_PASSWORD || process.env.TEST_ADMIN_PASSWORD;
+    const password =
+      process.env.TEST_MANAGER_PASSWORD || process.env.TEST_ADMIN_PASSWORD;
 
     if (!email || !password) {
       test.skip();
@@ -58,7 +59,9 @@ test.describe('Type 2 Workflow - UI Elements', () => {
     await page.goto(`${BASE_URL}/cases`, { waitUntil: 'networkidle' });
 
     // Verify cases page loaded
-    await expect(page.getByTestId('case-detail-page').or(page.locator('h1'))).toBeVisible({
+    await expect(
+      page.getByTestId('case-detail-page').or(page.locator('h1')),
+    ).toBeVisible({
       timeout: 10000,
     });
   });
@@ -96,9 +99,11 @@ test.describe('Type 2 Workflow - UI Elements', () => {
       // We don't assert its presence since it depends on case state
       // Instead we verify the page renders without errors
       const errorBanner = page.locator('[data-testid="error-display"]');
-      await expect(errorBanner).not.toBeVisible({ timeout: 3000 }).catch(() => {
-        // Error display may appear for cases in error state - that's OK
-      });
+      await expect(errorBanner)
+        .not.toBeVisible({ timeout: 3000 })
+        .catch(() => {
+          // Error display may appear for cases in error state - that's OK
+        });
     }
   });
 
